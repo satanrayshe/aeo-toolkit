@@ -1,0 +1,137 @@
+/**
+ * Landing v2 — "the audit, printed" design system (light-mode-paper-technical).
+ * A warm paper sheet framed by the site's dark graphite shell. One accent. All
+ * tokens are scoped to .v2 so the rest of the console is untouched.
+ */
+.v2 {
+  --v2-shell: #101014;
+  --v2-paper: #f4f1e9;
+  --v2-paper-deep: #eae6da;
+  --v2-ink: #16150f;
+  --v2-ink-soft: #4c4a40;
+  --v2-ink-faint: #807c6d;
+  --v2-rule: #d9d4c5;
+  --v2-rule-strong: #b9b3a0;
+  --v2-signal: #e8501a;
+  --v2-ok: #1d7a4c;
+
+  color: var(--v2-ink);
+  font-family: var(--font-v2-sans), system-ui, sans-serif;
+  /* Lenis is the sole scroll engine on this page — no native smooth double-driving. */
+  scroll-behavior: auto;
+}
+
+/* Lenis is the sole scroll engine here; the console's global `html { scroll-behavior:
+   smooth }` would double-drive anchor scrolling on this page, so it is switched off at
+   the scrolling element whenever the landing is mounted. */
+html:has(.v2) {
+  scroll-behavior: auto;
+}
+
+.v2 ::selection {
+  background: var(--v2-signal);
+  color: #fff;
+}
+
+/* Focus must read on paper — the console's cyan ring is a dark-theme token. */
+.v2 :focus-visible {
+  outline: 2px solid var(--v2-signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.v2 h1,
+.v2 h2,
+.v2 h3 {
+  color: var(--v2-ink);
+  font-family: var(--font-v2-sans), system-ui, sans-serif;
+  letter-spacing: -0.03em;
+}
+
+/* The paper master sheet: framed, softly shadowed, faintly textured. */
+.v2-sheet {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(22, 21, 15, 0.016) 0 1px,
+      transparent 1px 7px
+    ),
+    var(--v2-paper);
+  border: 1px solid var(--v2-rule-strong);
+  border-radius: 20px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05),
+    0 30px 80px -30px rgba(0, 0, 0, 0.55);
+}
+
+/* Mono utility voice: labels, stamps, metadata. */
+.v2-label {
+  font-family: var(--font-v2-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--v2-ink-faint);
+}
+
+/* Engraved horizontal rule (drawn in by the motion system). */
+.v2-rule {
+  height: 1px;
+  background: var(--v2-rule-strong);
+}
+
+/* L-bracket corners for framed regions — authored geometry, not decoration for its own
+   sake: they mark the measured areas of the report. */
+.v2-brackets {
+  position: relative;
+}
+.v2-brackets::before,
+.v2-brackets::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--v2-rule-strong);
+  pointer-events: none;
+}
+.v2-brackets::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.v2-brackets::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* Word-split masks (added by Motion.tsx; decorative spans are aria-hidden). */
+.v2-word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+.v2-word {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Hidden-until-revealed applies ONLY once the motion system is armed, so the page is
+   complete without JavaScript and under prefers-reduced-motion. */
+html.has-motion .v2 [data-hero-title] {
+  visibility: hidden;
+}
+
+/* Specimen sheet pointer response is additive — base state is fully composed. */
+.v2-specimen {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-specimen {
+    transition: none;
+    transform: none;
+  }
+}
