@@ -50,7 +50,7 @@ const faqLd: Record<string, unknown> = {
 
 export default function LandingPage(): JSX.Element {
   return (
-    <div className={`v2 ${v2Sans.variable} ${v2Mono.variable} relative bg-[#101014]`}>
+    <div className={`v2 ${v2Sans.variable} ${v2Mono.variable} relative bg-[#131210]`}>
       <JsonLd data={faqLd} />
       <Motion />
 

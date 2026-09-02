@@ -100,7 +100,7 @@ export function SpecimenReport(): React.ReactElement {
                   className="h-full"
                   style={{
                     width: `${cat.score}%`,
-                    background: cat.score >= 80 ? 'var(--v2-ok)' : 'var(--v2-signal)',
+                    background: cat.score >= 80 ? 'var(--v2-ok)' : 'var(--v2-warn)',
                   }}
                 />
               </div>

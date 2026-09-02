@@ -49,7 +49,7 @@ export function HeroV2(): JSX.Element {
             />
             <button
               type="submit"
-              className="h-12 shrink-0 px-5 text-sm font-semibold text-white transition-colors hover:bg-[#c43f10]"
+              className="h-12 shrink-0 px-5 text-sm font-semibold text-white transition-colors hover:bg-[var(--v2-signal-hover)]"
               style={{ background: 'var(--v2-signal)', borderRadius: '0 4px 4px 0' }}
             >
               Run the audit
@@ -301,7 +301,7 @@ export function FaqV2(): JSX.Element {
 export function CtaV2(): JSX.Element {
   return (
     <section className="px-6 py-20 text-center sm:py-24" aria-labelledby="cta-h">
-      <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
+      <p className="v2-label" style={{ color: 'var(--v2-signal-ondark)' }}>
         Begin the measurement
       </p>
       <h2
@@ -314,7 +314,7 @@ export function CtaV2(): JSX.Element {
       <div className="mt-8 flex justify-center">
         <Link
           href="/tools/audit"
-          className="inline-flex h-12 items-center px-7 text-sm font-semibold text-white transition-colors hover:bg-[#c43f10]"
+          className="inline-flex h-12 items-center px-7 text-sm font-semibold text-white transition-colors hover:bg-[var(--v2-signal-hover)]"
           style={{ background: 'var(--v2-signal)', borderRadius: 4 }}
         >
           Run your first audit

@@ -3,9 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Logo } from '@advance-labs/ui';
-import { Button } from './ui/Button';
+import { BrandLockup } from './BrandMark';
 import { cn } from '@/lib/cn';
+
+/** Solid drafting-ink CTA — the v2 accent, replacing the old gradient pill. */
+const CTA_CLASSES =
+  'inline-flex h-9 items-center rounded px-3.5 text-sm font-semibold text-white transition-colors bg-[#2B3FD1] hover:bg-[#3A50E8]';
 
 const NAV = [
   { href: '/tools/audit', label: 'Audit' },
@@ -23,10 +26,10 @@ export function Header(): React.ReactElement {
   const path = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-ink-950/70 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#131210]/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-content items-center justify-between px-5 sm:px-8">
         <Link href="/" aria-label="AEO Toolkit home" className="shrink-0">
-          <Logo size={26} variant="dark" />
+          <BrandLockup size={22} tone="dark" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -48,9 +51,9 @@ export function Header(): React.ReactElement {
         </nav>
 
         <div className="hidden md:block">
-          <Button href="/tools/audit" size="sm">
+          <Link href="/tools/audit" className={CTA_CLASSES}>
             Run a free audit
-          </Button>
+          </Link>
         </div>
 
         <button
@@ -80,7 +83,7 @@ export function Header(): React.ReactElement {
       </div>
 
       {open ? (
-        <div className="border-t border-white/[0.06] bg-ink-950/95 px-5 py-3 md:hidden">
+        <div className="border-t border-white/[0.06] bg-[#131210]/95 px-5 py-3 md:hidden">
           <nav className="flex flex-col gap-1">
             {NAV.map((item) => (
               <Link
@@ -92,9 +95,9 @@ export function Header(): React.ReactElement {
                 {item.label}
               </Link>
             ))}
-            <Button href="/tools/audit" size="sm" className="mt-2">
+            <Link href="/tools/audit" onClick={() => setOpen(false)} className={cn(CTA_CLASSES, 'mt-2 justify-center')}>
               Run a free audit
-            </Button>
+            </Link>
           </nav>
         </div>
       ) : null}

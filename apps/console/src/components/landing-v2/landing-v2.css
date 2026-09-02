@@ -4,7 +4,7 @@
  * tokens are scoped to .v2 so the rest of the console is untouched.
  */
 .v2 {
-  --v2-shell: #101014;
+  --v2-shell: #131210;
   --v2-paper: #f4f1e9;
   --v2-paper-deep: #eae6da;
   --v2-ink: #16150f;
@@ -12,8 +12,13 @@
   --v2-ink-faint: #807c6d;
   --v2-rule: #d9d4c5;
   --v2-rule-strong: #b9b3a0;
-  --v2-signal: #e8501a;
+  /* Drafting-ink blue: the accent of a blueprint, not a startup gradient. */
+  --v2-signal: #1f35b5;
+  --v2-signal-hover: #16278f;
+  /* Same voice lifted for the dark shell, where full-strength ink would go muddy. */
+  --v2-signal-ondark: #93a3f5;
   --v2-ok: #1d7a4c;
+  --v2-warn: #b45309;
 
   color: var(--v2-ink);
   font-family: var(--font-v2-sans), system-ui, sans-serif;

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LogoMark } from '@advance-labs/ui';
+import { BrandLockup } from '../BrandMark';
 import { Container } from './Container';
 
 const TOOLS = [
@@ -30,8 +30,7 @@ export function Footer(): React.ReactElement {
               className="inline-flex items-center gap-2.5"
               aria-label="AEO Toolkit home"
             >
-              <LogoMark size={28} idSuffix="footer" />
-              <span className="font-display text-lg font-semibold text-white">AEO Toolkit</span>
+              <BrandLockup size={24} tone="dark" />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-slate-400">
               Audit, optimize, and track your visibility across AI answer engines — ChatGPT, Claude,
