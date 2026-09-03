@@ -70,11 +70,12 @@ export function Motion(): null {
       const story = document.querySelector<HTMLElement>('[data-story]');
       if (story) {
         const lines = story.querySelectorAll<HTMLElement>('[data-story-line]');
+        const specimen = story.querySelector<HTMLElement>('[data-story-specimen]');
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: story,
             start: 'top top',
-            end: '+=140%',
+            end: '+=170%',
             scrub: 0.4,
             pin: true,
           },
@@ -90,6 +91,32 @@ export function Motion(): null {
             tl.to(line, { autoAlpha: 0.16, duration: 0.5 }, i * 1.1 + 0.85);
           }
         });
+        if (specimen) {
+          const at = lines.length * 1.1;
+          tl.fromTo(
+            specimen,
+            { autoAlpha: 0, xPercent: 16 },
+            { autoAlpha: 1, xPercent: 0, duration: 1.2, ease: 'power2.out' },
+            at,
+          );
+          const scoreEl = specimen.querySelector<HTMLElement>('[data-count]');
+          if (scoreEl) {
+            const target = Number(scoreEl.dataset.count ?? '0');
+            const state = { n: 0 };
+            tl.to(
+              state,
+              {
+                n: target,
+                duration: 1.3,
+                ease: 'none',
+                onUpdate: () => {
+                  scoreEl.textContent = String(Math.round(state.n));
+                },
+              },
+              at + 0.3,
+            );
+          }
+        }
       }
 
       // ── Act II scan: rows brighten one by one as the scroll passes them.
@@ -104,7 +131,7 @@ export function Motion(): null {
 
       // ── Act III: the score counts up when the specimen enters.
       const scoreEl = document.querySelector<HTMLElement>('[data-count]');
-      if (scoreEl) {
+      if (scoreEl && !scoreEl.closest('[data-story]')) {
         const target = Number(scoreEl.dataset.count ?? '0');
         const state = { n: 0 };
         gsap.to(state, {

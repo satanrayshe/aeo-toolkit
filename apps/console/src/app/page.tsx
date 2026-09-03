@@ -13,7 +13,6 @@ import {
   LedgerV2,
   StoryFrame,
   StoryTurn,
-  VerdictV2,
 } from '@/components/landing-v2/Sections';
 import '@/components/landing-v2/landing-v2.css';
 
@@ -69,13 +68,7 @@ export default function LandingPage(): JSX.Element {
           <div className="v2-sheet overflow-hidden">
             <HeroV2 />
             <StoryTurn />
-            <StoryFrame
-              src="/story/uncited.webp"
-              alt="A dark field of hundreds of faint distant lights, with a single point glowing acid green"
-              label="Uncited is invisible"
-            />
             <LedgerV2 />
-            <VerdictV2 />
             <StoryFrame
               src="/story/calibrated.webp"
               alt="Macro of a precision lens element in matte black metal, a thin green laser refracting through its edge"

@@ -19,7 +19,7 @@ export const LANDING_FAQS = FAQS.slice(0, 3);
 
 export function HeroV2(): JSX.Element {
   return (
-    <section className="px-6 pb-20 pt-14 sm:px-10 sm:pt-20 lg:px-14">
+    <section className="px-6 pb-14 pt-12 sm:px-10 sm:pt-16 lg:px-14">
       <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
         <div>
           <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
@@ -84,18 +84,42 @@ export function StoryTurn(): JSX.Element {
     <section
       data-story
       aria-label="Why AI citations matter"
-      className="flex min-h-[70vh] flex-col justify-center gap-6 border-t border-[color:var(--v2-rule)] px-6 py-24 sm:px-10 lg:px-14"
+      className="relative flex min-h-screen items-center overflow-hidden border-t border-[color:var(--v2-rule)] px-6 py-16 sm:px-10 lg:px-14"
     >
-      {STORY_LINES.map((line, i) => (
-        <p
-          key={line}
-          data-story-line
-          className="max-w-3xl text-balance text-4xl font-bold leading-[1.05] tracking-tighter sm:text-5xl lg:text-6xl"
-          style={i === STORY_LINES.length - 1 ? { color: 'var(--v2-signal)' } : undefined}
-        >
-          {line}
-        </p>
-      ))}
+      {/* The commissioned void frame is the backdrop of this act: a field of faint
+          far-away lights, exactly one lit. (Higgsfield Soul Cinema, 2026-09-03.) */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- local static backdrop */}
+      <img
+        src="/story/uncited.webp"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
+      />
+      <div className="relative grid w-full items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+        <div className="flex flex-col gap-6">
+          {STORY_LINES.map((line, i) => (
+            <p
+              key={line}
+              data-story-line
+              className="max-w-2xl text-balance text-4xl font-bold leading-[1.05] tracking-tighter sm:text-5xl lg:text-6xl"
+              style={i === STORY_LINES.length - 1 ? { color: 'var(--v2-signal)' } : undefined}
+            >
+              {line}
+            </p>
+          ))}
+        </div>
+        {/* The answer pops in from the side once the loss lands: know in sixty seconds. */}
+        <div data-story-specimen className="flex flex-col items-center gap-4 lg:items-end">
+          <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
+            02 · Know — sixty seconds later
+          </p>
+          <SpecimenReport />
+        </div>
+      </div>
+      <p className="v2-label absolute bottom-5 left-6 sm:left-10 lg:left-14">
+        Uncited is invisible
+      </p>
     </section>
   );
 }
@@ -117,7 +141,7 @@ export function StoryFrame({
   label: string;
 }): JSX.Element {
   return (
-    <figure className="relative m-0 h-[38vh] min-h-[260px] overflow-hidden border-y border-[color:var(--v2-rule)] sm:h-[46vh]">
+    <figure className="relative m-0 h-[28vh] min-h-[220px] overflow-hidden border-y border-[color:var(--v2-rule)] sm:h-[34vh]">
       {/* eslint-disable-next-line @next/next/no-img-element -- local static asset, parallax-transformed */}
       <img
         src={src}
@@ -146,10 +170,10 @@ const MEASURES: ReadonlyArray<{ n: string; name: string; detail: string }> = [
 
 export function LedgerV2(): JSX.Element {
   return (
-    <section className="px-6 py-20 sm:px-10 lg:px-14" aria-labelledby="measures-h">
+    <section className="px-6 py-14 sm:px-10 sm:py-16 lg:px-14" aria-labelledby="measures-h">
       <div data-reveal>
         <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
-          02 · Measure
+          03 · Measure
         </p>
         <h2 id="measures-h" className="mt-3 max-w-lg text-3xl font-bold tracking-tighter sm:text-4xl">
           Six instruments scan.
@@ -183,35 +207,6 @@ export function LedgerV2(): JSX.Element {
   );
 }
 
-/* ────────────────────────── Act III · Read ────────────────────────── */
-
-export function VerdictV2(): JSX.Element {
-  return (
-    <section
-      className="border-t border-[color:var(--v2-rule)] px-6 py-20 sm:px-10 lg:px-14"
-      aria-labelledby="verdict-h"
-    >
-      <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
-        <div data-reveal>
-          <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
-            03 · Read
-          </p>
-          <h2 id="verdict-h" className="mt-3 max-w-md text-3xl font-bold tracking-tighter sm:text-4xl">
-            Sixty seconds later, you know.
-          </h2>
-          <p className="mt-4 max-w-sm text-base leading-relaxed" style={{ color: 'var(--v2-ink-soft)' }}>
-            One grade, six categories, and the exact rule each page fails — ranked by what to fix
-            first.
-          </p>
-        </div>
-        <div className="flex justify-center lg:justify-end">
-          <SpecimenReport />
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ────────────────────────── Act IV · Fix ────────────────────────── */
 
 /** One fragment per tool — the sentence lives on the tool page, not here. */
@@ -226,7 +221,7 @@ const TOOL_FRAGMENTS: Record<string, string> = {
 export function InstrumentIndexV2(): JSX.Element {
   return (
     <section
-      className="border-t border-[color:var(--v2-rule-strong)] bg-white/[0.03] px-6 py-20 sm:px-10 lg:px-14"
+      className="border-t border-[color:var(--v2-rule-strong)] bg-white/[0.03] px-6 py-14 sm:px-10 sm:py-16 lg:px-14"
       aria-labelledby="tools-h"
     >
       <div data-reveal className="flex flex-wrap items-end justify-between gap-4">
@@ -294,7 +289,7 @@ export function InstrumentIndexV2(): JSX.Element {
 
 export function FaqV2(): JSX.Element {
   return (
-    <section className="px-6 py-20 sm:px-10 lg:px-14" aria-labelledby="faq-h">
+    <section className="px-6 py-14 sm:px-10 sm:py-16 lg:px-14" aria-labelledby="faq-h">
       <div data-reveal>
         <h2 id="faq-h" className="text-2xl font-bold tracking-tighter sm:text-3xl">
           Asked and answered.
@@ -331,7 +326,7 @@ export function FaqV2(): JSX.Element {
 
 export function CtaV2(): JSX.Element {
   return (
-    <section className="px-6 py-20 text-center sm:py-24" aria-labelledby="cta-h">
+    <section className="px-6 py-16 text-center sm:py-20" aria-labelledby="cta-h">
       <p className="v2-label" style={{ color: 'var(--v2-signal-ondark)' }}>
         Begin the measurement
       </p>
