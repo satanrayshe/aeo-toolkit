@@ -75,7 +75,7 @@ export function Motion(): null {
           scrollTrigger: {
             trigger: story,
             start: 'top top',
-            end: '+=170%',
+            end: '+=200%',
             scrub: 0.4,
             pin: true,
           },

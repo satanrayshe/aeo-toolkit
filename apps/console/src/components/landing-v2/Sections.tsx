@@ -77,6 +77,7 @@ const STORY_LINES: ReadonlyArray<string> = [
   'A customer asks.',
   'The engine answers with three names.',
   'Yours isn’t one of them.',
+  'But it should be.',
 ];
 
 export function StoryTurn(): JSX.Element {
