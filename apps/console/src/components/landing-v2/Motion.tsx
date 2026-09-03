@@ -2,18 +2,14 @@
 
 /**
  * Landing motion system — GSAP + ScrollTrigger driven by Lenis (the sole smooth-scroll
- * engine; native scroll-behavior is disabled on the landing wrapper). Follows the
- * cinematic-gsap-lenis recipe: Lenis raf runs through the GSAP ticker so ScrollTrigger
- * stays synced, reveals trigger on entry (not per-pixel), eases stay in the power3/expo
- * family, and everything is destroyed on unmount.
+ * engine). v6 adds the storytelling layer: a pinned, scrubbed three-line turn, a scan
+ * sequence over the measure ledger, scroll-triggered score count-up, and slow parallax
+ * on the narrative frames.
  *
- * Accessibility contract:
- * - Under `prefers-reduced-motion: reduce`, nothing is hidden or animated and Lenis is
- *   never constructed — the page renders its final state immediately.
- * - Without JavaScript the markup is complete and visible; `html.has-motion` (added here,
- *   pre-first-paint via useLayoutEffect) is what arms the hidden-until-revealed styles.
- * - Word splitting keeps the unsplit accessible name: the original text becomes the
- *   element's aria-label and the decorative word spans are aria-hidden.
+ * Accessibility contract: under prefers-reduced-motion nothing is hidden, pinned, or
+ * animated (final states render immediately); without JavaScript the markup is complete
+ * — hidden/dimmed styles apply only under `html.has-motion`. Word splitting preserves
+ * the accessible name (aria-label on the element, aria-hidden word spans).
  */
 
 import { useLayoutEffect } from 'react';
@@ -53,8 +49,7 @@ export function Motion(): null {
     const ctx = gsap.context(() => {
       gsap.defaults({ ease: 'power3.out', duration: 0.85 });
 
-      // ── Hero intro: headline words, then supporting copy and the specimen sheet.
-      // Nav/CTA are never part of the timeline, so the page is usable from frame one.
+      // ── Act I intro: headline words, then support, form, and the instrument.
       const heroTitle = document.querySelector<HTMLElement>('[data-hero-title]');
       const intro = gsap.timeline({ delay: 0.1 });
       if (heroTitle) {
@@ -62,38 +57,81 @@ export function Motion(): null {
         gsap.set(heroTitle, { visibility: 'visible' });
         intro.from(words, { yPercent: 110, duration: 0.9, stagger: 0.055, ease: 'expo.out' });
       }
-      intro.from(
-        '[data-hero-sub]',
-        { autoAlpha: 0, y: 18, duration: 0.75 },
-        heroTitle ? '-=0.45' : 0,
-      );
+      intro.from('[data-hero-sub]', { autoAlpha: 0, y: 18, duration: 0.75 }, heroTitle ? '-=0.45' : 0);
       intro.from('[data-hero-cta]', { autoAlpha: 0, y: 14, duration: 0.6 }, '-=0.5');
       intro.from(
         '[data-hero-sheet]',
-        { autoAlpha: 0, y: 32, rotate: 0.6, duration: 1.0, ease: 'power4.out' },
+        { autoAlpha: 0, y: 32, duration: 1.0, ease: 'power4.out' },
         '-=0.55',
       );
 
-      // Score numeral counts up once the sheet lands.
+      // ── The turn: pinned, scrubbed lines. Each line arrives, then recedes as the
+      // next lands — the last (the loss, in signal green) stays.
+      const story = document.querySelector<HTMLElement>('[data-story]');
+      if (story) {
+        const lines = story.querySelectorAll<HTMLElement>('[data-story-line]');
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: story,
+            start: 'top top',
+            end: '+=140%',
+            scrub: 0.4,
+            pin: true,
+          },
+        });
+        lines.forEach((line, i) => {
+          tl.fromTo(
+            line,
+            { autoAlpha: 0, y: 44 },
+            { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' },
+            i * 1.1,
+          );
+          if (i < lines.length - 1) {
+            tl.to(line, { autoAlpha: 0.16, duration: 0.5 }, i * 1.1 + 0.85);
+          }
+        });
+      }
+
+      // ── Act II scan: rows brighten one by one as the scroll passes them.
+      for (const item of gsap.utils.toArray<HTMLElement>('[data-scan-item]')) {
+        ScrollTrigger.create({
+          trigger: item,
+          start: 'top 72%',
+          onEnter: () => item.classList.add('is-scanned'),
+          onLeaveBack: () => item.classList.remove('is-scanned'),
+        });
+      }
+
+      // ── Act III: the score counts up when the specimen enters.
       const scoreEl = document.querySelector<HTMLElement>('[data-count]');
       if (scoreEl) {
         const target = Number(scoreEl.dataset.count ?? '0');
         const state = { n: 0 };
-        intro.to(
-          state,
-          {
-            n: target,
-            duration: 1.1,
-            ease: 'power2.out',
-            onUpdate: () => {
-              scoreEl.textContent = String(Math.round(state.n));
-            },
+        gsap.to(state, {
+          n: target,
+          duration: 1.2,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: scoreEl, start: 'top 80%', once: true },
+          onUpdate: () => {
+            scoreEl.textContent = String(Math.round(state.n));
           },
-          '-=0.55',
+        });
+      }
+
+      // ── Narrative frames: slow parallax inside their clipped figures.
+      for (const img of gsap.utils.toArray<HTMLElement>('[data-parallax]')) {
+        gsap.fromTo(
+          img,
+          { yPercent: -6 },
+          {
+            yPercent: 6,
+            ease: 'none',
+            scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
+          },
         );
       }
 
-      // ── Scroll reveals: sections assemble like a report being printed.
+      // ── Shared grammar: entry reveals and drawn rules.
       for (const el of gsap.utils.toArray<HTMLElement>('[data-reveal]')) {
         gsap.from(el, {
           autoAlpha: 0,
@@ -111,7 +149,6 @@ export function Motion(): null {
           scrollTrigger: { trigger: group, start: 'top 82%' },
         });
       }
-      // Horizontal rules draw in — the "engraving" beat of the system.
       for (const rule of gsap.utils.toArray<HTMLElement>('[data-rule]')) {
         gsap.from(rule, {
           scaleX: 0,
@@ -123,7 +160,7 @@ export function Motion(): null {
       }
     });
 
-    // Lenis drives its raf through the GSAP ticker (single clock, no drift).
+    // Lenis through the GSAP ticker — one clock, ScrollTrigger stays synced.
     const lenis = new Lenis({ lerp: 0.08, smoothWheel: true, wheelMultiplier: 0.9 });
     lenis.on('scroll', ScrollTrigger.update);
     const tick = (time: number): void => {

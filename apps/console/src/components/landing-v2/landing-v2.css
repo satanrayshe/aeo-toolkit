@@ -234,6 +234,23 @@ html.has-motion .v2 [data-hero-title] {
   transition: opacity 0.4s ease;
 }
 
+/* Act II scan: rows idle-dimmed only while motion is armed; the pass brightens them
+   and lights the numeral. Static and reduced-motion views get full rows, green numerals. */
+.v2 .v2-scan-n {
+  color: var(--v2-signal);
+  transition: color 0.45s ease;
+}
+html.has-motion .v2 [data-scan-item] {
+  opacity: 0.38;
+  transition: opacity 0.45s ease;
+}
+html.has-motion .v2 [data-scan-item].is-scanned {
+  opacity: 1;
+}
+html.has-motion .v2 [data-scan-item]:not(.is-scanned) .v2-scan-n {
+  color: var(--v2-ink-faint);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .v2-specimen {
     transition: none;

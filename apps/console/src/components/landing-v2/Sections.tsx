@@ -1,23 +1,29 @@
 /**
- * Landing v2 sections — server components, complete without JavaScript. The visual
- * system is "the audit, printed": ruled ledger rows, numbered indices, mono metadata,
- * one signal accent. Motion hooks are data-attributes consumed by Motion.tsx.
+ * Landing v6 — the story cut. "Do less with more": the page is four acts told on
+ * scroll — ASK (a customer asks an AI), MEASURE (the instruments scan), READ (the
+ * verdict), FIX (work the list, get named) — with content compressed to fragments
+ * wherever a sentence restated what a tool page already owns. Server components,
+ * complete and readable without JavaScript; scroll behavior lives in Motion.tsx.
  */
 
 import type { JSX } from 'react';
 import Link from 'next/link';
 import { FAQS, TOOLS } from '@/components/landing';
 import { NodeFieldViewport } from './NodeFieldViewport';
+import { SpecimenReport } from './SpecimenReport';
 
-/* ────────────────────────── Hero ────────────────────────── */
+/** The visible FAQ is cut to three; the page's FAQPage JSON-LD mirrors exactly these. */
+export const LANDING_FAQS = FAQS.slice(0, 3);
+
+/* ────────────────────────── Act I · Ask ────────────────────────── */
 
 export function HeroV2(): JSX.Element {
   return (
-    <section className="px-6 pb-16 pt-14 sm:px-10 sm:pb-20 sm:pt-20 lg:px-14">
+    <section className="px-6 pb-20 pt-14 sm:px-10 sm:pt-20 lg:px-14">
       <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
         <div>
           <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
-            Answer Engine Optimization · free & open source
+            01 · Ask
           </p>
           <h1
             data-hero-title
@@ -30,8 +36,7 @@ export function HeroV2(): JSX.Element {
             className="mt-6 max-w-md text-lg leading-relaxed"
             style={{ color: 'var(--v2-ink-soft)' }}
           >
-            AEO Toolkit measures whether ChatGPT, Claude, and Perplexity can find, parse, and cite
-            your site — then hands you the fix list. No sign-up.
+            Free, open instruments that measure whether the engines can find, parse, and cite you.
           </p>
 
           <form data-hero-cta action="/tools/audit" method="get" className="mt-8 flex max-w-md gap-0">
@@ -55,7 +60,7 @@ export function HeroV2(): JSX.Element {
               Run the audit
             </button>
           </form>
-          <p className="v2-label mt-4">54 rules · crawls up to 50 pages · report in ~60s</p>
+          <p className="v2-label mt-4">54 rules · 50 pages · ~60s · no account</p>
         </div>
 
         <div className="flex justify-center lg:justify-end">
@@ -66,67 +71,109 @@ export function HeroV2(): JSX.Element {
   );
 }
 
-/* ─────────────────── What gets measured (ledger) ─────────────────── */
+/* ─────────────── The turn: scrubbed story lines (pinned on scroll) ─────────────── */
+
+const STORY_LINES: ReadonlyArray<string> = [
+  'A customer asks.',
+  'The engine answers with three names.',
+  'Yours isn’t one of them.',
+];
+
+export function StoryTurn(): JSX.Element {
+  return (
+    <section
+      data-story
+      aria-label="Why AI citations matter"
+      className="flex min-h-[70vh] flex-col justify-center gap-6 border-t border-[color:var(--v2-rule)] px-6 py-24 sm:px-10 lg:px-14"
+    >
+      {STORY_LINES.map((line, i) => (
+        <p
+          key={line}
+          data-story-line
+          className="max-w-3xl text-balance text-4xl font-bold leading-[1.05] tracking-tighter sm:text-5xl lg:text-6xl"
+          style={i === STORY_LINES.length - 1 ? { color: 'var(--v2-signal)' } : undefined}
+        >
+          {line}
+        </p>
+      ))}
+    </section>
+  );
+}
+
+/* ────────────── Narrative frames (commissioned stills, see provenance) ────────────── */
+
+/**
+ * Both frames were generated for this design with Higgsfield Soul Cinema (2026-09-03),
+ * prompted to this system's world: matte black, one acid-green signal. Local files in
+ * /public/story; no third-party assets.
+ */
+export function StoryFrame({
+  src,
+  alt,
+  label,
+}: {
+  src: string;
+  alt: string;
+  label: string;
+}): JSX.Element {
+  return (
+    <figure className="relative m-0 h-[38vh] min-h-[260px] overflow-hidden border-y border-[color:var(--v2-rule)] sm:h-[46vh]">
+      {/* eslint-disable-next-line @next/next/no-img-element -- local static asset, parallax-transformed */}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        data-parallax
+        className="absolute inset-0 h-full w-full scale-110 object-cover"
+      />
+      <figcaption className="v2-label absolute bottom-4 left-6 sm:left-10 lg:left-14">
+        {label}
+      </figcaption>
+    </figure>
+  );
+}
+
+/* ────────────────────────── Act II · Measure ────────────────────────── */
 
 const MEASURES: ReadonlyArray<{ n: string; name: string; detail: string }> = [
-  {
-    n: '01',
-    name: 'Crawlability & indexing',
-    detail: 'robots.txt, sitemaps, canonicals, redirect health — can an engine reach you at all.',
-  },
-  {
-    n: '02',
-    name: 'AI-bot access',
-    detail: 'GPTBot, ClaudeBot, PerplexityBot directives and llms.txt — the gates most sites shut by accident.',
-  },
-  {
-    n: '03',
-    name: 'Structured data',
-    detail: 'JSON-LD, Microdata, RDFa — validated, and checked for the types answer engines actually cite from.',
-  },
-  {
-    n: '04',
-    name: 'Metadata & on-page',
-    detail: 'Titles, descriptions, heading hierarchy, alt coverage — the parse layer.',
-  },
-  {
-    n: '05',
-    name: 'Answer readiness',
-    detail: 'Question-shaped headings, extractable lists and tables, answer-first structure an LLM can quote.',
-  },
-  {
-    n: '06',
-    name: 'E-E-A-T signals',
-    detail: 'Experience, Expertise, Authoritativeness, Trust — whether you are safe to cite, pillar by pillar.',
-  },
+  { n: '01', name: 'Crawlability', detail: 'robots.txt · sitemaps · canonicals · redirects' },
+  { n: '02', name: 'AI-bot access', detail: 'GPTBot · ClaudeBot · PerplexityBot · llms.txt' },
+  { n: '03', name: 'Structured data', detail: 'JSON-LD · Microdata · RDFa · citable types' },
+  { n: '04', name: 'Metadata', detail: 'titles · descriptions · headings · alt text' },
+  { n: '05', name: 'Answer readiness', detail: 'question headings · lists · answer-first' },
+  { n: '06', name: 'E-E-A-T', detail: 'experience · expertise · authority · trust' },
 ];
 
 export function LedgerV2(): JSX.Element {
   return (
-    <section className="px-6 pb-16 sm:px-10 sm:pb-20 lg:px-14" aria-labelledby="measures-h">
+    <section className="px-6 py-20 sm:px-10 lg:px-14" aria-labelledby="measures-h">
       <div data-reveal>
-        <p className="v2-label">The measurement</p>
+        <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
+          02 · Measure
+        </p>
         <h2 id="measures-h" className="mt-3 max-w-lg text-3xl font-bold tracking-tighter sm:text-4xl">
-          Six instruments, one graded report.
+          Six instruments scan.
         </h2>
       </div>
       <div className="v2-rule mt-8" data-rule aria-hidden="true" />
-      <dl data-reveal-group className="m-0">
+      <dl data-scan className="m-0">
         {MEASURES.map((m) => (
           <div
             key={m.n}
-            data-reveal-item
-            className="grid grid-cols-[3rem_1fr] gap-x-4 gap-y-1 border-b border-[color:var(--v2-rule)] py-5 sm:grid-cols-[4rem_16rem_1fr] sm:items-baseline"
+            data-scan-item
+            className="grid grid-cols-[3rem_1fr] items-baseline gap-x-4 border-b border-[color:var(--v2-rule)] py-4 sm:grid-cols-[4rem_15rem_1fr]"
           >
             <span
-              className="font-[var(--font-v2-mono)] text-sm tabular-nums"
-              style={{ color: 'var(--v2-signal)' }}
+              className="v2-scan-n font-[var(--font-v2-mono)] text-sm tabular-nums"
               aria-hidden="true"
             >
               {m.n}
             </span>
             <dt className="text-base font-semibold">{m.name}</dt>
-            <dd className="col-start-2 m-0 text-sm leading-relaxed sm:col-start-3" style={{ color: 'var(--v2-ink-soft)' }}>
+            <dd
+              className="col-start-2 m-0 font-[var(--font-v2-mono)] text-xs sm:col-start-3 sm:text-right"
+              style={{ color: 'var(--v2-ink-faint)', letterSpacing: '0.04em' }}
+            >
               {m.detail}
             </dd>
           </div>
@@ -136,22 +183,62 @@ export function LedgerV2(): JSX.Element {
   );
 }
 
-/* ─────────────────── The instruments (tool index) ─────────────────── */
+/* ────────────────────────── Act III · Read ────────────────────────── */
+
+export function VerdictV2(): JSX.Element {
+  return (
+    <section
+      className="border-t border-[color:var(--v2-rule)] px-6 py-20 sm:px-10 lg:px-14"
+      aria-labelledby="verdict-h"
+    >
+      <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
+        <div data-reveal>
+          <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
+            03 · Read
+          </p>
+          <h2 id="verdict-h" className="mt-3 max-w-md text-3xl font-bold tracking-tighter sm:text-4xl">
+            Sixty seconds later, you know.
+          </h2>
+          <p className="mt-4 max-w-sm text-base leading-relaxed" style={{ color: 'var(--v2-ink-soft)' }}>
+            One grade, six categories, and the exact rule each page fails — ranked by what to fix
+            first.
+          </p>
+        </div>
+        <div className="flex justify-center lg:justify-end">
+          <SpecimenReport />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────── Act IV · Fix ────────────────────────── */
+
+/** One fragment per tool — the sentence lives on the tool page, not here. */
+const TOOL_FRAGMENTS: Record<string, string> = {
+  '/tools/audit': 'crawl · score · fix list · PDF',
+  '/tools/eeat': 'four pillars, exact gaps',
+  '/tools/llms-txt': 'generate & download',
+  '/tools/chat': 'ask your own GA4 + GSC',
+  '/tools/graph': 'the web around you, in 3D',
+};
 
 export function InstrumentIndexV2(): JSX.Element {
   return (
     <section
-      className="border-t border-[color:var(--v2-rule-strong)] bg-white/[0.03] px-6 py-16 sm:px-10 sm:py-20 lg:px-14"
+      className="border-t border-[color:var(--v2-rule-strong)] bg-white/[0.03] px-6 py-20 sm:px-10 lg:px-14"
       aria-labelledby="tools-h"
     >
       <div data-reveal className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="v2-label">The instruments</p>
-          <h2 id="tools-h" className="mt-3 text-3xl font-bold tracking-tighter sm:text-4xl">
-            Five tools. All free. All open.
+          <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
+            04 · Fix
+          </p>
+          <h2 id="tools-h" className="mt-3 max-w-lg text-3xl font-bold tracking-tighter sm:text-4xl">
+            Work the list. Re-run. Get named.
           </h2>
         </div>
-        <p className="v2-label">No account · MIT licensed</p>
+        <p className="v2-label">Five tools · free · MIT</p>
       </div>
 
       <ol data-reveal-group className="mt-10 list-none p-0">
@@ -159,7 +246,7 @@ export function InstrumentIndexV2(): JSX.Element {
           <li key={tool.href} data-reveal-item>
             <Link
               href={tool.href}
-              className="group grid grid-cols-[3rem_1fr_auto] items-baseline gap-4 border-t border-[color:var(--v2-rule)] py-5 transition-colors hover:bg-white/[0.06] sm:grid-cols-[4rem_18rem_1fr_auto]"
+              className="group grid grid-cols-[3rem_1fr_auto] items-baseline gap-4 border-t border-[color:var(--v2-rule)] py-5 transition-colors hover:bg-white/[0.06] sm:grid-cols-[4rem_1fr_auto_auto]"
             >
               <span
                 className="font-[var(--font-v2-mono)] text-sm tabular-nums"
@@ -172,10 +259,10 @@ export function InstrumentIndexV2(): JSX.Element {
                 {tool.name}
               </span>
               <span
-                className="col-start-2 text-sm leading-relaxed sm:col-start-3"
-                style={{ color: 'var(--v2-ink-soft)' }}
+                className="col-start-2 font-[var(--font-v2-mono)] text-xs sm:col-start-3"
+                style={{ color: 'var(--v2-ink-faint)', letterSpacing: '0.04em' }}
               >
-                {tool.blurb}
+                {TOOL_FRAGMENTS[tool.href] ?? ''}
               </span>
               <span
                 className="hidden font-[var(--font-v2-mono)] text-sm sm:block"
@@ -188,88 +275,33 @@ export function InstrumentIndexV2(): JSX.Element {
           </li>
         ))}
       </ol>
-    </section>
-  );
-}
 
-/* ─────────────────── Method + honest proof ─────────────────── */
-
-const STEPS: ReadonlyArray<{ n: string; name: string; detail: string }> = [
-  { n: 'I', name: 'Point', detail: 'Give it a URL. The crawler reads up to 50 pages, politely, sitemap-first.' },
-  { n: 'II', name: 'Read', detail: 'Every rule returns a pass or a specific failure — scored, weighted, graded.' },
-  { n: 'III', name: 'Fix', detail: 'Work the prioritized list, download the missing-file templates, re-run.' },
-];
-
-/** Verifiable facts only — repository truth, no manufactured proof. */
-const PROOF: ReadonlyArray<{ value: string; label: string }> = [
-  { value: 'MIT', label: 'licensed, clean-room TypeScript' },
-  { value: '6', label: 'packages published on npm' },
-  { value: '800+', label: 'tests in the open repo' },
-  { value: '3', label: 'MCP servers for Claude & Cursor' },
-];
-
-export function MethodV2(): JSX.Element {
-  return (
-    <section className="px-6 py-16 sm:px-10 sm:py-20 lg:px-14" aria-labelledby="method-h">
-      <div data-reveal>
-        <p className="v2-label">The method</p>
-        <h2 id="method-h" className="mt-3 text-3xl font-bold tracking-tighter sm:text-4xl">
-          Point. Read. Fix.
-        </h2>
-      </div>
-      <div data-reveal-group className="mt-10 grid gap-8 sm:grid-cols-3">
-        {STEPS.map((step) => (
-          <div key={step.n} data-reveal-item className="v2-glass rounded-xl p-6">
-            <span className="font-[var(--font-v2-mono)] text-sm" style={{ color: 'var(--v2-signal)' }}>
-              {step.n}
-            </span>
-            <h3 className="mt-3 text-xl font-bold tracking-tight">{step.name}</h3>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--v2-ink-soft)' }}>
-              {step.detail}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="v2-rule mt-16" data-rule aria-hidden="true" />
-      <dl data-reveal-group className="m-0 mt-8 grid grid-cols-2 gap-8 lg:grid-cols-4">
-        {PROOF.map((fact) => (
-          <div key={fact.label} data-reveal-item>
-            <dt className="sr-only">{fact.label}</dt>
-            <dd className="m-0 font-[var(--font-v2-sans)] text-4xl font-bold tracking-tighter">
-              {fact.value}
-            </dd>
-            <dd className="v2-label m-0 mt-2">{fact.label}</dd>
-          </div>
-        ))}
-      </dl>
-      <p className="v2-label mt-8">
-        Everything above is verifiable in the repository →{' '}
+      {/* Verifiable-facts strip — one line, every claim checkable in the repo. */}
+      <p data-reveal className="v2-label mt-12">
+        MIT · 6 packages on npm · 800+ tests · 3 MCP servers ·{' '}
         <a
           href="https://github.com/Advance-Labs/aeo-toolkit"
-          className="underline"
-          style={{ color: 'var(--v2-ink)' }}
+          className="underline hover:text-[color:var(--v2-text)]"
         >
-          github.com/Advance-Labs/aeo-toolkit
+          verify on GitHub
         </a>
       </p>
     </section>
   );
 }
 
-/* ─────────────────── FAQ ─────────────────── */
+/* ─────────────────── FAQ (three, mirrored 1:1 in JSON-LD) ─────────────────── */
 
 export function FaqV2(): JSX.Element {
   return (
-    <section className="px-6 pb-16 sm:px-10 sm:pb-20 lg:px-14" aria-labelledby="faq-h">
+    <section className="px-6 py-20 sm:px-10 lg:px-14" aria-labelledby="faq-h">
       <div data-reveal>
-        <p className="v2-label">Questions</p>
-        <h2 id="faq-h" className="mt-3 text-3xl font-bold tracking-tighter sm:text-4xl">
+        <h2 id="faq-h" className="text-2xl font-bold tracking-tighter sm:text-3xl">
           Asked and answered.
         </h2>
       </div>
-      <div data-reveal-group className="mt-8">
-        {FAQS.map((faq) => (
+      <div data-reveal-group className="mt-6">
+        {LANDING_FAQS.map((faq) => (
           <details
             key={faq.question}
             data-reveal-item
@@ -295,7 +327,7 @@ export function FaqV2(): JSX.Element {
   );
 }
 
-/* ─────────────────── Final CTA (inverse, on the shell) ─────────────────── */
+/* ────────────────────────── Coda ────────────────────────── */
 
 export function CtaV2(): JSX.Element {
   return (

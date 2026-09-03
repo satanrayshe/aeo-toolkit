@@ -3,15 +3,17 @@ import type { Metadata } from 'next';
 import { Archivo, IBM_Plex_Mono } from 'next/font/google';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { publicUrl } from '@/lib/seo';
-import { FAQS } from '@/components/landing';
 import { Motion } from '@/components/landing-v2/Motion';
 import {
   CtaV2,
   FaqV2,
   HeroV2,
   InstrumentIndexV2,
+  LANDING_FAQS,
   LedgerV2,
-  MethodV2,
+  StoryFrame,
+  StoryTurn,
+  VerdictV2,
 } from '@/components/landing-v2/Sections';
 import '@/components/landing-v2/landing-v2.css';
 
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
 const faqLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: FAQS.map((faq) => ({
+  mainEntity: LANDING_FAQS.map((faq) => ({
     '@type': 'Question',
     name: faq.question,
     acceptedAnswer: { '@type': 'Answer', text: faq.answer },
@@ -66,9 +68,20 @@ export default function LandingPage(): JSX.Element {
           <span className="v2-corner" style={{ bottom: -2, right: -16 }} aria-hidden="true" />
           <div className="v2-sheet overflow-hidden">
             <HeroV2 />
+            <StoryTurn />
+            <StoryFrame
+              src="/story/uncited.webp"
+              alt="A dark field of hundreds of faint distant lights, with a single point glowing acid green"
+              label="Uncited is invisible"
+            />
             <LedgerV2 />
+            <VerdictV2 />
+            <StoryFrame
+              src="/story/calibrated.webp"
+              alt="Macro of a precision lens element in matte black metal, a thin green laser refracting through its edge"
+              label="Calibrated · 54 rules"
+            />
             <InstrumentIndexV2 />
-            <MethodV2 />
             <FaqV2 />
           </div>
         </div>
