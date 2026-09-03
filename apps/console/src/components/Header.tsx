@@ -8,7 +8,7 @@ import { cn } from '@/lib/cn';
 
 /** Solid drafting-ink CTA — the v2 accent, replacing the old gradient pill. */
 const CTA_CLASSES =
-  'inline-flex h-9 items-center rounded px-3.5 text-sm font-semibold text-white transition-colors bg-[#2B3FD1] hover:bg-[#3A50E8]';
+  'v2-cta inline-flex h-9 items-center rounded-lg px-3.5 text-sm font-semibold';
 
 const NAV = [
   { href: '/tools/audit', label: 'Audit' },
@@ -26,7 +26,7 @@ export function Header(): React.ReactElement {
   const path = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#131210]/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#0b0d14]/55 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-content items-center justify-between px-5 sm:px-8">
         <Link href="/" aria-label="AEO Toolkit home" className="shrink-0">
           <BrandLockup size={22} tone="dark" />
@@ -83,7 +83,7 @@ export function Header(): React.ReactElement {
       </div>
 
       {open ? (
-        <div className="border-t border-white/[0.06] bg-[#131210]/95 px-5 py-3 md:hidden">
+        <div className="border-t border-white/[0.06] bg-[#0b0d14]/80 backdrop-blur-xl px-5 py-3 md:hidden">
           <nav className="flex flex-col gap-1">
             {NAV.map((item) => (
               <Link

@@ -50,7 +50,9 @@ const faqLd: Record<string, unknown> = {
 
 export default function LandingPage(): JSX.Element {
   return (
-    <div className={`v2 ${v2Sans.variable} ${v2Mono.variable} relative bg-[#131210]`}>
+    <div className={`v2 ${v2Sans.variable} ${v2Mono.variable} relative`}>
+      {/* The light field the glass refracts — fixed, so it also glows through the chrome. */}
+      <div className="v2-backdrop" aria-hidden="true" />
       <JsonLd data={faqLd} />
       <Motion />
 

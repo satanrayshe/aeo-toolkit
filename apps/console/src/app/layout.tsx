@@ -59,9 +59,9 @@ export default function RootLayout({ children }: { children: ReactNode }): React
       lang="en"
       className={`${sans.variable} ${display.variable} ${mono.variable} ${brand.variable}`}
     >
-      {/* Warm graphite shell (v2): one ground for chrome, sheets, and tool pages — the old
+      {/* Deep ground for the liquid-glass system (v3): shared by chrome, sheets, and tool pages — the old
           navy + aurora backdrop was the generic-gradient layer this redesign removes. */}
-      <body className="relative min-h-screen overflow-x-hidden bg-[#131210] antialiased">
+      <body className="relative min-h-screen overflow-x-hidden bg-[#0b0d14] antialiased">
         <JsonLd data={[organizationSchema(), websiteSchema(), softwareApplicationSchema()]} />
         <Header />
         <main className="relative">{children}</main>

@@ -37,6 +37,9 @@ export function SpecimenReport(): React.ReactElement {
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     el.style.setProperty('--tilt-x', `${(-y * 3).toFixed(2)}deg`);
     el.style.setProperty('--tilt-y', `${(x * 4).toFixed(2)}deg`);
+    el.style.setProperty('--mx', `${((x + 0.5) * 100).toFixed(1)}%`);
+    el.style.setProperty('--my', `${((y + 0.5) * 100).toFixed(1)}%`);
+    el.style.setProperty('--sheen', '1');
   }, []);
 
   const reset = useCallback(() => {
@@ -44,6 +47,7 @@ export function SpecimenReport(): React.ReactElement {
     if (!el) return;
     el.style.setProperty('--tilt-x', '0deg');
     el.style.setProperty('--tilt-y', '0deg');
+    el.style.setProperty('--sheen', '0');
   }, []);
 
   return (
@@ -53,8 +57,7 @@ export function SpecimenReport(): React.ReactElement {
       onPointerMove={onPointerMove}
       onPointerLeave={reset}
       onBlur={reset}
-      className="v2-specimen v2-brackets w-full max-w-md border border-[color:var(--v2-rule-strong)] bg-white/70 p-6 sm:p-7"
-      style={{ borderRadius: 6 }}
+      className="v2-specimen v2-glass v2-brackets w-full max-w-md p-6 sm:p-7"
     >
       {/* Report header — mono metadata voice. */}
       <div className="flex items-baseline justify-between gap-4">

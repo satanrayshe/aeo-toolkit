@@ -44,13 +44,13 @@ export function HeroV2(): JSX.Element {
               type="url"
               inputMode="url"
               placeholder="https://yoursite.com"
-              className="h-12 w-full border border-r-0 border-[color:var(--v2-ink)] bg-white/80 px-4 font-[var(--font-v2-mono)] text-sm text-[color:var(--v2-ink)] placeholder:text-[color:var(--v2-ink-faint)]"
-              style={{ borderRadius: '4px 0 0 4px' }}
+              className="h-12 w-full border border-r-0 border-white/25 bg-white/[0.07] px-4 font-[var(--font-v2-mono)] text-sm text-[color:var(--v2-text)] backdrop-blur-md placeholder:text-[color:var(--v2-ink-faint)]"
+              style={{ borderRadius: '10px 0 0 10px' }}
             />
             <button
               type="submit"
-              className="h-12 shrink-0 px-5 text-sm font-semibold text-white transition-colors hover:bg-[var(--v2-signal-hover)]"
-              style={{ background: 'var(--v2-signal)', borderRadius: '0 4px 4px 0' }}
+              className="v2-cta h-12 shrink-0 px-5 text-sm font-semibold"
+              style={{ borderRadius: '0 10px 10px 0' }}
             >
               Run the audit
             </button>
@@ -141,9 +141,9 @@ export function LedgerV2(): JSX.Element {
 export function InstrumentIndexV2(): JSX.Element {
   return (
     <section
-      className="border-t border-[color:var(--v2-rule-strong)] bg-[color:var(--v2-paper-deep)] px-6 py-16 sm:px-10 sm:py-20 lg:px-14"
+      className="border-t border-[color:var(--v2-rule-strong)] bg-white/[0.03] px-6 py-16 sm:px-10 sm:py-20 lg:px-14"
       aria-labelledby="tools-h"
-      style={{ borderRadius: '0 0 19px 19px' }}
+      style={{ borderRadius: '0 0 23px 23px' }}
     >
       <div data-reveal className="flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -160,7 +160,7 @@ export function InstrumentIndexV2(): JSX.Element {
           <li key={tool.href} data-reveal-item>
             <Link
               href={tool.href}
-              className="group grid grid-cols-[3rem_1fr_auto] items-baseline gap-4 border-t border-[color:var(--v2-rule)] py-5 transition-colors hover:bg-white/40 sm:grid-cols-[4rem_18rem_1fr_auto]"
+              className="group grid grid-cols-[3rem_1fr_auto] items-baseline gap-4 border-t border-[color:var(--v2-rule)] py-5 transition-colors hover:bg-white/[0.06] sm:grid-cols-[4rem_18rem_1fr_auto]"
             >
               <span
                 className="font-[var(--font-v2-mono)] text-sm tabular-nums"
@@ -220,7 +220,7 @@ export function MethodV2(): JSX.Element {
       </div>
       <div data-reveal-group className="mt-10 grid gap-8 sm:grid-cols-3">
         {STEPS.map((step) => (
-          <div key={step.n} data-reveal-item className="v2-brackets border border-[color:var(--v2-rule)] p-6">
+          <div key={step.n} data-reveal-item className="v2-glass v2-brackets rounded-xl p-6">
             <span className="font-[var(--font-v2-mono)] text-sm" style={{ color: 'var(--v2-signal)' }}>
               {step.n}
             </span>
@@ -314,13 +314,12 @@ export function CtaV2(): JSX.Element {
       <div className="mt-8 flex justify-center">
         <Link
           href="/tools/audit"
-          className="inline-flex h-12 items-center px-7 text-sm font-semibold text-white transition-colors hover:bg-[var(--v2-signal-hover)]"
-          style={{ background: 'var(--v2-signal)', borderRadius: 4 }}
+          className="v2-cta inline-flex h-12 items-center rounded-xl px-7 text-sm font-semibold"
         >
           Run your first audit
         </Link>
       </div>
-      <p className="v2-label mt-5" style={{ color: '#8a8778' }}>
+      <p className="v2-label mt-5" style={{ color: 'var(--v2-ink-faint)' }}>
         Free · no account · your data stays yours
       </p>
     </section>

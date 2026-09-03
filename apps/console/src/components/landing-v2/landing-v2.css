@@ -1,75 +1,132 @@
 /**
- * Landing v2 — "the audit, printed" design system (light-mode-paper-technical).
- * A warm paper sheet framed by the site's dark graphite shell. One accent. All
- * tokens are scoped to .v2 so the rest of the console is untouched.
+ * Landing v3 — liquid-glass material system on the v2 bones.
+ * One glass material (frosted, specular top edge, deep shadow) over a dim authored
+ * light field; drafting-ink blue is the only accent, lifted for dark. All tokens are
+ * scoped to .v2 so the rest of the console is untouched.
  */
 .v2 {
-  --v2-shell: #131210;
-  --v2-paper: #f4f1e9;
-  --v2-paper-deep: #eae6da;
-  --v2-ink: #16150f;
-  --v2-ink-soft: #4c4a40;
-  --v2-ink-faint: #807c6d;
-  --v2-rule: #d9d4c5;
-  --v2-rule-strong: #b9b3a0;
-  /* Drafting-ink blue: the accent of a blueprint, not a startup gradient. */
-  --v2-signal: #1f35b5;
-  --v2-signal-hover: #16278f;
-  /* Same voice lifted for the dark shell, where full-strength ink would go muddy. */
+  --v2-bg: #0b0d14;
+  --v2-text: #f2f3f8;
+  --v2-ink: #f2f3f8; /* legacy alias used by sections */
+  --v2-ink-soft: #b7bcce;
+  --v2-ink-faint: #7c8296;
+  --v2-rule: rgba(255, 255, 255, 0.1);
+  --v2-rule-strong: rgba(255, 255, 255, 0.18);
+  --v2-paper: #f2f3f8; /* legacy alias: "paper" now means the light text tone */
+  --v2-signal: #7d8fff;
+  --v2-signal-hover: #a3b1ff;
   --v2-signal-ondark: #93a3f5;
-  --v2-ok: #1d7a4c;
-  --v2-warn: #b45309;
+  --v2-signal-deep: #3d55f0;
+  --v2-ok: #46d195;
+  --v2-warn: #f0a85a;
 
-  color: var(--v2-ink);
+  color: var(--v2-text);
   font-family: var(--font-v2-sans), system-ui, sans-serif;
-  /* Lenis is the sole scroll engine on this page — no native smooth double-driving. */
   scroll-behavior: auto;
 }
 
-/* Lenis is the sole scroll engine here; the console's global `html { scroll-behavior:
-   smooth }` would double-drive anchor scrolling on this page, so it is switched off at
-   the scrolling element whenever the landing is mounted. */
+/* Lenis is the sole scroll engine on this page. */
 html:has(.v2) {
   scroll-behavior: auto;
 }
 
 .v2 ::selection {
-  background: var(--v2-signal);
+  background: var(--v2-signal-deep);
   color: #fff;
 }
 
-/* Focus must read on paper — the console's cyan ring is a dark-theme token. */
 .v2 :focus-visible {
   outline: 2px solid var(--v2-signal);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .v2 h1,
 .v2 h2,
 .v2 h3 {
-  color: var(--v2-ink);
+  color: var(--v2-text);
   font-family: var(--font-v2-sans), system-ui, sans-serif;
   letter-spacing: -0.03em;
 }
 
-/* The paper master sheet: framed, softly shadowed, faintly textured. */
-.v2-sheet {
+/* ── The light field the glass refracts. Fixed so it also glows through the chrome. ── */
+.v2-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background:
-    repeating-linear-gradient(
-      -45deg,
-      rgba(22, 21, 15, 0.016) 0 1px,
-      transparent 1px 7px
-    ),
-    var(--v2-paper);
-  border: 1px solid var(--v2-rule-strong);
-  border-radius: 20px;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.05),
-    0 30px 80px -30px rgba(0, 0, 0, 0.55);
+    radial-gradient(52% 44% at 18% 6%, rgba(61, 85, 240, 0.34) 0%, transparent 68%),
+    radial-gradient(44% 40% at 86% 30%, rgba(125, 143, 255, 0.2) 0%, transparent 70%),
+    radial-gradient(36% 30% at 70% 88%, rgba(240, 168, 90, 0.1) 0%, transparent 72%),
+    radial-gradient(60% 55% at 40% 60%, rgba(32, 42, 96, 0.5) 0%, transparent 75%),
+    var(--v2-bg);
+}
+/* Fine grain keeps the big soft masses from banding and gives the glass tooth. */
+.v2-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
 }
 
-/* Mono utility voice: labels, stamps, metadata. */
+.v2 > *:not(.v2-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── The glass master sheet. ── */
+.v2-sheet {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.04));
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  backdrop-filter: blur(28px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 40px 90px -40px rgba(0, 0, 0, 0.75);
+}
+
+/* Smaller glass panels: the specimen, method cards, FAQ rows, form field. */
+.v2-glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045));
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 24px 60px -30px rgba(0, 0, 0, 0.65);
+}
+
+/* Tinted liquid button — vibrant glass, not a flat fill and not a gradient pill. */
+.v2-cta {
+  color: #fff;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 45%),
+    rgba(61, 85, 240, 0.9);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(160, 175, 255, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 12px 30px -12px rgba(61, 85, 240, 0.55);
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.2s ease;
+}
+.v2-cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 16px 40px -12px rgba(97, 118, 255, 0.7);
+  transform: translateY(-1px);
+}
+.v2-cta:active {
+  transform: translateY(0);
+}
+
+/* Mono utility voice. */
 .v2-label {
   font-family: var(--font-v2-mono), ui-monospace, monospace;
   font-size: 0.6875rem;
@@ -78,14 +135,12 @@ html:has(.v2) {
   color: var(--v2-ink-faint);
 }
 
-/* Engraved horizontal rule (drawn in by the motion system). */
 .v2-rule {
   height: 1px;
   background: var(--v2-rule-strong);
 }
 
-/* L-bracket corners for framed regions — authored geometry, not decoration for its own
-   sake: they mark the measured areas of the report. */
+/* L-bracket corners marking measured regions. */
 .v2-brackets {
   position: relative;
 }
@@ -95,7 +150,7 @@ html:has(.v2) {
   position: absolute;
   width: 14px;
   height: 14px;
-  border: 1px solid var(--v2-rule-strong);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   pointer-events: none;
 }
 .v2-brackets::before {
@@ -111,7 +166,7 @@ html:has(.v2) {
   border-top: 0;
 }
 
-/* Word-split masks (added by Motion.tsx; decorative spans are aria-hidden). */
+/* Word-split masks (Motion.tsx). */
 .v2-word-mask {
   display: inline-block;
   overflow: hidden;
@@ -121,22 +176,41 @@ html:has(.v2) {
   display: inline-block;
   will-change: transform;
 }
-
-/* Hidden-until-revealed applies ONLY once the motion system is armed, so the page is
-   complete without JavaScript and under prefers-reduced-motion. */
 html.has-motion .v2 [data-hero-title] {
   visibility: hidden;
 }
 
-/* Specimen sheet pointer response is additive — base state is fully composed. */
+/* Specimen: glass instrument with a pointer-following sheen (set via --mx/--my). */
 .v2-specimen {
+  border-radius: 14px;
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  overflow: hidden;
+}
+.v2-specimen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    260px 200px at var(--mx, 30%) var(--my, 20%),
+    rgba(255, 255, 255, 0.14) 0%,
+    transparent 70%
+  );
+  opacity: var(--sheen, 0);
+  transition: opacity 0.4s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .v2-specimen {
     transition: none;
+    transform: none;
+  }
+  .v2-specimen::before {
+    display: none;
+  }
+  .v2-cta,
+  .v2-cta:hover {
     transform: none;
   }
 }
