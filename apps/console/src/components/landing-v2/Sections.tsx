@@ -7,7 +7,7 @@
 import type { JSX } from 'react';
 import Link from 'next/link';
 import { FAQS, TOOLS } from '@/components/landing';
-import { SpecimenReport } from './SpecimenReport';
+import { NodeFieldViewport } from './NodeFieldViewport';
 
 /* ────────────────────────── Hero ────────────────────────── */
 
@@ -59,7 +59,7 @@ export function HeroV2(): JSX.Element {
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <SpecimenReport />
+          <NodeFieldViewport />
         </div>
       </div>
     </section>
