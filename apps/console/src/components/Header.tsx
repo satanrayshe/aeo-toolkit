@@ -26,7 +26,7 @@ export function Header(): React.ReactElement {
   const path = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#0b0d14]/55 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#0a0a0b]/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-content items-center justify-between px-5 sm:px-8">
         <Link href="/" aria-label="AEO Toolkit home" className="shrink-0">
           <BrandLockup size={22} tone="dark" />
@@ -52,7 +52,7 @@ export function Header(): React.ReactElement {
 
         <div className="hidden md:block">
           <Link href="/tools/audit" className={CTA_CLASSES}>
-            Run a free audit
+            Run the audit
           </Link>
         </div>
 
@@ -83,7 +83,7 @@ export function Header(): React.ReactElement {
       </div>
 
       {open ? (
-        <div className="border-t border-white/[0.06] bg-[#0b0d14]/80 backdrop-blur-xl px-5 py-3 md:hidden">
+        <div className="border-t border-white/[0.06] bg-[#0a0a0b]/90 backdrop-blur-xl px-5 py-3 md:hidden">
           <nav className="flex flex-col gap-1">
             {NAV.map((item) => (
               <Link
@@ -96,7 +96,7 @@ export function Header(): React.ReactElement {
               </Link>
             ))}
             <Link href="/tools/audit" onClick={() => setOpen(false)} className={cn(CTA_CLASSES, 'mt-2 justify-center')}>
-              Run a free audit
+              Run the audit
             </Link>
           </nav>
         </div>

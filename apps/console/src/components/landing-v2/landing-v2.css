@@ -1,37 +1,36 @@
 /**
- * Landing v3 — liquid-glass material system on the v2 bones.
- * One glass material (frosted, specular top edge, deep shadow) over a dim authored
- * light field; drafting-ink blue is the only accent, lifted for dark. All tokens are
- * scoped to .v2 so the rest of the console is untouched.
+ * Landing v4 — framed tech dark. One engineered master shell with gradient-border
+ * framing, overshooting guide rails, and corner marks on a near-black monochrome
+ * ground. The ink-blue survives only as sparse active cues; hierarchy is carried by
+ * frame logic and monochrome contrast. Tokens scoped to .v2; components unchanged.
  */
 .v2 {
-  --v2-bg: #0b0d14;
-  --v2-text: #f2f3f8;
-  --v2-ink: #f2f3f8; /* legacy alias used by sections */
-  --v2-ink-soft: #b7bcce;
-  --v2-ink-faint: #7c8296;
-  --v2-rule: rgba(255, 255, 255, 0.1);
+  --v2-bg: #0a0a0b;
+  --v2-text: #f4f4f5;
+  --v2-ink: #f4f4f5; /* legacy alias */
+  --v2-ink-soft: #b6b6bd;
+  /* Lifted per audit: this token carries real qualifying copy at 11px mono. */
+  --v2-ink-faint: #9a9aa6;
+  --v2-rule: rgba(255, 255, 255, 0.09);
   --v2-rule-strong: rgba(255, 255, 255, 0.18);
-  --v2-paper: #f2f3f8; /* legacy alias: "paper" now means the light text tone */
+  --v2-paper: #f4f4f5; /* legacy alias: light text tone */
   --v2-signal: #7d8fff;
   --v2-signal-hover: #a3b1ff;
   --v2-signal-ondark: #93a3f5;
-  --v2-signal-deep: #3d55f0;
-  --v2-ok: #46d195;
-  --v2-warn: #f0a85a;
+  --v2-ok: #3fbf8a;
+  --v2-warn: #d9974f;
 
   color: var(--v2-text);
   font-family: var(--font-v2-sans), system-ui, sans-serif;
   scroll-behavior: auto;
 }
 
-/* Lenis is the sole scroll engine on this page. */
 html:has(.v2) {
   scroll-behavior: auto;
 }
 
 .v2 ::selection {
-  background: var(--v2-signal-deep);
+  background: #2c2c31;
   color: #fff;
 }
 
@@ -49,20 +48,17 @@ html:has(.v2) {
   letter-spacing: -0.03em;
 }
 
-/* ── The light field the glass refracts. Fixed so it also glows through the chrome. ── */
+/* ── Monochrome atmosphere: one soft bloom + falloff + grain. Nothing colored. ── */
 .v2-backdrop {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(52% 44% at 18% 6%, rgba(61, 85, 240, 0.34) 0%, transparent 68%),
-    radial-gradient(44% 40% at 86% 30%, rgba(125, 143, 255, 0.2) 0%, transparent 70%),
-    radial-gradient(36% 30% at 70% 88%, rgba(240, 168, 90, 0.1) 0%, transparent 72%),
-    radial-gradient(60% 55% at 40% 60%, rgba(32, 42, 96, 0.5) 0%, transparent 75%),
+    radial-gradient(55% 40% at 50% -4%, rgba(255, 255, 255, 0.07) 0%, transparent 70%),
+    radial-gradient(70% 60% at 50% 115%, rgba(255, 255, 255, 0.03) 0%, transparent 70%),
     var(--v2-bg);
 }
-/* Fine grain keeps the big soft masses from banding and gives the glass tooth. */
 .v2-backdrop::after {
   content: '';
   position: absolute;
@@ -76,54 +72,93 @@ html:has(.v2) {
   z-index: 1;
 }
 
-/* ── The glass master sheet. ── */
+/* ── Gradient-border framing: one technique, three weights. ──
+   A transparent border filled by a border-box gradient over a padding-box fill keeps
+   the 1px edge crisp at any radius. */
+
+/* Master shell. */
 .v2-sheet {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.04));
-  -webkit-backdrop-filter: blur(28px) saturate(1.5);
-  backdrop-filter: blur(28px) saturate(1.5);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 24px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 40px 90px -40px rgba(0, 0, 0, 0.75);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(18, 18, 20, 0.97), rgba(13, 13, 15, 0.97)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.28),
+        rgba(255, 255, 255, 0.07) 30%,
+        rgba(255, 255, 255, 0.05) 70%,
+        rgba(255, 255, 255, 0.14)
+      )
+      border-box;
+  box-shadow: 0 40px 90px -45px rgba(0, 0, 0, 0.9);
 }
 
-/* Smaller glass panels: the specimen, method cards, FAQ rows, form field. */
+/* Panel: cards, the specimen, the form field's sibling surfaces. */
 .v2-glass {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045));
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
-  backdrop-filter: blur(18px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 24px 60px -30px rgba(0, 0, 0, 0.65);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)) border-box;
+  box-shadow: 0 24px 50px -30px rgba(0, 0, 0, 0.7);
 }
 
-/* Tinted liquid button — vibrant glass, not a flat fill and not a gradient pill. */
+/* Control: the border-gradient button with a dark inner fill and white-light lift. */
 .v2-cta {
   color: #fff;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 45%),
-    rgba(61, 85, 240, 0.9);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(160, 175, 255, 0.45);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, #232327, #141416) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.1)) border-box;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 12px 30px -12px rgba(61, 85, 240, 0.55);
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 10px 24px -12px rgba(0, 0, 0, 0.8);
   transition:
-    box-shadow 0.25s ease,
-    background-color 0.25s ease,
+    filter 0.2s ease,
     transform 0.2s ease;
 }
 .v2-cta:hover {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 16px 40px -12px rgba(97, 118, 255, 0.7);
+  filter: brightness(1.25);
   transform: translateY(-1px);
 }
 .v2-cta:active {
   transform: translateY(0);
+  filter: brightness(1.1);
+}
+
+/* ── Frame furniture: overshooting rails + corner squares on the master shell. ── */
+.v2-frame {
+  position: relative;
+}
+/* Vertical guide rails that overshoot the shell top and bottom. */
+.v2-frame::before,
+.v2-frame::after {
+  content: '';
+  position: absolute;
+  top: -28px;
+  bottom: -28px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(255, 255, 255, 0.16) 12%,
+    rgba(255, 255, 255, 0.16) 88%,
+    transparent
+  );
+  pointer-events: none;
+}
+.v2-frame::before {
+  left: -14px;
+}
+.v2-frame::after {
+  right: -14px;
+}
+/* Tiny corner squares where the rails meet the shell's top and bottom edges. */
+.v2-corner {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
 }
 
 /* Mono utility voice. */
@@ -140,7 +175,7 @@ html:has(.v2) {
   background: var(--v2-rule-strong);
 }
 
-/* L-bracket corners marking measured regions. */
+/* L-brackets: reserved for the specimen alone — they mark the measured instrument. */
 .v2-brackets {
   position: relative;
 }
@@ -150,7 +185,7 @@ html:has(.v2) {
   position: absolute;
   width: 14px;
   height: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   pointer-events: none;
 }
 .v2-brackets::before {
@@ -180,9 +215,9 @@ html.has-motion .v2 [data-hero-title] {
   visibility: hidden;
 }
 
-/* Specimen: glass instrument with a pointer-following sheen (set via --mx/--my). */
+/* Specimen: framed instrument with a monochrome flashlight sheen following the pointer. */
 .v2-specimen {
-  border-radius: 14px;
+  border-radius: 12px;
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   overflow: hidden;
@@ -193,8 +228,8 @@ html.has-motion .v2 [data-hero-title] {
   inset: 0;
   pointer-events: none;
   background: radial-gradient(
-    260px 200px at var(--mx, 30%) var(--my, 20%),
-    rgba(255, 255, 255, 0.14) 0%,
+    240px 190px at var(--mx, 30%) var(--my, 20%),
+    rgba(255, 255, 255, 0.09) 0%,
     transparent 70%
   );
   opacity: var(--sheen, 0);

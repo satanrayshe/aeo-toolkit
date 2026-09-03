@@ -61,7 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }): React
     >
       {/* Deep ground for the liquid-glass system (v3): shared by chrome, sheets, and tool pages — the old
           navy + aurora backdrop was the generic-gradient layer this redesign removes. */}
-      <body className="relative min-h-screen overflow-x-hidden bg-[#0b0d14] antialiased">
+      <body className="relative min-h-screen overflow-x-hidden bg-[#0a0a0b] antialiased">
         <JsonLd data={[organizationSchema(), websiteSchema(), softwareApplicationSchema()]} />
         <Header />
         <main className="relative">{children}</main>

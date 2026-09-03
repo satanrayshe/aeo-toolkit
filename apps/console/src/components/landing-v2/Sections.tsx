@@ -143,7 +143,6 @@ export function InstrumentIndexV2(): JSX.Element {
     <section
       className="border-t border-[color:var(--v2-rule-strong)] bg-white/[0.03] px-6 py-16 sm:px-10 sm:py-20 lg:px-14"
       aria-labelledby="tools-h"
-      style={{ borderRadius: '0 0 23px 23px' }}
     >
       <div data-reveal className="flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -220,7 +219,7 @@ export function MethodV2(): JSX.Element {
       </div>
       <div data-reveal-group className="mt-10 grid gap-8 sm:grid-cols-3">
         {STEPS.map((step) => (
-          <div key={step.n} data-reveal-item className="v2-glass v2-brackets rounded-xl p-6">
+          <div key={step.n} data-reveal-item className="v2-glass rounded-xl p-6">
             <span className="font-[var(--font-v2-mono)] text-sm" style={{ color: 'var(--v2-signal)' }}>
               {step.n}
             </span>
@@ -316,7 +315,7 @@ export function CtaV2(): JSX.Element {
           href="/tools/audit"
           className="v2-cta inline-flex h-12 items-center rounded-xl px-7 text-sm font-semibold"
         >
-          Run your first audit
+          Run the audit
         </Link>
       </div>
       <p className="v2-label mt-5" style={{ color: 'var(--v2-ink-faint)' }}>

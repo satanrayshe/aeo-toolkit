@@ -77,7 +77,7 @@ export function SpecimenReport(): React.ReactElement {
             aria-label={`Overall score ${OVERALL} out of 100`}
           >
             <span data-count={OVERALL}>{OVERALL}</span>
-            <span className="text-2xl font-medium" style={{ color: 'var(--v2-ink-faint)' }}>
+            <span className="text-2xl font-medium" style={{ color: 'var(--v2-ink-soft)' }}>
               /100
             </span>
           </div>
