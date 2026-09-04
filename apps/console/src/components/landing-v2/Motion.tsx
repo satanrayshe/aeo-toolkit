@@ -74,6 +74,9 @@ export function Motion(): null {
         const lines = stage.querySelectorAll<HTMLElement>('[data-story-line]');
         const specimen = stage.querySelector<HTMLElement>('[data-story-specimen]');
         if (storyLayer) gsap.set(storyLayer, { autoAlpha: 0 });
+        // Hover-capable devices fold the chrome once the stage releases; touch keeps
+        // the header, since there is no hover to summon it back.
+        const canFold = window.matchMedia('(hover: hover)').matches;
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: stage,
@@ -81,6 +84,12 @@ export function Motion(): null {
             end: '+=320%',
             scrub: 0.4,
             pin: true,
+            onLeave: () => {
+              if (canFold) document.documentElement.classList.add('v2-header-folded');
+            },
+            onEnterBack: () => {
+              document.documentElement.classList.remove('v2-header-folded', 'v2-header-peek');
+            },
           },
         });
         if (heroLayer) {
@@ -208,6 +217,33 @@ export function Motion(): null {
       }
     });
 
+    // A thin invisible strip along the top edge: while the header is folded,
+    // entering it peeks the chrome back down; leaving the header folds it again.
+    const peekZone = document.createElement('div');
+    peekZone.setAttribute('aria-hidden', 'true');
+    Object.assign(peekZone.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      right: '0',
+      height: '18px',
+      zIndex: '60',
+      pointerEvents: 'auto',
+      background: 'transparent',
+    });
+    const onZoneEnter = (): void => {
+      if (document.documentElement.classList.contains('v2-header-folded')) {
+        document.documentElement.classList.add('v2-header-peek');
+      }
+    };
+    const headerEl = document.querySelector<HTMLElement>('body > header');
+    const onHeaderLeave = (): void => {
+      document.documentElement.classList.remove('v2-header-peek');
+    };
+    peekZone.addEventListener('pointerenter', onZoneEnter);
+    headerEl?.addEventListener('pointerleave', onHeaderLeave);
+    document.body.appendChild(peekZone);
+
     // Lenis through the GSAP ticker — one clock, ScrollTrigger stays synced.
     const lenis = new Lenis({ lerp: 0.08, smoothWheel: true, wheelMultiplier: 0.9 });
     lenis.on('scroll', ScrollTrigger.update);
@@ -222,6 +258,10 @@ export function Motion(): null {
 
     return () => {
       window.removeEventListener('load', onLoad);
+      peekZone.removeEventListener('pointerenter', onZoneEnter);
+      document.querySelector('body > header')?.removeEventListener('pointerleave', onHeaderLeave);
+      peekZone.remove();
+      document.documentElement.classList.remove('v2-header-folded', 'v2-header-peek');
       gsap.ticker.remove(tick);
       lenis.destroy();
       ctx.revert();

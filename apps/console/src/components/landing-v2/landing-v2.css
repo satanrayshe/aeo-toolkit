@@ -203,6 +203,25 @@ html:has(.v2) {
   border-top: 0;
 }
 
+/* Header fold (landing only, hover-capable devices only — Motion.tsx sets the
+   classes): once the cinematic stage releases into normal scrolling the chrome folds
+   upward; hovering the top edge (or focusing into the header) drops it back down. */
+body > header {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html.v2-header-folded body > header {
+  transform: translateY(-100%);
+}
+html.v2-header-folded.v2-header-peek body > header,
+html.v2-header-folded body > header:focus-within {
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  body > header {
+    transition: none;
+  }
+}
+
 /* The cinematic stage: in static/no-JS/reduced-motion views the two layers are
    ordinary stacked sections. With motion armed they occupy one grid cell — the hero
    on top, the story beneath — so scroll can zoom past one into the other. */
