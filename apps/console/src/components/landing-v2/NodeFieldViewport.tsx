@@ -95,6 +95,25 @@ export function NodeFieldViewport(): React.ReactElement {
     });
     group.add(new THREE.LineSegments(linkGeo, linkMat));
 
+    // A sparse violet minority among the green points — the Advance Labs duo.
+    const accentCount = 90;
+    const accentPositions = new Float32Array(accentCount * 3);
+    for (let i = 0; i < accentCount; i += 1) {
+      const v = new THREE.Vector3().randomDirection().multiplyScalar(0.78 + Math.random() * 0.5);
+      accentPositions.set([v.x, v.y, v.z], i * 3);
+    }
+    const accentGeo = new THREE.BufferGeometry();
+    accentGeo.setAttribute('position', new THREE.BufferAttribute(accentPositions, 3));
+    const accentMat = new THREE.PointsMaterial({
+      color: 0xa78bfa,
+      size: 0.02,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    group.add(new THREE.Points(accentGeo, accentMat));
+
     // A faint wire core anchors the field.
     const coreGeo = new THREE.IcosahedronGeometry(0.34, 1);
     const coreMat = new THREE.MeshBasicMaterial({
@@ -184,6 +203,8 @@ export function NodeFieldViewport(): React.ReactElement {
       pointMat.dispose();
       linkGeo.dispose();
       linkMat.dispose();
+      accentGeo.dispose();
+      accentMat.dispose();
       coreGeo.dispose();
       coreMat.dispose();
       renderer.dispose();

@@ -118,7 +118,7 @@ export function StoryTurn(): JSX.Element {
           <SpecimenReport />
         </div>
       </div>
-      <p className="v2-label absolute bottom-5 left-6 sm:left-10 lg:left-14">
+      <p className="v2-label absolute bottom-5 left-6 sm:left-10 lg:left-14" style={{ color: 'var(--v2-accent2)' }}>
         Uncited is invisible
       </p>
     </section>
@@ -151,7 +151,7 @@ export function StoryFrame({
         data-parallax
         className="absolute inset-0 h-full w-full scale-110 object-cover"
       />
-      <figcaption className="v2-label absolute bottom-4 left-6 sm:left-10 lg:left-14">
+      <figcaption className="v2-label absolute bottom-4 left-6 sm:left-10 lg:left-14" style={{ color: 'var(--v2-accent2)' }}>
         {label}
       </figcaption>
     </figure>

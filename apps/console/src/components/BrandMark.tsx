@@ -9,14 +9,14 @@
 interface BrandMarkProps {
   size?: number;
   className?: string;
-  /** Accent for the center dot; defaults to the drafting-ink blue that reads on dark. */
+  /** Accent for the center dot; defaults to the Advance Labs violet secondary. */
   dotColor?: string;
 }
 
 export function BrandMark({
   size = 24,
   className,
-  dotColor = '#7C8CF0',
+  dotColor = '#A78BFA',
 }: BrandMarkProps): React.ReactElement {
   return (
     <svg

@@ -62,7 +62,7 @@ export function SpecimenReport(): React.ReactElement {
       {/* Report header — mono metadata voice. */}
       <div className="flex items-baseline justify-between gap-4">
         <span className="v2-label">Audit report</span>
-        <span className="v2-label" style={{ color: 'var(--v2-signal)' }}>
+        <span className="v2-label" style={{ color: 'var(--v2-accent2)' }}>
           Specimen · illustrative
         </span>
       </div>

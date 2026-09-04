@@ -75,24 +75,30 @@ export function Motion(): null {
           scrollTrigger: {
             trigger: story,
             start: 'top top',
-            end: '+=200%',
+            end: '+=180%',
             scrub: 0.4,
             pin: true,
           },
         });
+        // The first line is visible from the moment the scene pins — the viewer is
+        // never handed an empty screen — and later beats land on a tighter cadence.
         lines.forEach((line, i) => {
-          tl.fromTo(
-            line,
-            { autoAlpha: 0, y: 44 },
-            { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' },
-            i * 1.1,
-          );
+          if (i === 0) {
+            tl.fromTo(line, { y: 24 }, { y: 0, duration: 0.6, ease: 'power2.out' }, 0);
+          } else {
+            tl.fromTo(
+              line,
+              { autoAlpha: 0, y: 44 },
+              { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power2.out' },
+              i * 0.9,
+            );
+          }
           if (i < lines.length - 1) {
-            tl.to(line, { autoAlpha: 0.16, duration: 0.5 }, i * 1.1 + 0.85);
+            tl.to(line, { autoAlpha: 0.16, duration: 0.45 }, i * 0.9 + 0.7);
           }
         });
         if (specimen) {
-          const at = lines.length * 1.1;
+          const at = lines.length * 0.9;
           tl.fromTo(
             specimen,
             { autoAlpha: 0, xPercent: 16 },
