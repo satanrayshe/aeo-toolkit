@@ -19,7 +19,7 @@ export const LANDING_FAQS = FAQS.slice(0, 3);
 
 export function HeroV2(): JSX.Element {
   return (
-    <section className="px-6 pb-14 pt-12 sm:px-10 sm:pt-16 lg:px-14">
+    <section className="flex min-h-[calc(100vh-4rem)] items-center px-6 py-12 sm:px-10 lg:px-14">
       <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
         <div>
           <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>

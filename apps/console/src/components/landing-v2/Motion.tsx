@@ -75,7 +75,7 @@ export function Motion(): null {
           scrollTrigger: {
             trigger: story,
             start: 'top top',
-            end: '+=180%',
+            end: '+=150%',
             scrub: 0.4,
             pin: true,
           },
@@ -86,19 +86,20 @@ export function Motion(): null {
           if (i === 0) {
             tl.fromTo(line, { y: 24 }, { y: 0, duration: 0.6, ease: 'power2.out' }, 0);
           } else {
+            // Beats land early in the pin: the viewer reaches text within a short scroll.
             tl.fromTo(
               line,
               { autoAlpha: 0, y: 44 },
-              { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power2.out' },
-              i * 0.9,
+              { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+              0.35 + (i - 1) * 0.75,
             );
           }
           if (i < lines.length - 1) {
-            tl.to(line, { autoAlpha: 0.16, duration: 0.45 }, i * 0.9 + 0.7);
+            tl.to(line, { autoAlpha: 0.16, duration: 0.4 }, 0.35 + i * 0.75);
           }
         });
         if (specimen) {
-          const at = lines.length * 0.9;
+          const at = 0.35 + (lines.length - 1) * 0.75 + 0.5;
           tl.fromTo(
             specimen,
             { autoAlpha: 0, xPercent: 16 },
