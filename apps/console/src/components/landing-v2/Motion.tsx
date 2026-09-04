@@ -65,41 +65,55 @@ export function Motion(): null {
         '-=0.55',
       );
 
-      // ── The turn: pinned, scrubbed lines. Each line arrives, then recedes as the
-      // next lands — the last (the loss, in signal green) stays.
-      const story = document.querySelector<HTMLElement>('[data-story]');
-      if (story) {
-        const lines = story.querySelectorAll<HTMLElement>('[data-story-line]');
-        const specimen = story.querySelector<HTMLElement>('[data-story-specimen]');
+      // ── The cinematic stage: scroll zooms past the hero while the void frame
+      // surfaces; the story lines then play; the pin releases into normal scrolling.
+      const stage = document.querySelector<HTMLElement>('[data-stage]');
+      if (stage) {
+        const heroLayer = stage.querySelector<HTMLElement>('[data-stage-hero]');
+        const storyLayer = stage.querySelector<HTMLElement>('[data-stage-story]');
+        const lines = stage.querySelectorAll<HTMLElement>('[data-story-line]');
+        const specimen = stage.querySelector<HTMLElement>('[data-story-specimen]');
+        if (storyLayer) gsap.set(storyLayer, { autoAlpha: 0 });
         const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: story,
+            trigger: stage,
             start: 'top top',
-            end: '+=150%',
+            end: '+=320%',
             scrub: 0.4,
             pin: true,
           },
         });
-        // The first line is visible from the moment the scene pins — the viewer is
-        // never handed an empty screen — and later beats land on a tighter cadence.
+        if (heroLayer) {
+          tl.to(
+            heroLayer,
+            {
+              scale: 1.22,
+              autoAlpha: 0,
+              duration: 1.2,
+              ease: 'power2.in',
+              transformOrigin: '50% 42%',
+            },
+            0,
+          );
+        }
+        if (storyLayer) {
+          tl.to(storyLayer, { autoAlpha: 1, duration: 1.0, ease: 'none' }, 0.2);
+        }
+        const lineStart = 1.25;
+        const beat = 0.75;
         lines.forEach((line, i) => {
-          if (i === 0) {
-            tl.fromTo(line, { y: 24 }, { y: 0, duration: 0.6, ease: 'power2.out' }, 0);
-          } else {
-            // Beats land early in the pin: the viewer reaches text within a short scroll.
-            tl.fromTo(
-              line,
-              { autoAlpha: 0, y: 44 },
-              { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' },
-              0.35 + (i - 1) * 0.75,
-            );
-          }
+          tl.fromTo(
+            line,
+            { autoAlpha: 0, y: 44 },
+            { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+            lineStart + i * beat,
+          );
           if (i < lines.length - 1) {
-            tl.to(line, { autoAlpha: 0.16, duration: 0.4 }, 0.35 + i * 0.75);
+            tl.to(line, { autoAlpha: 0.16, duration: 0.4 }, lineStart + i * beat + 0.6);
           }
         });
         if (specimen) {
-          const at = 0.35 + (lines.length - 1) * 0.75 + 0.5;
+          const at = lineStart + (lines.length - 1) * beat + 0.55;
           tl.fromTo(
             specimen,
             { autoAlpha: 0, xPercent: 16 },
@@ -138,7 +152,7 @@ export function Motion(): null {
 
       // ── Act III: the score counts up when the specimen enters.
       const scoreEl = document.querySelector<HTMLElement>('[data-count]');
-      if (scoreEl && !scoreEl.closest('[data-story]')) {
+      if (scoreEl && !scoreEl.closest('[data-stage]')) {
         const target = Number(scoreEl.dataset.count ?? '0');
         const state = { n: 0 };
         gsap.to(state, {

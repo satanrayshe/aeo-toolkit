@@ -203,6 +203,26 @@ html:has(.v2) {
   border-top: 0;
 }
 
+/* The cinematic stage: in static/no-JS/reduced-motion views the two layers are
+   ordinary stacked sections. With motion armed they occupy one grid cell — the hero
+   on top, the story beneath — so scroll can zoom past one into the other. */
+html.has-motion .v2 .v2-stage {
+  display: grid;
+  min-height: calc(100vh - 4rem);
+}
+html.has-motion .v2 .v2-stage > .v2-stage-layer {
+  grid-area: 1 / 1;
+}
+html.has-motion .v2 [data-stage-hero] {
+  z-index: 2;
+  background: linear-gradient(180deg, #121214, #0d0d0f);
+  will-change: transform, opacity;
+}
+html.has-motion .v2 [data-stage-story] {
+  z-index: 1;
+  border-top: 0;
+}
+
 /* Word-split masks (Motion.tsx). */
 .v2-word-mask {
   display: inline-block;

@@ -15,63 +15,7 @@ import { SpecimenReport } from './SpecimenReport';
 /** The visible FAQ is cut to three; the page's FAQPage JSON-LD mirrors exactly these. */
 export const LANDING_FAQS = FAQS.slice(0, 3);
 
-/* ────────────────────────── Act I · Ask ────────────────────────── */
-
-export function HeroV2(): JSX.Element {
-  return (
-    <section className="flex min-h-[calc(100vh-4rem)] items-center px-6 py-12 sm:px-10 lg:px-14">
-      <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
-        <div>
-          <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
-            01 · Ask
-          </p>
-          <h1
-            data-hero-title
-            className="mt-5 max-w-xl text-balance text-5xl font-bold leading-[0.98] tracking-tighter sm:text-6xl lg:text-7xl"
-          >
-            Your next customer asks an AI.
-          </h1>
-          <p
-            data-hero-sub
-            className="mt-6 max-w-md text-lg leading-relaxed"
-            style={{ color: 'var(--v2-ink-soft)' }}
-          >
-            Free, open instruments that measure whether the engines can find, parse, and cite you.
-          </p>
-
-          <form data-hero-cta action="/tools/audit" method="get" className="mt-8 flex max-w-md gap-0">
-            <label htmlFor="hero-url" className="sr-only">
-              Website URL to audit
-            </label>
-            <input
-              id="hero-url"
-              name="url"
-              type="url"
-              inputMode="url"
-              placeholder="https://yoursite.com"
-              className="h-12 w-full border border-r-0 border-white/25 bg-white/[0.07] px-4 font-[var(--font-v2-mono)] text-sm text-[color:var(--v2-text)] backdrop-blur-md placeholder:text-[color:var(--v2-ink-faint)]"
-              style={{ borderRadius: '10px 0 0 10px' }}
-            />
-            <button
-              type="submit"
-              className="v2-cta h-12 shrink-0 px-5 text-sm font-semibold"
-              style={{ borderRadius: '0 10px 10px 0' }}
-            >
-              Run the audit
-            </button>
-          </form>
-          <p className="v2-label mt-4">54 rules · 50 pages · ~60s · no account</p>
-        </div>
-
-        <div className="flex justify-center lg:justify-end">
-          <NodeFieldViewport />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────── The turn: scrubbed story lines (pinned on scroll) ─────────────── */
+/* ──────────── Acts I–II · The cinematic stage (Ask → the turn → Know) ──────────── */
 
 const STORY_LINES: ReadonlyArray<string> = [
   'A customer asks.',
@@ -80,47 +24,121 @@ const STORY_LINES: ReadonlyArray<string> = [
   'But it should be.',
 ];
 
-export function StoryTurn(): JSX.Element {
+/**
+ * One pinned stage, two layers. Scrolling zooms the viewer past the hero while the
+ * void frame surfaces beneath it; the story lines then play; the pin releases and the
+ * page scrolls normally. Without JavaScript (or under reduced motion) the layers render
+ * as two ordinary stacked sections — nothing is hidden, nothing pins.
+ */
+export function CinematicStage(): JSX.Element {
   return (
     <section
-      data-story
-      aria-label="Why AI citations matter"
-      className="relative flex min-h-screen items-center overflow-hidden border-t border-[color:var(--v2-rule)] px-6 py-16 sm:px-10 lg:px-14"
+      data-stage
+      aria-label="Your next customer asks an AI — and why citations matter"
+      className="v2-stage relative overflow-hidden"
     >
-      {/* The commissioned void frame is the backdrop of this act: a field of faint
-          far-away lights, exactly one lit. (Higgsfield Soul Cinema, 2026-09-03.) */}
-      {/* eslint-disable-next-line @next/next/no-img-element -- local static backdrop */}
-      <img
-        src="/story/uncited.webp"
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
-      />
-      <div className="relative grid w-full items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
-        <div className="flex flex-col gap-6">
-          {STORY_LINES.map((line, i) => (
-            <p
-              key={line}
-              data-story-line
-              className="max-w-2xl text-balance text-4xl font-bold leading-[1.05] tracking-tighter sm:text-5xl lg:text-6xl"
-              style={i === STORY_LINES.length - 1 ? { color: 'var(--v2-signal)' } : undefined}
-            >
-              {line}
+      {/* Layer 1 · the hero (on top while pinned; scrolling zooms past it). */}
+      <div
+        data-stage-hero
+        className="v2-stage-layer relative flex min-h-[calc(100vh-4rem)] items-center px-6 py-12 sm:px-10 lg:px-14"
+      >
+        <div className="grid w-full items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
+          <div>
+            <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
+              01 · Ask
             </p>
-          ))}
-        </div>
-        {/* The answer pops in from the side once the loss lands: know in sixty seconds. */}
-        <div data-story-specimen className="flex flex-col items-center gap-4 lg:items-end">
-          <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
-            02 · Know — sixty seconds later
-          </p>
-          <SpecimenReport />
+            <h1
+              data-hero-title
+              className="mt-5 max-w-xl text-balance text-5xl font-bold leading-[0.98] tracking-tighter sm:text-6xl lg:text-7xl"
+            >
+              Your next customer asks an AI.
+            </h1>
+            <p
+              data-hero-sub
+              className="mt-6 max-w-md text-lg leading-relaxed"
+              style={{ color: 'var(--v2-ink-soft)' }}
+            >
+              Free, open instruments that measure whether the engines can find, parse, and cite
+              you.
+            </p>
+
+            <form
+              data-hero-cta
+              action="/tools/audit"
+              method="get"
+              className="mt-8 flex max-w-md gap-0"
+            >
+              <label htmlFor="hero-url" className="sr-only">
+                Website URL to audit
+              </label>
+              <input
+                id="hero-url"
+                name="url"
+                type="url"
+                inputMode="url"
+                placeholder="https://yoursite.com"
+                className="h-12 w-full border border-r-0 border-white/25 bg-white/[0.07] px-4 font-[var(--font-v2-mono)] text-sm text-[color:var(--v2-text)] backdrop-blur-md placeholder:text-[color:var(--v2-ink-faint)]"
+                style={{ borderRadius: '10px 0 0 10px' }}
+              />
+              <button
+                type="submit"
+                className="v2-cta h-12 shrink-0 px-5 text-sm font-semibold"
+                style={{ borderRadius: '0 10px 10px 0' }}
+              >
+                Run the audit
+              </button>
+            </form>
+            <p className="v2-label mt-4">54 rules · 50 pages · ~60s · no account</p>
+          </div>
+
+          <div className="flex justify-center lg:justify-end">
+            <NodeFieldViewport />
+          </div>
         </div>
       </div>
-      <p className="v2-label absolute bottom-5 left-6 sm:left-10 lg:left-14" style={{ color: 'var(--v2-accent2)' }}>
-        Uncited is invisible
-      </p>
+
+      {/* Layer 2 · the turn (surfaces beneath the hero as it zooms past). */}
+      <div
+        data-stage-story
+        className="v2-stage-layer relative flex min-h-[calc(100vh-4rem)] items-center border-t border-[color:var(--v2-rule)] px-6 py-16 sm:px-10 lg:px-14"
+      >
+        {/* Commissioned void frame as the act backdrop (Higgsfield Soul Cinema, 2026-09-03). */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- local static backdrop */}
+        <img
+          src="/story/uncited.webp"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
+        />
+        <div className="relative grid w-full items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+          <div className="flex flex-col gap-6">
+            {STORY_LINES.map((line, i) => (
+              <p
+                key={line}
+                data-story-line
+                className="max-w-2xl text-balance text-4xl font-bold leading-[1.05] tracking-tighter sm:text-5xl lg:text-6xl"
+                style={i === STORY_LINES.length - 1 ? { color: 'var(--v2-signal)' } : undefined}
+              >
+                {line}
+              </p>
+            ))}
+          </div>
+          {/* The answer pops in from the side once the resolve lands. */}
+          <div data-story-specimen className="flex flex-col items-center gap-4 lg:items-end">
+            <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
+              02 · Know — sixty seconds later
+            </p>
+            <SpecimenReport />
+          </div>
+        </div>
+        <p
+          className="v2-label absolute bottom-5 left-6 sm:left-10 lg:left-14"
+          style={{ color: 'var(--v2-accent2)' }}
+        >
+          Uncited is invisible
+        </p>
+      </div>
     </section>
   );
 }

@@ -7,12 +7,11 @@ import { Motion } from '@/components/landing-v2/Motion';
 import {
   CtaV2,
   FaqV2,
-  HeroV2,
+  CinematicStage,
   InstrumentIndexV2,
   LANDING_FAQS,
   LedgerV2,
   StoryFrame,
-  StoryTurn,
 } from '@/components/landing-v2/Sections';
 import '@/components/landing-v2/landing-v2.css';
 
@@ -66,8 +65,7 @@ export default function LandingPage(): JSX.Element {
           <span className="v2-corner" style={{ bottom: -2, left: -16 }} aria-hidden="true" />
           <span className="v2-corner" style={{ bottom: -2, right: -16 }} aria-hidden="true" />
           <div className="v2-sheet overflow-hidden">
-            <HeroV2 />
-            <StoryTurn />
+            <CinematicStage />
             <LedgerV2 />
             <StoryFrame
               src="/story/calibrated.webp"
