@@ -96,7 +96,7 @@ export function NodeFieldViewport(): React.ReactElement {
     group.add(new THREE.LineSegments(linkGeo, linkMat));
 
     // A sparse violet minority among the green points — the Advance Labs duo.
-    const accentCount = 90;
+    const accentCount = 140;
     const accentPositions = new Float32Array(accentCount * 3);
     for (let i = 0; i < accentCount; i += 1) {
       const v = new THREE.Vector3().randomDirection().multiplyScalar(0.78 + Math.random() * 0.5);
@@ -105,10 +105,10 @@ export function NodeFieldViewport(): React.ReactElement {
     const accentGeo = new THREE.BufferGeometry();
     accentGeo.setAttribute('position', new THREE.BufferAttribute(accentPositions, 3));
     const accentMat = new THREE.PointsMaterial({
-      color: 0xa78bfa,
-      size: 0.02,
+      color: 0xb6a4fd,
+      size: 0.026,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.95,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
