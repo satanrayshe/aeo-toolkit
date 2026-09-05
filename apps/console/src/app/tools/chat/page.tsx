@@ -164,7 +164,7 @@ export default function ChatToolPage(): JSX.Element {
                 <Reveal key={step.title} delay={i * 0.05}>
                   <SpotlightCard className="h-full">
                     <div className="flex h-full flex-col gap-3 p-5">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#6366F1,#22D3EE)] text-sm font-bold text-white">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#7C3AED,#A8F326)] text-sm font-bold text-white">
                         {i + 1}
                       </span>
                       <h3 className="text-base font-semibold text-white">{step.title}</h3>

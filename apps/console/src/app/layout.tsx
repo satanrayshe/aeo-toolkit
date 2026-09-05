@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { Inter, Space_Grotesk, JetBrains_Mono, Syne } from 'next/font/google';
+import { Inter, JetBrains_Mono, Syne } from 'next/font/google';
 import { Footer } from '@/components/ui/Footer';
 import { Header } from '@/components/Header';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -8,7 +8,7 @@ import { organizationSchema, websiteSchema, softwareApplicationSchema, SITE_URL 
 import './globals.css';
 
 const sans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
-const display = Space_Grotesk({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
+const display = Syne({ subsets: ['latin'], weight: ['600', '700', '800'], variable: '--font-display', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 // v2 identity face — the wordmark and landing headlines share it.
 const brand = Syne({ subsets: ['latin'], weight: ['700'], variable: '--font-brand', display: 'swap' });

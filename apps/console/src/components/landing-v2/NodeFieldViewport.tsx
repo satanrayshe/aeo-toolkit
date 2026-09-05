@@ -12,7 +12,6 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import * as THREE from 'three';
 
 const NODE_COUNT = 520;
@@ -21,7 +20,6 @@ const LINKS_PER_NODE = 2;
 export function NodeFieldViewport(): React.ReactElement {
   const hostRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
-  const [stats, setStats] = useState({ nodes: 0, links: 0 });
 
   useEffect(() => {
     const host = hostRef.current;
@@ -124,7 +122,6 @@ export function NodeFieldViewport(): React.ReactElement {
     });
     group.add(new THREE.Mesh(coreGeo, coreMat));
 
-    setStats({ nodes: NODE_COUNT, links: linkPositions.length / 6 });
 
     const resize = (): void => {
       const w = host.clientWidth;
@@ -226,25 +223,6 @@ export function NodeFieldViewport(): React.ReactElement {
         ) : null}
       </div>
 
-      {/* Compact instrument HUD floating at the field's foot — honest scene stats. */}
-      <div
-        className="v2-glass v2-brackets absolute inset-x-2 bottom-2 z-10 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-lg px-4 py-2.5 sm:inset-x-6 sm:bottom-4"
-        style={{ position: 'absolute' }}
-      >
-        <span className="v2-label whitespace-nowrap">
-          Live synthesis · <span style={{ color: 'var(--v2-signal)' }}>● Backlink field</span>
-        </span>
-        <span className="v2-label whitespace-nowrap">
-          Nodes <span style={{ color: 'var(--v2-text)' }}>{stats.nodes}</span> · Links{' '}
-          <span style={{ color: 'var(--v2-text)' }}>{stats.links}</span>
-        </span>
-        <Link
-          href="/tools/graph"
-          className="v2-label whitespace-nowrap underline hover:text-[color:var(--v2-text)]"
-        >
-          Open the real graph →
-        </Link>
-      </div>
     </div>
   );
 }

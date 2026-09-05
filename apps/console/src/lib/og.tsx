@@ -45,7 +45,7 @@ export function renderOgImage({ eyebrow, title, subtitle }: OgCard): ImageRespon
               width: '92px',
               height: '92px',
               borderRadius: '22px',
-              backgroundImage: 'linear-gradient(135deg, #818CF8 0%, #A78BFA 100%)',
+              backgroundImage: 'linear-gradient(135deg, #B6A4FD 0%, #A78BFA 100%)',
               boxShadow: '0 24px 70px -20px rgba(99,102,241,0.7)',
             }}
           >
@@ -61,7 +61,7 @@ export function renderOgImage({ eyebrow, title, subtitle }: OgCard): ImageRespon
               <path d="M24.2 34.6H39.8" fill="none" stroke="#fff" strokeWidth="5.5" strokeLinecap="round" />
               <path
                 d="M44 9.2 45.1 13.4 49.3 14.5 45.1 15.6 44 19.8 42.9 15.6 38.7 14.5 42.9 13.4Z"
-                fill="#22D3EE"
+                fill="#A8F326"
               />
             </svg>
           </div>
@@ -78,7 +78,7 @@ export function renderOgImage({ eyebrow, title, subtitle }: OgCard): ImageRespon
               borderRadius: '999px',
               border: '1px solid rgba(255,255,255,0.14)',
               backgroundColor: 'rgba(255,255,255,0.05)',
-              color: '#22D3EE',
+              color: '#A8F326',
               fontSize: '24px',
               fontWeight: 600,
               letterSpacing: '0.04em',
@@ -117,7 +117,7 @@ export function renderOgImage({ eyebrow, title, subtitle }: OgCard): ImageRespon
               width: '220px',
               height: '8px',
               borderRadius: '999px',
-              backgroundImage: 'linear-gradient(90deg, #6366F1 0%, #8B5CF6 50%, #22D3EE 100%)',
+              backgroundImage: 'linear-gradient(90deg, #7C3AED 0%, #B6A4FD 50%, #A8F326 100%)',
             }}
           />
           <div style={{ display: 'flex', color: '#6b7390', fontSize: '26px' }}>{SITE_NAME}</div>
