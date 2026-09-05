@@ -113,7 +113,7 @@ export default function ChatToolPage(): JSX.Element {
 
         <Container className="flex flex-col gap-12 py-12 sm:py-16">
           {/* Hero */}
-          <header className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center">
+          <header className="flex max-w-3xl flex-col gap-5">
             <Reveal>
               <Breadcrumb trail={TRAIL} />
             </Reveal>
@@ -145,36 +145,6 @@ export default function ChatToolPage(): JSX.Element {
           <div className="mx-auto w-full max-w-3xl">
             <ChatWorkspace initialConnected={false} />
           </div>
-
-          {/* How it works */}
-          <section aria-labelledby="how-it-works" className="mx-auto w-full max-w-4xl scroll-mt-24">
-            <Reveal>
-              <div className="flex flex-col gap-2 text-center">
-                <span className="eyebrow mx-auto">How it works</span>
-                <h2
-                  id="how-it-works"
-                  className="text-3xl font-semibold tracking-tight text-white sm:text-4xl"
-                >
-                  From Google to answer in four steps
-                </h2>
-              </div>
-            </Reveal>
-            <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {HOW_IT_WORKS.map((step, i) => (
-                <Reveal key={step.title} delay={i * 0.05}>
-                  <SpotlightCard className="h-full">
-                    <div className="flex h-full flex-col gap-3 p-5">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#7C3AED,#A8F326)] text-sm font-bold text-white">
-                        {i + 1}
-                      </span>
-                      <h3 className="text-base font-semibold text-white">{step.title}</h3>
-                      <p className="text-sm leading-relaxed text-slate-400">{step.body}</p>
-                    </div>
-                  </SpotlightCard>
-                </Reveal>
-              ))}
-            </ol>
-          </section>
 
           {/* FAQ */}
           <section aria-labelledby="faq" className="mx-auto w-full max-w-3xl scroll-mt-24">

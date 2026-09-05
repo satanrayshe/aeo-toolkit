@@ -22,7 +22,7 @@ export const metadata = toolMetadata({
 
 /** Answer-first summary an LLM can lift verbatim. Kept in one place for reuse in copy + JSON-LD. */
 const ANSWER_FIRST =
-  'An LLM & technical SEO audit crawls your website, checks the technical and answer-engine signals that determine whether Google and AI assistants can find, understand, and cite your pages, and scores the result out of 100. The AEO Toolkit audit crawls up to 50 pages and returns an overall grade, a category breakdown, a prioritized fix list, and ready-to-use templates for any missing crawl-hint files.';
+  'An LLM & technical SEO audit checks whether Google and AI assistants can find, understand, and cite your pages. It crawls up to 50 pages and returns a score out of 100, a category breakdown, a prioritized fix list, and templates for any missing crawl-hint files.';
 
 /** Signal groups the audit evaluates — drives the visible feature list and reads as extractable content. */
 const CHECKS: ReadonlyArray<{ title: string; description: string }> = [
