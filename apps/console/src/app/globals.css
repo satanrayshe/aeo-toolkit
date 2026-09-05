@@ -71,7 +71,7 @@
     backdrop-filter: blur(8px);
   }
   .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-wider text-brand-cyan;
+    @apply inline-flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-wider text-brand-cyan;
   }
   /* Subtle dotted/grid backdrop used behind sections.
      The grid image AND its radial fade-mask live on a ::before layer so the mask only fades the
