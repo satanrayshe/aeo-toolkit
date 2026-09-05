@@ -1,14 +1,14 @@
 'use client';
 
 /**
- * Hero instrument: a live Three.js node field — luminous green points linked into a
- * loose graph, slowly orbiting with damped pointer parallax. It is system-connected,
- * not decoration: it previews the Backlink Graph tool and its readouts are the real
- * scene stats.
+ * Hero instrument, option B: the node field is an unframed cloud filling the hero's
+ * right half — no card clipping it — with a compact glass HUD floating at its foot
+ * carrying the live readouts. Green graph with a violet minority (the brand duo),
+ * slow orbit, damped pointer parallax; previews the Backlink Graph tool.
  *
- * Discipline: DPR capped, rendering pauses when the tab is hidden, everything is
- * disposed on unmount, context loss swaps to the fallback, and reduced motion gets a
- * single static frame with no loop and no pointer response.
+ * Discipline unchanged: DPR capped, rendering pauses when the tab is hidden, full
+ * disposal on unmount, context loss swaps to the fallback, reduced motion renders a
+ * single static frame.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -40,22 +40,23 @@ export function NodeFieldViewport(): React.ReactElement {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 20);
-    camera.position.z = 3.1;
+    camera.position.z = 2.75;
 
     const group = new THREE.Group();
     scene.add(group);
 
-    // Nodes on a jittered shell — reads as a synthesized site graph, not a starfield.
+    // A wider jittered shell than the framed version — the cloud is meant to fill
+    // the whole half, not sit inside a card.
     const positions = new Float32Array(NODE_COUNT * 3);
     for (let i = 0; i < NODE_COUNT; i += 1) {
-      const v = new THREE.Vector3().randomDirection().multiplyScalar(0.78 + Math.random() * 0.5);
+      const v = new THREE.Vector3().randomDirection().multiplyScalar(0.92 + Math.random() * 0.55);
       positions.set([v.x, v.y, v.z], i * 3);
     }
     const pointGeo = new THREE.BufferGeometry();
     pointGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const pointMat = new THREE.PointsMaterial({
       color: 0xa8f326,
-      size: 0.022,
+      size: 0.028,
       transparent: true,
       opacity: 0.95,
       blending: THREE.AdditiveBlending,
@@ -63,7 +64,7 @@ export function NodeFieldViewport(): React.ReactElement {
     });
     group.add(new THREE.Points(pointGeo, pointMat));
 
-    // Each node links to its nearest neighbors — a graph, honestly counted below.
+    // Nearest-neighbor links — a graph, honestly counted in the HUD.
     const linkPositions: number[] = [];
     const p = new THREE.Vector3();
     const q = new THREE.Vector3();
@@ -73,8 +74,7 @@ export function NodeFieldViewport(): React.ReactElement {
       for (let j = 0; j < NODE_COUNT; j += 1) {
         if (j === i) continue;
         q.fromArray(positions, j * 3);
-        const d = p.distanceToSquared(q);
-        nearest.push({ d, j });
+        nearest.push({ d: p.distanceToSquared(q), j });
       }
       nearest.sort((a, b) => a.d - b.d);
       for (let k = 0; k < LINKS_PER_NODE; k += 1) {
@@ -89,24 +89,24 @@ export function NodeFieldViewport(): React.ReactElement {
     const linkMat = new THREE.LineBasicMaterial({
       color: 0xa8f326,
       transparent: true,
-      opacity: 0.14,
+      opacity: 0.15,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
     group.add(new THREE.LineSegments(linkGeo, linkMat));
 
-    // A sparse violet minority among the green points — the Advance Labs duo.
+    // The violet minority — the Advance Labs duo.
     const accentCount = 140;
     const accentPositions = new Float32Array(accentCount * 3);
     for (let i = 0; i < accentCount; i += 1) {
-      const v = new THREE.Vector3().randomDirection().multiplyScalar(0.78 + Math.random() * 0.5);
+      const v = new THREE.Vector3().randomDirection().multiplyScalar(0.92 + Math.random() * 0.55);
       accentPositions.set([v.x, v.y, v.z], i * 3);
     }
     const accentGeo = new THREE.BufferGeometry();
     accentGeo.setAttribute('position', new THREE.BufferAttribute(accentPositions, 3));
     const accentMat = new THREE.PointsMaterial({
       color: 0xb6a4fd,
-      size: 0.026,
+      size: 0.032,
       transparent: true,
       opacity: 0.95,
       blending: THREE.AdditiveBlending,
@@ -114,8 +114,8 @@ export function NodeFieldViewport(): React.ReactElement {
     });
     group.add(new THREE.Points(accentGeo, accentMat));
 
-    // A faint wire core anchors the field.
-    const coreGeo = new THREE.IcosahedronGeometry(0.34, 1);
+    // Wire core anchors the field.
+    const coreGeo = new THREE.IcosahedronGeometry(0.4, 1);
     const coreMat = new THREE.MeshBasicMaterial({
       color: 0xa8f326,
       wireframe: true,
@@ -183,7 +183,6 @@ export function NodeFieldViewport(): React.ReactElement {
     renderer.domElement.addEventListener('webglcontextlost', onContextLost);
 
     if (reduceMotion) {
-      // Static poster: one composed frame, no loop, no pointer.
       renderer.render(scene, camera);
     } else {
       host.addEventListener('pointermove', onPointer);
@@ -213,17 +212,13 @@ export function NodeFieldViewport(): React.ReactElement {
   }, []);
 
   return (
-    <div data-hero-sheet className="v2-glass v2-brackets w-full max-w-md rounded-xl">
-      {/* Instrument header — mono system voice. */}
-      <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--v2-rule)] px-5 py-3">
-        <span className="v2-label">Live synthesis</span>
-        <span className="v2-label" style={{ color: 'var(--v2-signal)' }}>
-          ● Backlink field
-        </span>
-      </div>
-
-      {/* The viewport. Falls back to a mono readout if WebGL is unavailable. */}
-      <div ref={hostRef} className="relative h-72 w-full overflow-hidden sm:h-80 [&>canvas]:h-full [&>canvas]:w-full">
+    <div data-hero-sheet className="relative h-[420px] w-full sm:h-[500px] lg:h-[560px]">
+      {/* The unframed cloud: fills the column, spills past where the card used to end. */}
+      <div
+        ref={hostRef}
+        className="absolute inset-0 [&>canvas]:h-full [&>canvas]:w-full"
+        aria-hidden="true"
+      >
         {failed ? (
           <div className="flex h-full items-center justify-center">
             <p className="v2-label">Viewport offline · graph renders in the tool</p>
@@ -231,13 +226,22 @@ export function NodeFieldViewport(): React.ReactElement {
         ) : null}
       </div>
 
-      {/* Real scene stats — the readouts are honest by construction. */}
-      <div className="flex items-baseline justify-between gap-4 border-t border-[color:var(--v2-rule)] px-5 py-3">
-        <span className="v2-label">
+      {/* Compact instrument HUD floating at the field's foot — honest scene stats. */}
+      <div
+        className="v2-glass v2-brackets absolute inset-x-2 bottom-2 z-10 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-lg px-4 py-2.5 sm:inset-x-6 sm:bottom-4"
+        style={{ position: 'absolute' }}
+      >
+        <span className="v2-label whitespace-nowrap">
+          Live synthesis · <span style={{ color: 'var(--v2-signal)' }}>● Backlink field</span>
+        </span>
+        <span className="v2-label whitespace-nowrap">
           Nodes <span style={{ color: 'var(--v2-text)' }}>{stats.nodes}</span> · Links{' '}
           <span style={{ color: 'var(--v2-text)' }}>{stats.links}</span>
         </span>
-        <Link href="/tools/graph" className="v2-label underline hover:text-[color:var(--v2-text)]">
+        <Link
+          href="/tools/graph"
+          className="v2-label whitespace-nowrap underline hover:text-[color:var(--v2-text)]"
+        >
           Open the real graph →
         </Link>
       </div>
