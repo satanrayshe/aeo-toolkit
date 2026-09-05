@@ -47,8 +47,16 @@ html:has(.v2) {
 .v2 h2,
 .v2 h3 {
   color: var(--v2-text);
-  font-family: var(--font-v2-sans), system-ui, sans-serif;
-  letter-spacing: -0.03em;
+  font-family: var(--font-v2-display), var(--font-v2-sans), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* The cursive accent voice: one turned phrase per headline, never body copy. */
+.v2-cursive {
+  font-family: var(--font-v2-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 /* ── Monochrome atmosphere: one soft bloom + falloff + grain. Nothing colored. ── */
@@ -252,6 +260,10 @@ html.has-motion .v2 [data-stage-story] {
   display: inline-block;
   will-change: transform;
 }
+.v2 [data-story-line] {
+  font-family: var(--font-v2-display), var(--font-v2-sans), system-ui, sans-serif;
+}
+
 html.has-motion .v2 [data-hero-title] {
   visibility: hidden;
 }

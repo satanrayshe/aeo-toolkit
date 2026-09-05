@@ -117,7 +117,11 @@ export function CinematicStage(): JSX.Element {
               <p
                 key={line}
                 data-story-line
-                className="max-w-2xl text-balance text-4xl font-bold leading-[1.05] tracking-tighter sm:text-5xl lg:text-6xl"
+                className={
+                  i === STORY_LINES.length - 1
+                    ? 'v2-cursive max-w-2xl text-balance text-5xl leading-[1.05] sm:text-6xl lg:text-7xl'
+                    : 'max-w-2xl text-balance text-4xl font-bold leading-[1.05] tracking-tighter sm:text-5xl lg:text-6xl'
+                }
                 style={i === STORY_LINES.length - 1 ? { color: 'var(--v2-signal)' } : undefined}
               >
                 {line}
@@ -195,7 +199,7 @@ export function LedgerV2(): JSX.Element {
           03 · Measure
         </p>
         <h2 id="measures-h" className="mt-3 max-w-lg text-3xl font-bold tracking-tighter sm:text-4xl">
-          Six instruments scan.
+          Six instruments <span className="v2-cursive">scan.</span>
         </h2>
       </div>
       <div className="v2-rule mt-8" data-rule aria-hidden="true" />
@@ -249,7 +253,7 @@ export function InstrumentIndexV2(): JSX.Element {
             04 · Fix
           </p>
           <h2 id="tools-h" className="mt-3 max-w-lg text-3xl font-bold tracking-tighter sm:text-4xl">
-            Work the list. Re-run. Get named.
+            Work the list. Re-run. <span className="v2-cursive">Get named.</span>
           </h2>
         </div>
         <p className="v2-label">Five tools · free · MIT</p>
@@ -311,7 +315,7 @@ export function FaqV2(): JSX.Element {
     <section className="px-6 py-14 sm:px-10 sm:py-16 lg:px-14" aria-labelledby="faq-h">
       <div data-reveal>
         <h2 id="faq-h" className="text-2xl font-bold tracking-tighter sm:text-3xl">
-          Asked and answered.
+          Asked and <span className="v2-cursive">answered.</span>
         </h2>
       </div>
       <div data-reveal-group className="mt-6">
@@ -354,7 +358,7 @@ export function CtaV2(): JSX.Element {
         className="mx-auto mt-4 max-w-2xl text-balance text-4xl font-bold tracking-tighter sm:text-5xl"
         style={{ color: 'var(--v2-paper)' }}
       >
-        Sixty seconds from URL to graded report.
+        Sixty seconds from URL to <span className="v2-cursive">graded report.</span>
       </h2>
       <div className="mt-8 flex justify-center">
         <Link

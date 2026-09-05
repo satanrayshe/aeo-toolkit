@@ -48,13 +48,13 @@ export function BrandLockup({
   size?: number;
   tone?: 'dark' | 'paper';
 }): React.ReactElement {
-  const color = tone === 'dark' ? '#F4F1E9' : '#16150F';
+  const color = tone === 'dark' ? '#A8F326' : '#16150F';
   return (
     <span className="inline-flex items-center gap-2.5" style={{ color }}>
       <BrandMark size={size} />
       <span
         className="text-[17px] font-bold tracking-tight"
-        style={{ fontFamily: 'var(--font-brand), var(--font-sans), system-ui, sans-serif' }}
+        style={{ fontFamily: 'var(--font-brand), var(--font-sans), system-ui, sans-serif', letterSpacing: '-0.01em' }}
       >
         AEO&nbsp;Toolkit
       </span>

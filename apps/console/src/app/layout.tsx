@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { Inter, Space_Grotesk, JetBrains_Mono, Archivo } from 'next/font/google';
+import { Inter, Space_Grotesk, JetBrains_Mono, Syne } from 'next/font/google';
 import { Footer } from '@/components/ui/Footer';
 import { Header } from '@/components/Header';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -11,7 +11,7 @@ const sans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap
 const display = Space_Grotesk({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 // v2 identity face — the wordmark and landing headlines share it.
-const brand = Archivo({ subsets: ['latin'], variable: '--font-brand', display: 'swap' });
+const brand = Syne({ subsets: ['latin'], weight: ['700'], variable: '--font-brand', display: 'swap' });
 
 // SITE_URL is imported from '@/lib/seo' — the single source of truth (falls back to the
 // canonical https://aeo.advancelabs.dev). Previously this file redefined it with a divergent

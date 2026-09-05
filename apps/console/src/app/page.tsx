@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 import type { Metadata } from 'next';
-import { Archivo, IBM_Plex_Mono } from 'next/font/google';
+import { Archivo, IBM_Plex_Mono, Instrument_Serif, Syne } from 'next/font/google';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { publicUrl } from '@/lib/seo';
 import { Motion } from '@/components/landing-v2/Motion';
@@ -29,6 +29,21 @@ const v2Mono = IBM_Plex_Mono({
   variable: '--font-v2-mono',
   display: 'swap',
 });
+// Display voice: Syne — wide, arty, unmistakably not a default.
+const v2Display = Syne({
+  subsets: ['latin'],
+  weight: ['700', '800'],
+  variable: '--font-v2-display',
+  display: 'swap',
+});
+// Cursive accent: Instrument Serif italic, for the one phrase per headline that turns.
+const v2Serif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: 'italic',
+  variable: '--font-v2-serif',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'AEO Toolkit — Get cited by ChatGPT, Claude & Perplexity',
@@ -50,7 +65,7 @@ const faqLd: Record<string, unknown> = {
 
 export default function LandingPage(): JSX.Element {
   return (
-    <div className={`v2 ${v2Sans.variable} ${v2Mono.variable} relative`}>
+    <div className={`v2 ${v2Sans.variable} ${v2Mono.variable} ${v2Display.variable} ${v2Serif.variable} relative`}>
       {/* The light field the glass refracts — fixed, so it also glows through the chrome. */}
       <div className="v2-backdrop" aria-hidden="true" />
       <JsonLd data={faqLd} />

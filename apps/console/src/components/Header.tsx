@@ -40,8 +40,10 @@ export function Header(): React.ReactElement {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'rounded-lg px-3 py-2 text-sm font-medium transition',
-                  active ? 'bg-white/[0.06] text-white' : 'text-slate-400 hover:text-white',
+                  'rounded px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition',
+                  active
+                    ? 'bg-[#A8F326]/10 text-[#C3FF57]'
+                    : 'text-[#A8F326]/85 hover:bg-[#A8F326]/5 hover:text-[#C3FF57]',
                 )}
               >
                 {item.label}
@@ -90,7 +92,7 @@ export function Header(): React.ReactElement {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-white"
+                className="rounded px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-[#A8F326]/85 hover:bg-[#A8F326]/5 hover:text-[#C3FF57]"
               >
                 {item.label}
               </Link>
