@@ -9,6 +9,7 @@
 import type { JSX } from 'react';
 import Link from 'next/link';
 import { FAQS, TOOLS } from '@/components/landing';
+import { HeroShader } from './HeroShader';
 import { NodeFieldViewport } from './NodeFieldViewport';
 import { SpecimenReport } from './SpecimenReport';
 
@@ -40,16 +41,18 @@ export function CinematicStage(): JSX.Element {
       {/* Layer 1 · the hero (on top while pinned; scrolling zooms past it). */}
       <div
         data-stage-hero
-        className="v2-stage-layer relative flex min-h-[calc(100vh-4rem)] items-center px-6 py-12 sm:px-10 lg:px-14"
+        className="v2-stage-layer relative flex min-h-[calc(100vh-6.75rem)] flex-col overflow-hidden px-6 pt-10 sm:px-10 lg:px-14"
       >
-        <div className="grid w-full items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
+        {/* Animated purple/green field (ruucm/shadergradient) behind everything. */}
+        <HeroShader />
+        <div className="relative z-10 my-auto grid w-full items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
           <div>
             <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
               01 · Ask
             </p>
             <h1
               data-hero-title
-              className="mt-5 max-w-xl text-balance text-5xl font-bold leading-[0.98] tracking-tighter sm:text-6xl lg:text-7xl"
+              className="mt-5 max-w-2xl text-balance text-5xl font-bold leading-[0.98] tracking-tighter sm:text-7xl lg:text-8xl"
             >
               Your next customer asks an AI.
             </h1>
@@ -95,12 +98,30 @@ export function CinematicStage(): JSX.Element {
             <NodeFieldViewport />
           </div>
         </div>
+
+        {/* Instrument rail: previews the six measures, fills the hero's bottom band,
+            and cues the scroll now that the stage zooms in place. */}
+        <div className="relative z-10 mt-auto border-t border-[color:var(--v2-rule)] py-4">
+          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+            {['Crawlability', 'AI-bot access', 'Structured data', 'Metadata', 'Answer readiness', 'E-E-A-T'].map(
+              (name, i) => (
+                <span key={name} className="v2-label whitespace-nowrap">
+                  <span style={{ color: 'var(--v2-signal)' }}>{String(i + 1).padStart(2, '0')}</span>{' '}
+                  {name}
+                </span>
+              ),
+            )}
+            <span className="v2-label ml-auto whitespace-nowrap" style={{ color: 'var(--v2-accent2)' }}>
+              Scroll to begin ↓
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Layer 2 · the turn (surfaces beneath the hero as it zooms past). */}
       <div
         data-stage-story
-        className="v2-stage-layer relative flex min-h-[calc(100vh-4rem)] items-center border-t border-[color:var(--v2-rule)] px-6 py-16 sm:px-10 lg:px-14"
+        className="v2-stage-layer relative flex min-h-[calc(100vh-6.75rem)] items-center border-t border-[color:var(--v2-rule)] px-6 py-16 sm:px-10 lg:px-14"
       >
         {/* Commissioned void frame as the act backdrop (Higgsfield Soul Cinema, 2026-09-03). */}
         {/* eslint-disable-next-line @next/next/no-img-element -- local static backdrop */}

@@ -80,7 +80,9 @@ export function Motion(): null {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: stage,
-            start: 'top top',
+            // Absolute zero: the stage owns the scroll from the first wheel tick — the
+            // hero never translates, it only zooms.
+            start: () => 0,
             end: '+=320%',
             scrub: 0.4,
             pin: true,

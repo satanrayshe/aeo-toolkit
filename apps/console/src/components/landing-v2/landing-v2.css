@@ -235,7 +235,7 @@ html.v2-header-folded body > header:focus-within {
    on top, the story beneath — so scroll can zoom past one into the other. */
 html.has-motion .v2 .v2-stage {
   display: grid;
-  min-height: calc(100vh - 4rem);
+  min-height: calc(100vh - 6.75rem);
 }
 html.has-motion .v2 .v2-stage > .v2-stage-layer {
   grid-area: 1 / 1;
