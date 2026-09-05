@@ -242,7 +242,7 @@ html.has-motion .v2 .v2-stage > .v2-stage-layer {
 }
 html.has-motion .v2 [data-stage-hero] {
   z-index: 2;
-  background: linear-gradient(180deg, #121214, #0d0d0f);
+  /* Transparent: the stage-level shader is the ground; the layer only carries content. */
   will-change: transform, opacity;
 }
 html.has-motion .v2 [data-stage-story] {

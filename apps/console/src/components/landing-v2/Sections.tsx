@@ -38,13 +38,16 @@ export function CinematicStage(): JSX.Element {
       aria-label="Your next customer asks an AI — and why citations matter"
       className="v2-stage relative overflow-hidden"
     >
+      {/* The shader field belongs to the stage, not the scaled hero layer: it stays
+          fixed in place while the zoom happens, and fades out on its own tween. */}
+      <div data-stage-shader className="absolute inset-0 z-0">
+        <HeroShader />
+      </div>
       {/* Layer 1 · the hero (on top while pinned; scrolling zooms past it). */}
       <div
         data-stage-hero
         className="v2-stage-layer relative flex min-h-[calc(100vh-6.75rem)] flex-col overflow-hidden px-6 pt-10 sm:px-10 lg:px-14"
       >
-        {/* Animated purple/green field (ruucm/shadergradient) behind everything. */}
-        <HeroShader />
         <div className="relative z-10 my-auto grid w-full items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
           <div>
             <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>

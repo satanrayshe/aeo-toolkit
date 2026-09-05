@@ -107,6 +107,10 @@ export function Motion(): null {
             0,
           );
         }
+        const shaderField = stage.querySelector<HTMLElement>('[data-stage-shader]');
+        if (shaderField) {
+          tl.to(shaderField, { autoAlpha: 0, duration: 1.1, ease: 'power1.in' }, 0.1);
+        }
         if (storyLayer) {
           tl.to(storyLayer, { autoAlpha: 1, duration: 1.0, ease: 'none' }, 0.2);
         }

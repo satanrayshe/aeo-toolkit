@@ -212,7 +212,8 @@ export function NodeFieldViewport(): React.ReactElement {
   }, []);
 
   return (
-    <div data-hero-sheet className="relative h-[420px] w-full sm:h-[500px] lg:h-[560px]">
+    <div data-hero-sheet className="flex w-full flex-col">
+      <div className="relative h-[380px] w-full sm:h-[440px] lg:h-[500px]">
       {/* The unframed cloud: fills the column, spills past where the card used to end. */}
       <div
         ref={hostRef}
@@ -226,24 +227,29 @@ export function NodeFieldViewport(): React.ReactElement {
         ) : null}
       </div>
 
-      {/* Compact instrument HUD floating at the field's foot — honest scene stats. */}
-      <div
-        className="v2-glass v2-brackets absolute inset-x-2 bottom-2 z-10 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-lg px-4 py-2.5 sm:inset-x-6 sm:bottom-4"
-        style={{ position: 'absolute' }}
-      >
-        <span className="v2-label whitespace-nowrap">
-          Live synthesis · <span style={{ color: 'var(--v2-signal)' }}>● Backlink field</span>
-        </span>
-        <span className="v2-label whitespace-nowrap">
-          Nodes <span style={{ color: 'var(--v2-text)' }}>{stats.nodes}</span> · Links{' '}
-          <span style={{ color: 'var(--v2-text)' }}>{stats.links}</span>
-        </span>
-        <Link
-          href="/tools/graph"
-          className="v2-label whitespace-nowrap underline hover:text-[color:var(--v2-text)]"
+      </div>
+
+      {/* What this is — anchored just below the field, overlapping only its fading edge. */}
+      <div className="relative z-10 -mt-6 flex flex-col gap-2 lg:items-end">
+        <p
+          className="max-w-md text-sm leading-relaxed lg:text-right"
+          style={{ color: 'var(--v2-ink-soft)' }}
         >
-          Open the real graph →
-        </Link>
+          A synthesized backlink neighborhood — every point a page, every thread a link between
+          pages. The Backlink Graph tool draws this map live for any URL.
+        </p>
+        <p className="v2-label flex flex-wrap items-baseline gap-x-4 gap-y-1 lg:justify-end">
+          <span className="whitespace-nowrap">
+            Nodes <span style={{ color: 'var(--v2-text)' }}>{stats.nodes}</span> · Links{' '}
+            <span style={{ color: 'var(--v2-text)' }}>{stats.links}</span>
+          </span>
+          <Link
+            href="/tools/graph"
+            className="whitespace-nowrap underline hover:text-[color:var(--v2-text)]"
+          >
+            Open the real graph →
+          </Link>
+        </p>
       </div>
     </div>
   );
