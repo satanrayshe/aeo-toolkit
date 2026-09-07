@@ -443,8 +443,13 @@ export function NodeFieldViewport(): React.ReactElement {
           </div>
         ) : null}
       </div>
-      {/* Mock query chips riding the probes — decorative, synthesized. */}
-      <div ref={labelLayerRef} aria-hidden="true" className="absolute inset-0 overflow-hidden" />
+      {/* Mock query chips riding the probes — decorative, synthesized. The layer must
+          not eat pointer events, or the canvas parallax beneath it goes dead. */}
+      <div
+        ref={labelLayerRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      />
     </div>
   );
 }
