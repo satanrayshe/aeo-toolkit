@@ -1,4 +1,9 @@
-<p align="center"><img src="../../brand/logo.svg" alt="AEO Toolkit" width="280"></p>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../../brand/logo-dark.png">
+    <img src="../../brand/logo.png" alt="AEO Toolkit" width="280">
+  </picture>
+</p>
 
 # Publishing to the Chrome Web Store
 
@@ -58,7 +63,7 @@ Prepare these before submission (the store will not publish without them):
 | Asset | Spec | Notes |
 | --- | --- | --- |
 | **Extension icons** | 16×16, 32×32, 48×48, 128×128 PNG | Generated from the brand mark `src/icons/icon.svg` by `pnpm icons` (`scripts/generate-icons.mjs`, via `sharp`) into `public/icons/icon-{16,32,48,128}.png`; Vite copies `public/` into `dist/`, so they resolve at `dist/icons/*`. `manifest.config.ts` already wires the `icons` map and `action.default_icon` (16/48/128). The `package` script runs `icons` automatically, so the store zip always contains them. |
-| **Store icon** | 128×128 PNG | The icon shown on the store listing page — `public/icons/icon-128.png`, the same brand mark rasterized at 128px. |
+| **Store icon** | 128×128 PNG | The icon shown on the store listing page — `public/icons/icon-128.png`, the Advance Labs sphere rasterized at 128px (see `docs/BRAND.md`). |
 | **Screenshots** | 1280×800 or 640×400 PNG/JPEG, 1–5 images | Capture the popup: score gauge, the site-file (robots/sitemap/llms) grid, and the checklist. |
 | **Small promo tile** (optional) | 440×280 PNG/JPEG | Improves discoverability. |
 | **Marquee promo tile** (optional) | 1400×560 PNG/JPEG | Only needed for featured placement. |

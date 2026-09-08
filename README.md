@@ -1,33 +1,33 @@
-> Contributions welcome — see CONTRIBUTING.md.
-
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="brand/logo-dark.svg">
-  <img src="brand/logo.svg" alt="AEO Toolkit" width="340">
+  <source media="(prefers-color-scheme: dark)" srcset="brand/logo-dark.png">
+  <img src="brand/logo.png" alt="AEO Toolkit" width="360">
 </picture>
 
 # AEO Toolkit — AI Search Optimization Suite
 
 ### Rank in ChatGPT, Claude, Perplexity &amp; AI Overviews
 
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-A8F326?style=flat-square&labelColor=0A0A0B)](LICENSE)
+[![Made by Advance Labs](https://img.shields.io/badge/Made%20by-Advance%20Labs-A8F326?style=flat-square&labelColor=0A0A0B)](https://advancelabs.dev)
+
 </div>
 
-> Open-source TypeScript monorepo for **Answer Engine Optimization (AEO)**, Generative Engine Optimization (GEO), and AI citation visibility.
+> Open-source TypeScript monorepo for **Answer Engine Optimization (AEO)**, Generative Engine Optimization (GEO), and AI citation visibility. Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 **Try it without installing anything:** the five tools run free in the browser at
 **[advancelabs.dev/tools](https://advancelabs.dev/tools)** — no sign-up, no account.
-Point the auditor at a URL and it returns a weighted, per-rule report in a few seconds.
+Point the auditor at a URL and it returns a weighted, per-rule report in about a minute.
+
+<a href="https://advancelabs.dev/tools"><img src="docs/assets/landing.webp" alt="AEO Toolkit — Your next customer asks an AI. Free, open instruments that measure whether the engines can find, parse, and cite you." width="100%"></a>
 
 Those five are the browser tools. The full suite is **ten**: these five, plus three
 MCP servers (`ai-visibility`, `backlink`, `ga-gsc`) exposing 22 tools to Claude or any MCP
 client, plus a scheduled content agent ([`@advance-labs/blogging`](packages/blogging)) and the
 [Chrome extension](apps/chrome-extension). See [`docs/reference/tools.md`](docs/reference/tools.md)
 for the full map.
-
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-[![Made by Advance Labs](https://img.shields.io/badge/Made%20by-Advance%20Labs-7C3AED?style=flat-square)](https://advancelabs.dev)
 
 ---
 
@@ -36,6 +36,16 @@ for the full map.
 **Answer Engine Optimization (AEO)** is the practice of structuring your content so that AI assistants — ChatGPT, Perplexity, Claude, Gemini — cite your site when answering questions in your domain. Traditional SEO gets you ranked on the blue-link results page. AEO gets you *quoted* in the AI answer.
 
 As AI-powered search becomes the default discovery layer, AEO is the new SEO.
+
+---
+
+## The audit
+
+54 rules across crawlability, AI-bot access, structured data, metadata, answer readiness and
+E-E-A-T, run against up to 50 pages, scored out of 100, with a prioritised fix list and templates
+for any crawl-hint file you're missing. Free, no account, and your data stays yours.
+
+<img src="docs/assets/audit-tool.webp" alt="The LLM &amp; Technical SEO Audit tool" width="100%">
 
 ---
 
@@ -83,7 +93,7 @@ git clone https://github.com/Advance-Labs/aeo-toolkit.git
 cd aeo-toolkit
 pnpm install
 pnpm build          # turbo builds every package
-pnpm test           # 868 tests
+pnpm test           # the full suite, no network
 pnpm dev --filter=@advance-labs/console   # run the console locally
 ```
 
@@ -134,10 +144,21 @@ aeo-toolkit/
 ├── apps/console/      # Next.js app behind the hosted tools
 ├── apps/chrome-extension/
 ├── apps/docs/         # Astro + Starlight docs site (renders ../../docs)
-└── docs/              # the documentation itself
+├── docs/              # the documentation itself
+└── brand/             # the mark and lockups; guide in docs/BRAND.md
 ```
 
 Built with [Turborepo](https://turbo.build) · TypeScript 5 · Vitest · React 19
+
+---
+
+## Design
+
+The console follows one visual system: a near-black ground, a single acid-green signal
+colour, mono lab-sheet labels, Syne headlines, and the Advance Labs sphere as the mark. The
+palette, type, tokens and rules are in [`docs/BRAND.md`](docs/BRAND.md); the assets are in
+[`brand/`](brand). Anything a user sees should follow it, and
+[`docs/CONVENTIONS.md`](docs/CONVENTIONS.md#design-and-brand) says how in code.
 
 ---
 
