@@ -185,7 +185,10 @@ function toPageStats(rows: Record<string, unknown>[]): BingPageStat[] {
     // Bing is inconsistent about which field carries the page URL across the
     // methods that return this shape (GetPageStats vs GetQueryPageStats) — the
     // `||` fallback covers both spellings so neither shape yields a silently
-    // empty page key. Confirmed against a live key in Task 11's verify:bing.
+    // empty page key. NOT yet confirmed against live data: `verify:bing`
+    // dumps the raw GetPageStats payload so an operator can settle which
+    // field is real. Until then the `||` covers both spellings rather than
+    // guessing one.
     page: asString(row['Query']) || asString(row['Url']),
     clicks: asNumber(row['Clicks']),
     impressions: asNumber(row['Impressions']),
