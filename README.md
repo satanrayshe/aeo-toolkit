@@ -11,7 +11,8 @@
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-A8F326?style=flat-square&labelColor=0A0A0B)](LICENSE)
-[![Made by Advance Labs](https://img.shields.io/badge/Made%20by-Advance%20Labs-A8F326?style=flat-square&labelColor=0A0A0B)](https://advancelabs.dev)
+[![Made by Advance Labs](https://img.shields.io/badge/Made%20by-Advance%20Labs-7C3AED?style=flat-square&labelColor=0A0A0B)](https://advancelabs.dev)
+[![Design system](https://img.shields.io/badge/Design-BRAND.md-B6A4FD?style=flat-square&labelColor=0A0A0B)](docs/BRAND.md)
 
 </div>
 

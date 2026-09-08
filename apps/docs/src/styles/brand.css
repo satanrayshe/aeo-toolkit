@@ -54,3 +54,35 @@ h1#_top {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+/* Secondary accent: the site's violet (#B6A4FD / #7C3AED). Signal stays for the one thing that
+   matters on a page; violet carries links, inline code, and the quiet structural glow. */
+:root {
+  --aeo-violet: #b6a4fd;
+  --aeo-violet-deep: #7c3aed;
+}
+.sl-markdown-content a:not(.sl-anchor-link) {
+  color: var(--aeo-violet);
+  text-decoration-color: color-mix(in srgb, var(--aeo-violet) 45%, transparent);
+}
+.sl-markdown-content a:not(.sl-anchor-link):hover {
+  color: var(--sl-color-accent-high);
+}
+.sl-markdown-content code:not(pre code) {
+  color: var(--aeo-violet);
+  background: color-mix(in srgb, var(--aeo-violet) 12%, transparent);
+}
+.sl-markdown-content blockquote {
+  border-inline-start-color: var(--aeo-violet-deep);
+}
+.sl-markdown-content th {
+  border-bottom: 1px solid color-mix(in srgb, var(--aeo-violet) 40%, transparent);
+}
+/* A faint violet-to-signal rule under the header, like the shader wash on the landing. */
+header.header {
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, var(--aeo-violet-deep), var(--aeo-violet) 45%, var(--sl-color-accent) 100%) 1;
+}
+:root[data-theme='light'] {
+  --aeo-violet: #6d4bd8;
+}
