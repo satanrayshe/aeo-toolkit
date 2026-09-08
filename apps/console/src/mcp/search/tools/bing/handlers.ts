@@ -7,11 +7,17 @@
  * comparable to GSC's single `position` is the cross-engine layer's job, and doing
  * it here would bake the choice in where no caller can see it.
  */
+import { McpToolError } from '@advance-labs/mcp-core';
 import type { ToolResult } from '@advance-labs/mcp-core';
 
 import { bingFor, type ToolContext } from '../context.js';
 import { jsonResult } from '../gsc/format.js';
-import type { BingSiteInput } from './schemas.js';
+import type {
+  BingIndexHealthInput,
+  BingKeywordResearchInput,
+  BingQueryPagesInput,
+  BingSiteInput,
+} from './schemas.js';
 
 /** `list_bing_sites()` — sites the resolved API key can access. */
 export async function listBingSites(ctx: ToolContext): Promise<ToolResult> {
@@ -67,5 +73,111 @@ export async function bingTopPages(
   return jsonResult(
     `Top ${pages.length} Bing pages for ${input.siteUrl} (of ${all.length}).`,
     { siteUrl: input.siteUrl, total: all.length, pages },
+  );
+}
+
+/**
+ * `bing_query_pages({ siteUrl, query? | page? })` — the query-to-page pairing.
+ *
+ * Bing exposes this as two methods rather than a `dimensions` array, so the tool
+ * takes exactly one of `query` or `page` and reports which direction it ran. Zod
+ * cannot express "exactly one of" across optional fields, so it is checked here.
+ */
+export async function bingQueryPages(
+  ctx: ToolContext,
+  input: BingQueryPagesInput,
+): Promise<ToolResult> {
+  const hasQuery = input.query !== undefined;
+  const hasPage = input.page !== undefined;
+  if (hasQuery === hasPage) {
+    throw new McpToolError(
+      'bing_query_pages needs exactly one of `query` or `page`: pass `query` to see the ' +
+        'pages that served it, or `page` to see the queries it served.',
+      'bing_query_pages_bad_input',
+    );
+  }
+
+  const bing = await bingFor(ctx);
+
+  if (hasQuery) {
+    const pages = await bing.getQueryPageStats(input.siteUrl, input.query as string);
+    return jsonResult(
+      `${pages.length} Bing pages served "${input.query as string}" on ${input.siteUrl}.`,
+      { siteUrl: input.siteUrl, direction: 'query_to_pages', query: input.query, pages },
+    );
+  }
+
+  const queries = await bing.getPageQueryStats(input.siteUrl, input.page as string);
+  return jsonResult(
+    `${queries.length} Bing queries served by ${input.page as string}.`,
+    { siteUrl: input.siteUrl, direction: 'page_to_queries', page: input.page, queries },
+  );
+}
+
+/**
+ * `bing_index_health({ siteUrl, url? })` — is Bing crawling and indexing this.
+ *
+ * Bundles the read-only submission quota alongside crawl health. A quota is not
+ * strictly "health", but an agent should be able to see what remains before any
+ * future write spec lets anything spend it.
+ */
+export async function bingIndexHealth(
+  ctx: ToolContext,
+  input: BingIndexHealthInput,
+): Promise<ToolResult> {
+  const bing = await bingFor(ctx);
+  const [crawlStats, crawlIssues, quota] = await Promise.all([
+    bing.getCrawlStats(input.siteUrl),
+    bing.getCrawlIssues(input.siteUrl),
+    bing.getUrlSubmissionQuota(input.siteUrl),
+  ]);
+
+  const urlInfo =
+    input.url !== undefined ? await bing.getUrlInfo(input.siteUrl, input.url) : null;
+
+  const latest = crawlStats.at(-1) ?? null;
+  const summary =
+    latest === null
+      ? `No Bing crawl stats for ${input.siteUrl}.`
+      : `Bing last crawled ${latest.crawledPages} pages for ${input.siteUrl}; ` +
+        `${latest.inIndex} in index, ${latest.codes4xx} 4xx, ${latest.codes5xx} 5xx.`;
+
+  return jsonResult(summary, {
+    siteUrl: input.siteUrl,
+    latest,
+    crawlStats,
+    crawlIssues,
+    quota,
+    urlInfo,
+  });
+}
+
+/**
+ * `bing_keyword_research({ query, country?, language? })`.
+ *
+ * The tool with no Google equivalent: Search Console does not expose keyword
+ * impression data at all. Seed stats and related keywords are merged and
+ * deduplicated by query, seed first.
+ */
+export async function bingKeywordResearch(
+  ctx: ToolContext,
+  input: BingKeywordResearchInput,
+): Promise<ToolResult> {
+  const bing = await bingFor(ctx);
+  const [seed, related] = await Promise.all([
+    bing.getKeywordStats(input.query, input.country, input.language),
+    bing.getRelatedKeywords(input.query, input.country, input.language),
+  ]);
+
+  const byQuery = new Map<string, (typeof seed)[number]>();
+  for (const row of [...seed, ...related]) {
+    if (!byQuery.has(row.query)) byQuery.set(row.query, row);
+  }
+  const keywords = [...byQuery.values()];
+
+  return jsonResult(
+    `${keywords.length} Bing keywords around "${input.query}" ` +
+      '(Search Console exposes no equivalent data).',
+    { seedQuery: input.query, keywords },
   );
 }
