@@ -17,6 +17,15 @@ describe('fractionalDelta', () => {
   it('is null from a zero baseline rather than Infinity', () => {
     expect(fractionalDelta(0, 10)).toBeNull();
   });
+
+  it('is null from a negative baseline', () => {
+    expect(fractionalDelta(-5, 10)).toBeNull();
+  });
+
+  it('is null from a non-finite baseline (NaN or Infinity)', () => {
+    expect(fractionalDelta(Number.NaN, 10)).toBeNull();
+    expect(fractionalDelta(Number.POSITIVE_INFINITY, 10)).toBeNull();
+  });
 });
 
 describe('classifyDivergence', () => {

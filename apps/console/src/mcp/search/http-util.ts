@@ -15,3 +15,11 @@ export function bearerToken(authorization: string | undefined | null): string | 
   const token = match[1]?.trim();
   return token && token.length > 0 ? token : null;
 }
+
+/** Read the request-scoped Bing API key. Never logged, never persisted. */
+export function bingApiKeyHeader(headers: Headers): string | null {
+  const raw = headers.get('x-bing-api-key');
+  if (raw === null) return null;
+  const trimmed = raw.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}

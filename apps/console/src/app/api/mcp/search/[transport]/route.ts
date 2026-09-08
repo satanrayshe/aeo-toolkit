@@ -29,7 +29,7 @@ import {
   type GaGscRuntime,
 } from '@/mcp/search/server.js';
 import { SERVER_NAME, SERVER_VERSION } from '@/mcp/search/config.js';
-import { bearerToken } from '@/mcp/search/http-util.js';
+import { bearerToken, bingApiKeyHeader } from '@/mcp/search/http-util.js';
 import { getSharedMcpRateLimiter } from '@/mcp/shared.js';
 import { checkEntitlement } from '@/lib/billing/entitlements';
 
@@ -47,8 +47,11 @@ function getRuntime(): GaGscRuntime {
  * token flows into the tool context (request-scoped, never persisted or logged)
  * and takes precedence over any stored Google credential.
  */
-function buildHandler(requestToken: string | null): (req: Request) => Promise<Response> {
-  const ctx = buildGaGscContext(getRuntime(), requestToken);
+function buildHandler(
+  requestToken: string | null,
+  requestBingKey: string | null,
+): (req: Request) => Promise<Response> {
+  const ctx = buildGaGscContext(getRuntime(), requestToken, requestBingKey);
   return createMcpHandler(
     (server) => {
       registerGaGscTools(server, ctx);
@@ -74,7 +77,8 @@ async function handler(request: Request): Promise<Response> {
   if (!gate.ok) return Response.json(gate.body, { status: gate.status });
 
   const token = bearerToken(request.headers.get('authorization'));
-  return buildHandler(token)(request);
+  const bingKey = bingApiKeyHeader(request.headers);
+  return buildHandler(token, bingKey)(request);
 }
 
 export { handler as GET, handler as POST };

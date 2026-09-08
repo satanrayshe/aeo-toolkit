@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bearerToken } from './http-util.js';
+import { bearerToken, bingApiKeyHeader } from './http-util.js';
 
 describe('bearerToken', () => {
   it('extracts a Bearer token case-insensitively', () => {
@@ -12,5 +12,22 @@ describe('bearerToken', () => {
     expect(bearerToken(null)).toBeNull();
     expect(bearerToken('Basic abc')).toBeNull();
     expect(bearerToken('Bearer   ')).toBeNull();
+  });
+});
+
+describe('bingApiKeyHeader', () => {
+  it('returns the header value when present', () => {
+    const headers = new Headers({ 'x-bing-api-key': 'abc123' });
+    expect(bingApiKeyHeader(headers)).toBe('abc123');
+  });
+
+  it('returns null when the header is absent', () => {
+    const headers = new Headers();
+    expect(bingApiKeyHeader(headers)).toBeNull();
+  });
+
+  it('returns null for a whitespace-only header', () => {
+    const headers = new Headers({ 'x-bing-api-key': '   ' });
+    expect(bingApiKeyHeader(headers)).toBeNull();
   });
 });

@@ -6,7 +6,7 @@
  * half. Every failure path lands in `coverage`, never in the numbers.
  */
 import type { ToolResult } from '@advance-labs/mcp-core';
-import { errorMessage } from '@advance-labs/mcp-core';
+import { errorMessage, McpToolError } from '@advance-labs/mcp-core';
 
 import { bingFor, gscFor, type ToolContext } from '../context.js';
 import { jsonResult } from '../gsc/format.js';
@@ -84,6 +84,13 @@ export async function compareEngines(
   return jsonResult(summary, { siteUrl: input.siteUrl, coverage, rows });
 }
 
+/** Inclusive day span of a `YYYY-MM-DD` date range. */
+function daySpan(startDate: string, endDate: string): number {
+  const start = new Date(`${startDate}T00:00:00Z`).getTime();
+  const end = new Date(`${endDate}T00:00:00Z`).getTime();
+  return Math.round((end - start) / 86_400_000) + 1;
+}
+
 /** Split a date range into a baseline half and a current half. */
 function halves(startDate: string, endDate: string): {
   baseline: { startDate: string; endDate: string };
@@ -111,6 +118,16 @@ export async function engineDivergence(
   ctx: ToolContext,
   input: EngineDivergenceInput,
 ): Promise<ToolResult> {
+  const span = daySpan(input.startDate, input.endDate);
+  if (span < 2) {
+    throw new McpToolError(
+      `engine_divergence needs at least a 2-day range because it compares the first half ` +
+        `against the second; received ${input.startDate}..${input.endDate} (${span} day` +
+        `${span === 1 ? '' : 's'}).`,
+      'engine_divergence_range_too_short',
+    );
+  }
+
   const { baseline, current } = halves(input.startDate, input.endDate);
 
   const [baseSides, currentSides] = await Promise.all([
