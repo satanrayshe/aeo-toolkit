@@ -1,4 +1,4 @@
-/** Scoring domain — the keystone shapes produced by `@aeo/scoring`. */
+/** Scoring domain — the keystone shapes produced by `@advance-labs/scoring`. */
 import type { Url } from './crawl.js';
 import type { CrawlResult } from './crawl.js';
 import type { ParsedHtml } from './html.js';
@@ -81,5 +81,16 @@ export interface Rule<TContext = ScoringContext> {
   description: string;
   recommendation: string;
   docsUrl?: string;
+  /**
+   * Optional applicability gate (ADV-175). Return false when this rule has nothing to say
+   * about the page being scored, and the engine drops it entirely — no finding, no weight.
+   *
+   * "Not applicable" is a third state, distinct from both pass and fail. A homepage has no
+   * BreadcrumbList because it is the ROOT of the trail, and is not an Article because it is
+   * not an article; reporting either as failed hands the client two findings to ignore and
+   * teaches them to discount the other 38. Passing them would be equally wrong — it would
+   * claim we checked something we did not.
+   */
+  appliesTo?: (ctx: TContext) => boolean;
   evaluate: (ctx: TContext) => RuleOutcome | Promise<RuleOutcome>;
 }

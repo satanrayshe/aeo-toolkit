@@ -1,6 +1,6 @@
 {
-  "name": "@aeo/llm",
-  "version": "0.1.0",
+  "name": "@advance-labs/llm",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "Provider-agnostic BYOK LLM client (Anthropic, OpenAI, Groq, Perplexity, Vercel AI Gateway) with an injectable fetcher.",
@@ -26,10 +26,10 @@
     "clean": "rimraf dist .turbo"
   },
   "dependencies": {
-    "@aeo/types": "workspace:*"
+    "@advance-labs/types": "workspace:*"
   },
   "devDependencies": {
-    "@aeo/config": "workspace:*",
+    "@advance-labs/config": "workspace:*",
     "@types/node": "^22.10.2",
     "rimraf": "^6.0.1",
     "tsup": "^8.3.5",

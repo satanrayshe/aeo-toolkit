@@ -12,7 +12,7 @@ ever leaves the browser**, and there are no server calls, accounts, or API keys.
 ## 1. Build the store archive
 
 ```bash
-pnpm --filter @aeo/chrome-extension package
+pnpm --filter @advance-labs/chrome-extension package
 ```
 
 This generates the brand icons (`pnpm icons`), runs `vite build` (producing `dist/`),
@@ -35,8 +35,12 @@ The packaged `manifest.json` is generated from
 [`manifest.config.ts`](./manifest.config.ts). Confirm:
 
 - `manifest_version` is `3`.
-- `name` is `AEO/GEO Auditor` and the `description` is store-appropriate
-  (max 132 chars — keep the one-line summary short).
+- `name` is `AEO/GEO Auditor` and the `description` is **at most 132 characters**. The store
+  rejects longer ones. Check it rather than assuming:
+  ```bash
+  node -e "console.log(require('./dist/manifest.json').description.length)"
+  ```
+  (The shipped description was 162 characters until 2026-08-30 and would have been rejected.)
 - `version` is bumped from the previously published version. The store rejects
   re-uploads of an already-published version number. Bump the `version` field in
   [`package.json`](./package.json); `manifest.config.ts` derives the manifest
@@ -101,4 +105,4 @@ The store requires a privacy section. Use these answers:
 4. Submit for review. MV3 extensions that request `<all_urls>` typically receive
    extra scrutiny; the local-only privacy posture above is the key justification.
 5. After approval, bump the `version` in `package.json` for the next release and
-   re-run `pnpm --filter @aeo/chrome-extension package` to produce the next zip.
+   re-run `pnpm --filter @advance-labs/chrome-extension package` to produce the next zip.

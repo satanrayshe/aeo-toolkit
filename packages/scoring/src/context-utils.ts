@@ -13,7 +13,7 @@ import type {
   ScoringContext,
   StructuredDataReport,
   Url,
-} from '@aeo/types';
+} from '@advance-labs/types';
 
 /** The AI bots whose access matters most for answer-engine visibility. */
 export const KEY_AI_BOTS: readonly AiBotName[] = [
@@ -51,6 +51,63 @@ export function longRedirectChains(ctx: ScoringContext, maxHops: number): Url[] 
     if (page.redirectChain.length > maxHops) out.push(page.url);
   }
   return out;
+}
+
+/**
+ * URLs whose redirect chain revisits a URL it has already been to.
+ *
+ * Distinct from {@link longRedirectChains}: a loop is not a long chain. A chain that cycles
+ * never terminates, so hop-count thresholds never fire on it — the request simply fails with
+ * "too many redirects" and the page is invisible to crawlers and users alike.
+ *
+ * Includes the requested URL in the visited set, which catches the self-referential case
+ * (a URL 3xx-ing to itself) that a chain-internal comparison alone would miss.
+ */
+export function redirectLoops(ctx: ScoringContext): Url[] {
+  const out: Url[] = [];
+  for (const page of ctx.crawl.pages) {
+    if (page.redirectChain.length === 0) continue;
+    const seen = new Set<string>([normalizeUrl(page.url)]);
+    for (const hop of page.redirectChain) {
+      const key = normalizeUrl(hop.url);
+      if (seen.has(key)) {
+        out.push(page.url);
+        break;
+      }
+      seen.add(key);
+    }
+  }
+  return out;
+}
+
+/**
+ * Canonical key for comparing two URLs that address the same resource.
+ *
+ * Lowercases the host, drops the fragment, and collapses a bare trailing slash so
+ * `https://Example.com/a/` and `https://example.com/a#x` compare equal. Deliberately KEEPS
+ * the query string: `?a=1` and `?a=2` are usually different resources.
+ *
+ * Falls back to the trimmed input when the value will not parse, so a malformed URL compares
+ * as itself rather than throwing inside a rule.
+ */
+export function normalizeUrl(raw: string, options: { keepFragment?: boolean } = {}): string {
+  const trimmed = raw.trim();
+  try {
+    const u = new URL(trimmed);
+    // Schema.org `@id` values are distinguished BY their fragment — `#organization` vs `#org`
+    // are two different nodes on one page. Dropping it would silently merge them, so callers
+    // comparing identifiers (rather than page addresses) must opt to keep it.
+    if (!options.keepFragment) u.hash = '';
+    if (u.pathname.length > 1 && u.pathname.endsWith('/')) {
+      u.pathname = u.pathname.slice(0, -1);
+    }
+    // A bare origin renders as "https://host/" while "https://host#x" renders without the
+    // slash; unify so the two forms of the same id compare equal.
+    if (u.pathname === '/') u.pathname = '';
+    return u.toString().toLowerCase();
+  } catch {
+    return trimmed.toLowerCase();
+  }
 }
 
 /** True when at least one parsed page or crawled page exists to evaluate. */
@@ -92,3 +149,23 @@ export function isNoindex(page: ParsedHtml): boolean {
   const robots = page.meta.robots?.toLowerCase() ?? '';
   return robots.includes('noindex');
 }
+
+/**
+ * True when this audit covers exactly one page and that page is the site root (ADV-175).
+ *
+ * Used by rules that are meaningful on a deep page but not on a homepage. Deliberately
+ * narrow: in a full-site crawl the homepage sits alongside deep pages, the cross-page rules
+ * already look at all of them, and nothing should be skipped.
+ */
+export function isSingleRootPage(ctx: ScoringContext): boolean {
+  if (ctx.mode !== 'single-page') return false;
+  const page = firstPage(ctx);
+  if (!page) return false;
+  try {
+    const path = new URL(page.url).pathname;
+    return path === '/' || path === '';
+  } catch {
+    return false;
+  }
+}
+

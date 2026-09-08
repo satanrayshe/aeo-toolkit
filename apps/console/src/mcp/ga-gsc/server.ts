@@ -3,7 +3,7 @@
  *
  * `registerGaGscTools(server, ctx)` binds every tool's zod schema + handler onto
  * an `McpServer` (the object `mcp-handler`'s `createMcpHandler` setup callback
- * gives us) via `@aeo/mcp-core#registerTool`. The `ctx` carries the request-scoped
+ * gives us) via `@advance-labs/mcp-core#registerTool`. The `ctx` carries the request-scoped
  * BYOK bearer token, so the route builds a fresh server per request.
  *
  * `buildGaGscRuntime()` assembles the process-shared store + token resolver from
@@ -11,8 +11,8 @@
  * service-role key and any tokens are read only here and never logged.
  */
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { registerTool } from '@aeo/mcp-core';
-import type { TokenStore } from '@aeo/types';
+import { registerTool } from '@advance-labs/mcp-core';
+import type { TokenStore } from '@advance-labs/types';
 
 import { loadConfig, type ServerConfig } from './config.js';
 import {
@@ -29,6 +29,9 @@ import {
   gscCtrGapsShape,
   gscSearchAnalyticsShape,
   gscTopQueriesShape,
+  gscTrafficDropShape,
+  gscCannibalizationShape,
+  gscDecayShape,
 } from './tools/schemas.js';
 import {
   comparePeriodsTool,
@@ -38,13 +41,16 @@ import {
   gscTopQueries,
   listGa4Properties,
   listGscSites,
+  gscTrafficDrop,
+  gscCannibalization,
+  gscDecay,
 } from './tools/handlers.js';
 
 export type { ToolContext } from './tools/context.js';
 export { defaultClientFactory } from './tools/context.js';
 
 /**
- * Register all seven tools onto `server`. The `ctx` is captured per registration;
+ * Register all ten tools onto `server`. The `ctx` is captured per registration;
  * the HTTP route builds a fresh `ctx` (with the request-scoped bearer token) per
  * request and re-registers onto a per-request server instance.
  */
@@ -121,6 +127,44 @@ export function registerGaGscTools(server: McpServer, ctx: ToolContext): void {
       'CTR, weighted position) with absolute and relative change.',
     inputSchema: comparePeriodsShape,
     handler: (input) => comparePeriodsTool(ctx, input),
+  });
+
+  registerTool(server, {
+    name: 'gsc_traffic_drop',
+    title: 'Diagnose a traffic drop',
+    description:
+      'Explain WHY traffic changed between two periods, not just whether it did. Attributes the ' +
+      'click change to individual pages (or queries) and ranks them by how much of the decline ' +
+      'each accounts for, with before/after clicks, impressions and position. Reports gains and ' +
+      'losses separately, so a flat net change cannot hide one page collapsing while another ' +
+      'grows. Use this when someone asks what caused a drop.',
+    inputSchema: gscTrafficDropShape,
+    handler: (input) => gscTrafficDrop(ctx, input),
+  });
+
+  registerTool(server, {
+    name: 'gsc_cannibalization',
+    title: 'Find keyword cannibalization',
+    description:
+      "Find queries that two or more of the site's own pages compete for, splitting clicks " +
+      'between them. Returns each competing page with its clicks, impressions, CTR and position, ' +
+      'plus the best-RANKING page as the natural consolidation target (not merely the one with ' +
+      'the most clicks). Overlap is reported as evidence, not as a fault.',
+    inputSchema: gscCannibalizationShape,
+    handler: (input) => gscCannibalization(ctx, input),
+  });
+
+  registerTool(server, {
+    name: 'gsc_decay',
+    title: 'Detect decaying content',
+    description:
+      'Catch pages bleeding traffic before they fall off page one. Compares a recent window ' +
+      'against the equal-length window immediately before it and returns pages whose clicks ' +
+      'fell past a threshold, flagging whether each also LOST RANK — clicks down at flat rank ' +
+      'suggests seasonality or a SERP change, while clicks down with rank suggests competitors. ' +
+      'Search Console cannot rule out seasonality on its own.',
+    inputSchema: gscDecayShape,
+    handler: (input) => gscDecay(ctx, input),
   });
 }
 

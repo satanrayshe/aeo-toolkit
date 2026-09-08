@@ -1,7 +1,6 @@
 {
-  "name": "@aeo/types",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@advance-labs/types",
+  "version": "0.2.0",
   "type": "module",
   "description": "Shared domain types for the AEO Toolkit — the single source of truth across all packages.",
   "license": "Apache-2.0",
@@ -26,10 +25,19 @@
     "clean": "rimraf dist .turbo"
   },
   "devDependencies": {
-    "@aeo/config": "workspace:*",
+    "@advance-labs/config": "workspace:*",
     "rimraf": "^6.0.1",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
     "vitest": "^3.2.6"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Advance-Labs/aeo-toolkit.git",
+    "directory": "packages/types"
+  },
+  "homepage": "https://github.com/Advance-Labs/aeo-toolkit#readme"
 }

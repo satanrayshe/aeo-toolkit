@@ -11,15 +11,15 @@
 | `/` | Dashboard / tool launcher |
 | `/tools/audit` · `/tools/eeat` · `/tools/llms-txt` · `/tools/chat` · `/tools/graph` | the 5 web tools |
 | `/api/audit/*`, `/api/generate`, `/api/chat`, `/api/auth/google/*`, `/api/graph/*` | tool APIs (Node runtime) |
-| `/api/mcp/ai-visibility`, `/api/mcp/ga-gsc`, `/api/mcp/backlink` | remote MCP servers (via `mcp-handler`) |
+| `/api/mcp/{ai-visibility,ga-gsc,backlink}/mcp` | remote MCP servers (via `mcp-handler`); the trailing `/mcp` is the transport path and is required |
 | `/.well-known/*` | MCP OAuth discovery for Claude.ai connectors |
 | `/api/cron/blogging` | the autonomous blogging agent, run by a **Vercel Cron** (see `vercel.ts`) |
 
-All logic lives in the shared `@aeo/*` packages; this app is the thin composition layer.
+All logic lives in the shared `@advance-labs/*` packages; this app is the thin composition layer.
 
 ## Run
 ```bash
-pnpm --filter @aeo/console dev
+pnpm --filter @advance-labs/console dev
 ```
 
 ## Deploy (single Vercel project)
