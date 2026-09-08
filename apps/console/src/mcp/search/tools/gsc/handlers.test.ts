@@ -55,10 +55,11 @@ function makeCtx(opts: {
   };
   const ga4Factory = vi.fn((_token: string) => ga4);
   const gscFactory = vi.fn((_token: string) => gsc);
-  const clients: ClientFactory = { ga4: ga4Factory, gsc: gscFactory };
+  const clients: ClientFactory = { ga4: ga4Factory, gsc: gscFactory, bing: vi.fn() };
   const { resolver } = fakeResolver(opts.token);
   const ctx: ToolContext = {
     tokens: resolver,
+    bingKeys: {} as unknown as ToolContext['bingKeys'],
     clients,
     userId: 'u1',
     requestToken: opts.requestToken ?? null,
@@ -210,9 +211,11 @@ describe('BYOK request token precedence', () => {
     };
     const ctx: ToolContext = {
       tokens: { resolveAccessToken } as unknown as ToolContext['tokens'],
+      bingKeys: {} as unknown as ToolContext['bingKeys'],
       clients: {
         ga4: () => ga4,
         gsc: () => ({ query: vi.fn(), listSites: vi.fn() }) as unknown as GscLike,
+        bing: vi.fn(),
       },
       userId: 'u1',
       requestToken: 'byok-abc',

@@ -15,6 +15,7 @@ import { registerTool } from '@advance-labs/mcp-core';
 import type { TokenStore } from '@advance-labs/types';
 
 import { loadConfig, type ServerConfig } from './config.js';
+import { BingKeyResolver, InMemoryBingKeyStore } from './auth/bing.js';
 import {
   createDefaultTokenResolver,
   createTokenStore,
@@ -173,6 +174,7 @@ export interface GaGscRuntime {
   config: ServerConfig;
   store: TokenStore;
   tokens: TokenResolver;
+  bingKeys: BingKeyResolver;
 }
 
 /** Build the shared runtime (store + resolver) from the environment, once per process. */
@@ -185,7 +187,12 @@ export function buildGaGscRuntime(env: NodeJS.ProcessEnv = process.env): GaGscRu
     staticAccessToken: config.staticAccessToken,
     store,
   });
-  return { config, store, tokens };
+  // Single-instance / local-dev only, mirroring `store`'s in-memory fallback above.
+  const bingKeys = new BingKeyResolver({
+    store: new InMemoryBingKeyStore(),
+    staticApiKey: config.bing.apiKey,
+  });
+  return { config, store, tokens, bingKeys };
 }
 
 /**
@@ -196,8 +203,10 @@ export function buildGaGscRuntime(env: NodeJS.ProcessEnv = process.env): GaGscRu
 export function buildGaGscContext(runtime: GaGscRuntime, requestToken: string | null): ToolContext {
   return {
     tokens: runtime.tokens,
+    bingKeys: runtime.bingKeys,
     clients: defaultClientFactory,
     userId: DEFAULT_USER_ID,
     requestToken,
+    requestBingKey: null,
   };
 }
