@@ -12,3 +12,9 @@ export {
   type FetchResponse,
   type RequestBingOptions,
 } from './http.js';
+export {
+  BingWebmasterClient,
+  BING_API_BASE,
+  type BingWebmasterClientOptions,
+} from './webmaster.js';
+export type * from './types.js';

@@ -1,0 +1,20 @@
+{
+  "d": [
+    {
+      "Query": "aeo tools",
+      "Clicks": 31,
+      "Impressions": 1840,
+      "AvgClickPosition": 4.2,
+      "AvgImpressionPosition": 8.7,
+      "Date": "/Date(1399100400000-0700)/"
+    },
+    {
+      "Query": "answer engine optimization",
+      "Clicks": 12,
+      "Impressions": 990,
+      "AvgClickPosition": 6.1,
+      "AvgImpressionPosition": 11.4,
+      "Date": "/Date(1399100400000-0700)/"
+    }
+  ]
+}

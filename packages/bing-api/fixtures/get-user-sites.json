@@ -1,0 +1,6 @@
+{
+  "d": [
+    { "Url": "https://example.com/", "IsVerified": true },
+    { "Url": "https://staging.example.com/", "IsVerified": false }
+  ]
+}
