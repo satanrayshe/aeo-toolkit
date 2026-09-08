@@ -92,7 +92,7 @@ export default defineConfig({
       // on `/edit/main/docs/<file>.md`, which is the file's real location on the default branch.
       editLink: { baseUrl: `${REPO}/edit/main/apps/docs/` },
       // Brand: the Advance Labs sphere as logo + favicon, Signal-green accent on the ink ground.
-      // Tokens and rules in ../../docs/BRAND.md; overrides in src/styles/brand.css.
+      // Tokens and rules in ../../brand/README.md; overrides in src/styles/brand.css.
       logo: { src: './public/favicon.png', alt: 'AEO Toolkit' },
       favicon: '/favicon.png',
       customCss: ['./src/styles/brand.css'],
@@ -128,10 +128,7 @@ export default defineConfig({
         },
         {
           label: 'Contributing',
-          items: [
-            { label: 'Conventions', slug: 'conventions' },
-            { label: 'Brand', slug: 'brand' },
-          ],
+          items: [{ label: 'Conventions', slug: 'conventions' }],
         },
         {
           label: 'Background',

@@ -120,7 +120,7 @@ Why it matters for AEO: `FAQPage`/`HowTo` give answer engines pre-extracted Q→
 
 ## 8. Implementation status
 
-**Shipping in this redesign pass:** server-rendered design system (the September 2026 brand, see [`BRAND.md`](BRAND.md)), per-page metadata + canonical, OG
+**Shipping in this redesign pass:** server-rendered design system (the September 2026 brand, see [`brand/README.md`](../brand/README.md)), per-page metadata + canonical, OG
 images, `sitemap.ts`, `robots.ts` (AI bots allowed), `/llms.txt`, Organization/WebSite/SoftwareApplication
 + per-page FAQPage/HowTo/BreadcrumbList JSON-LD, answer-first copy + FAQ blocks on every page, semantic
 HTML, internal-link hub, CWV-conscious rendering.

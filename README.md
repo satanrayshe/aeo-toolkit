@@ -12,7 +12,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-A8F326?style=flat-square&labelColor=0A0A0B)](LICENSE)
 [![Made by Advance Labs](https://img.shields.io/badge/Made%20by-Advance%20Labs-7C3AED?style=flat-square&labelColor=0A0A0B)](https://advancelabs.dev)
-[![Design system](https://img.shields.io/badge/Design-BRAND.md-B6A4FD?style=flat-square&labelColor=0A0A0B)](docs/BRAND.md)
+[![Brand](https://img.shields.io/badge/Brand-guide-B6A4FD?style=flat-square&labelColor=0A0A0B)](brand/README.md)
 
 </div>
 
@@ -146,7 +146,7 @@ aeo-toolkit/
 ├── apps/chrome-extension/
 ├── apps/docs/         # Astro + Starlight docs site (renders ../../docs)
 ├── docs/              # the documentation itself
-└── brand/             # the mark and lockups; guide in docs/BRAND.md
+└── brand/             # the mark, lockups, palette and type (brand/README.md)
 ```
 
 Built with [Turborepo](https://turbo.build) · TypeScript 5 · Vitest · React 19
@@ -157,8 +157,8 @@ Built with [Turborepo](https://turbo.build) · TypeScript 5 · Vitest · React 1
 
 The console follows one visual system: a near-black ground, a single acid-green signal
 colour, mono lab-sheet labels, Syne headlines, and the Advance Labs sphere as the mark. The
-palette, type, tokens and rules are in [`docs/BRAND.md`](docs/BRAND.md); the assets are in
-[`brand/`](brand). Anything a user sees should follow it, and
+palette, type, tokens and rules are in [`brand/README.md`](brand/README.md), with the assets
+beside it. Anything a user sees should follow it, and
 [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md#design-and-brand) says how in code.
 
 ---

@@ -90,7 +90,7 @@ consolidated nine apps into one on purpose.
 
 ## Design and brand
 
-The console's visual system is documented in [`BRAND.md`](BRAND.md); read it before touching
+The console's visual system is documented in [`brand/README.md`](../brand/README.md); read it before touching
 anything a user sees.
 
 - **Use tokens, not hex.** Colours come from the CSS variables in `apps/console/src/app/globals.css`

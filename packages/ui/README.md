@@ -54,5 +54,5 @@ co-located Vitest + Testing Library (jsdom) tests. No stubs.
 ## Brand
 
 The mark and lockups live in [`brand/`](../../brand) and the visual system in
-[`docs/BRAND.md`](../../docs/BRAND.md). The console renders the mark through its own `BrandMark`;
+[`brand/README.md`](../../brand/README.md). The console renders the mark through its own `BrandMark`;
 the old `Logo` / `LogoMark` tile components were removed with the September 2026 redesign.
