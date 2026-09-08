@@ -93,6 +93,9 @@ importers:
       '@advance-labs/backlinks':
         specifier: workspace:*
         version: link:../../packages/backlinks
+      '@advance-labs/bing-api':
+        specifier: workspace:*
+        version: link:../../packages/bing-api
       '@advance-labs/blogging':
         specifier: workspace:*
         version: link:../../packages/blogging
