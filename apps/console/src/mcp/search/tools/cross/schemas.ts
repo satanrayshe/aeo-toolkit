@@ -16,8 +16,14 @@ export const compareEnginesShape = {
     .min(1)
     .optional()
     .describe('Bing site URL when it differs from the GSC property URL.'),
-  startDate: isoDate,
-  endDate: isoDate,
+  startDate: isoDate.describe(
+    'Range start (YYYY-MM-DD). Applies to Google only — Bing\'s Webmaster API accepts no ' +
+      'date range, so Bing rows are always its own unwindowed aggregate.',
+  ),
+  endDate: isoDate.describe(
+    'Range end (YYYY-MM-DD). Applies to Google only — Bing\'s Webmaster API accepts no date ' +
+      'range, so Bing rows are always its own unwindowed aggregate.',
+  ),
   limit: z.number().int().positive().max(1000).default(100).describe('Max merged rows.'),
 } as const;
 

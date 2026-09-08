@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  BING_WINDOW_NOTE,
   buildCoverage,
   mergeEngineRows,
   normalizeBingQueries,
@@ -121,5 +122,21 @@ describe('buildCoverage', () => {
       bing: { rows: null, error: 'down' },
     });
     expect(cov.notes).not.toContain(POSITION_MAPPING_NOTE);
+  });
+
+  it('records the Bing-is-unwindowed note whenever Bing supplied rows', () => {
+    const cov = buildCoverage({
+      google: { rows: [], error: null },
+      bing: { rows: [], error: null },
+    });
+    expect(cov.notes).toContain(BING_WINDOW_NOTE);
+  });
+
+  it('omits the Bing-is-unwindowed note when Bing is unavailable', () => {
+    const cov = buildCoverage({
+      google: { rows: [], error: null },
+      bing: { rows: null, error: 'down' },
+    });
+    expect(cov.notes).not.toContain(BING_WINDOW_NOTE);
   });
 });

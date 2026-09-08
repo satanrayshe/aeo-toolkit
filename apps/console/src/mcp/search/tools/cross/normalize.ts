@@ -55,6 +55,12 @@ export const POSITION_MAPPING_NOTE =
   "Google's `position` measures. Bing's AvgClickPosition is a different metric and " +
   'is not represented in this comparison.';
 
+export const BING_WINDOW_NOTE =
+  "Bing's rows are the Webmaster API's own aggregate and are NOT scoped to " +
+  'startDate/endDate — GetQueryStats accepts no date range. Only the Google rows ' +
+  'honour the requested window; do not read a Google-vs-Bing gap as a change over ' +
+  'that window.';
+
 /** Clicks over impressions, or `null` when there were no impressions. */
 function ratio(clicks: number, impressions: number): number | null {
   return impressions > 0 ? clicks / impressions : null;
@@ -128,7 +134,10 @@ export function buildCoverage(opts: {
       : { available: true, rowCount: side.rows.length, reason: null };
 
   const notes: string[] = [];
-  if (opts.bing.rows !== null) notes.push(POSITION_MAPPING_NOTE);
+  if (opts.bing.rows !== null) {
+    notes.push(POSITION_MAPPING_NOTE);
+    notes.push(BING_WINDOW_NOTE);
+  }
 
   return { google: describe(opts.google), bing: describe(opts.bing), notes };
 }

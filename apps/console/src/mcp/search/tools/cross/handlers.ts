@@ -76,7 +76,8 @@ export async function compareEngines(
 
   const both = rows.filter((row) => row.google !== null && row.bing !== null).length;
   const summary =
-    `${rows.length} queries for ${input.siteUrl} (${input.startDate}..${input.endDate}); ` +
+    `${rows.length} queries for ${input.siteUrl} ` +
+    `(Google ${input.startDate}..${input.endDate}; Bing: unwindowed API aggregate); ` +
     `${both} present on both engines. ` +
     `Google: ${coverage.google.available ? `${coverage.google.rowCount} rows` : `unavailable (${coverage.google.reason ?? ''})`}. ` +
     `Bing: ${coverage.bing.available ? `${coverage.bing.rowCount} rows` : `unavailable (${coverage.bing.reason ?? ''})`}.`;
