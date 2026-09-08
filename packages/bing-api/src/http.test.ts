@@ -92,12 +92,14 @@ describe('requestBing', () => {
 
   it('never puts the api key in the thrown message', async () => {
     const fetcher = async () => fail(401, 'unauthorized');
-    try {
-      await requestBing(fetcher, { baseUrl: BASE, method: 'M', apiKey: 'super-secret' });
-      throw new Error('expected requestBing to reject');
-    } catch (err) {
-      expect((err as Error).message).not.toContain('super-secret');
-      expect((err as BingApiError).body).not.toContain('super-secret');
-    }
+    const err = await requestBing(fetcher, {
+      baseUrl: BASE,
+      method: 'M',
+      apiKey: 'super-secret',
+    }).catch((e: unknown) => e);
+
+    expect(err).toBeInstanceOf(BingApiError);
+    expect((err as BingApiError).message).not.toContain('super-secret');
+    expect((err as BingApiError).body).not.toContain('super-secret');
   });
 });
