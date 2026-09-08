@@ -72,13 +72,27 @@ export async function compareEngines(
 ): Promise<ToolResult> {
   const sides = await fetchBothEngines(ctx, input);
   const coverage = buildCoverage(sides);
-  const rows = mergeEngineRows(sides.google.rows, sides.bing.rows).slice(0, input.limit);
+  const merged = mergeEngineRows(sides.google.rows, sides.bing.rows);
 
-  const both = rows.filter((row) => row.google !== null && row.bing !== null).length;
+  // Combined clicks across whichever engines actually answered for this key — a
+  // missing engine contributes nothing to the sort key, it is never scored as a
+  // zero-click engine. Sorted DESCENDING before slicing so a high-traffic
+  // Bing-only row cannot be silently dropped by insertion order while a
+  // low-traffic Google row survives merely for coming first.
+  const combinedClicks = (row: (typeof merged)[number]): number =>
+    (row.google?.clicks ?? 0) + (row.bing?.clicks ?? 0);
+  const sorted = [...merged].sort((a, b) => combinedClicks(b) - combinedClicks(a));
+
+  // Computed from the FULL merged set, before truncation — the summary must
+  // describe the data, not the slice.
+  const bothTotal = sorted.filter((row) => row.google !== null && row.bing !== null).length;
+  const rows = sorted.slice(0, input.limit);
+
   const summary =
-    `${rows.length} queries for ${input.siteUrl} ` +
+    `${rows.length} of ${sorted.length} merged queries for ${input.siteUrl}, sorted by ` +
+    `combined clicks descending ` +
     `(Google ${input.startDate}..${input.endDate}; Bing: unwindowed API aggregate); ` +
-    `${both} present on both engines. ` +
+    `${bothTotal} of ${sorted.length} present on both engines. ` +
     `Google: ${coverage.google.available ? `${coverage.google.rowCount} rows` : `unavailable (${coverage.google.reason ?? ''})`}. ` +
     `Bing: ${coverage.bing.available ? `${coverage.bing.rowCount} rows` : `unavailable (${coverage.bing.reason ?? ''})`}.`;
 

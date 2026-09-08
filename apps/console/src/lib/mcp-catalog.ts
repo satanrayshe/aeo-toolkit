@@ -152,9 +152,9 @@ export const MCP_SERVERS: readonly McpServerMeta[] = [
   },
   {
     slug: 'ga-gsc',
-    name: 'GA4 + GSC MCP',
+    name: 'Search MCP (Google + Bing)',
     blurb:
-      'Query your own Google Analytics 4 and Search Console data in natural language after connecting your Google account.',
+      'Query your own Google Analytics 4, Search Console, and Bing Webmaster data in natural language, and compare Google against Bing directly, after connecting your accounts.',
     endpoint: mcpEndpoint('ga-gsc'),
     auth: 'google-byok',
     status: 'needs-google',
@@ -162,6 +162,7 @@ export const MCP_SERVERS: readonly McpServerMeta[] = [
       'List my Search Console sites and show the top queries for example.com over the last 28 days.',
       'Find high-impression, low-CTR queries on example.com that need better titles.',
       'Compare Search Console clicks and impressions for the last 28 days vs the prior 28.',
+      'Compare Google and Bing query performance for example.com over the last 28 days — where do they disagree?',
     ],
     tools: [
       {
@@ -213,6 +214,44 @@ export const MCP_SERVERS: readonly McpServerMeta[] = [
         name: 'gsc_decay',
         summary:
           'Catch pages bleeding clicks before they fall off page one, flagging whether each also lost rank — which separates a competitor problem from seasonality.',
+      },
+      {
+        name: 'list_bing_sites',
+        summary:
+          'List the Bing Webmaster Tools sites the connected API key can access.',
+      },
+      {
+        name: 'bing_traffic_stats',
+        summary:
+          "Bing's daily clicks and impressions series for a site, with totals across the series.",
+      },
+      {
+        name: 'bing_top_queries',
+        summary: 'The top search queries for a site on Bing, ranked by clicks.',
+      },
+      {
+        name: 'bing_top_pages',
+        summary: 'The top pages for a site on Bing, ranked by clicks.',
+      },
+      {
+        name: 'bing_query_pages',
+        summary:
+          'The query-to-page pairing on Bing: which pages served a query, or which queries a page served.',
+      },
+      {
+        name: 'bing_index_health',
+        summary:
+          "Bing's crawl stats, crawl issues, and URL submission quota for a site — is Bing crawling and indexing it.",
+      },
+      {
+        name: 'bing_keyword_research',
+        summary:
+          'Keyword impression and broad-match volume around a seed term, from Bing Webmaster. Google Search Console exposes no equivalent data at all — this tool is Bing-only.',
+      },
+      {
+        name: 'compare_engines',
+        summary:
+          'Query rows from Search Console and Bing Webmaster for the same site, merged by query with an explicit coverage block. Only the Google side honours the requested date range — Bing has no date-range parameter, so its rows are its own unwindowed aggregate.',
       },
     ],
   },

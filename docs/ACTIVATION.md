@@ -114,7 +114,7 @@ it lists every tool and the connection steps. In short:
 |--------|-----|------|
 | AI Visibility (5 tools) | `https://aeo.advancelabs.dev/api/mcp/ai-visibility/mcp` | none |
 | Backlink (7 tools) | `https://aeo.advancelabs.dev/api/mcp/backlink/mcp` | none |
-| GA4 + GSC (10 tools) | `https://aeo.advancelabs.dev/api/mcp/ga-gsc/mcp` | Google sign-in (BYOK) |
+| Search — Google + Bing (19 tools) | `https://aeo.advancelabs.dev/api/mcp/ga-gsc/mcp` | Google sign-in (BYOK); Bing key optional |
 
 **Claude.ai:** Settings → Connectors → Add custom connector → paste the URL.
 **Cursor** (`~/.cursor/mcp.json`):
