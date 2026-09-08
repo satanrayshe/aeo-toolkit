@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Shared React design-system components for the AEO Toolkit web apps. Presentational, Tailwind-class based, headless-friendly.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

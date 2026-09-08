@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Pure HTML extraction for the AEO Toolkit — meta/OG/Twitter, headings, images, links, content signals, and raw structured-data blocks. No network.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
