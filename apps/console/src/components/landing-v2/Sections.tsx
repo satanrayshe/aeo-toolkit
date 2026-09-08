@@ -127,7 +127,6 @@ export function CinematicStage(): JSX.Element {
         className="v2-stage-layer relative flex min-h-[calc(100vh-6.75rem)] items-center border-t border-[color:var(--v2-rule)] px-6 py-16 sm:px-10 lg:px-14"
       >
         {/* Commissioned void frame as the act backdrop (Higgsfield Soul Cinema, 2026-09-03). */}
-        {/* eslint-disable-next-line @next/next/no-img-element -- local static backdrop */}
         <img
           src="/story/uncited.webp"
           alt=""
@@ -189,7 +188,6 @@ export function StoryFrame({
 }): JSX.Element {
   return (
     <figure className="relative m-0 h-[28vh] min-h-[220px] overflow-hidden border-y border-[color:var(--v2-rule)] sm:h-[34vh]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- local static asset, parallax-transformed */}
       <img
         src={src}
         alt={alt}

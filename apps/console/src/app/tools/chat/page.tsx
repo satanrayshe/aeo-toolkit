@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import { ChatWorkspace } from '@/components/chat/ChatWorkspace.js';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { Badge, Breadcrumb, Container, GradientText, Reveal, SpotlightCard } from '@/components/ui';
+import { Badge, Breadcrumb, Container, GradientText, Reveal } from '@/components/ui';
 import { breadcrumbSchema, toolBreadcrumbTrail, toolMetadata } from '@/lib/seo';
 
 const SITE_URL = process.env.MCP_PUBLIC_URL ?? 'https://aeo-toolkit-ten.vercel.app';
@@ -145,6 +145,39 @@ export default function ChatToolPage(): JSX.Element {
           <div className="mx-auto w-full max-w-3xl">
             <ChatWorkspace initialConnected={false} />
           </div>
+
+          {/* How it works — kept visible because the HowTo JSON-LD above mirrors these four steps. */}
+          <section aria-labelledby="how-it-works" className="mx-auto w-full max-w-3xl scroll-mt-24">
+            <Reveal>
+              <div className="flex flex-col gap-2 text-center">
+                <span className="eyebrow mx-auto">How it works</span>
+                <h2
+                  id="how-it-works"
+                  className="text-3xl font-semibold tracking-tight text-white sm:text-4xl"
+                >
+                  From Google to answer in four steps
+                </h2>
+              </div>
+            </Reveal>
+            <ol className="mt-8 grid gap-3 sm:grid-cols-2">
+              {HOW_IT_WORKS.map((step, i) => (
+                <Reveal key={step.title} delay={i * 0.04}>
+                  <li className="surface flex h-full gap-4 p-5">
+                    <span
+                      aria-hidden="true"
+                      className="mt-0.5 shrink-0 font-mono text-sm tabular-nums text-slate-500"
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <div className="flex flex-col gap-1.5">
+                      <h3 className="text-base font-medium text-white">{step.title}</h3>
+                      <p className="text-sm leading-relaxed text-slate-400">{step.body}</p>
+                    </div>
+                  </li>
+                </Reveal>
+              ))}
+            </ol>
+          </section>
 
           {/* FAQ */}
           <section aria-labelledby="faq" className="mx-auto w-full max-w-3xl scroll-mt-24">
