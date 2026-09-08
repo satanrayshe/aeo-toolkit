@@ -6,6 +6,7 @@
  * a static `GOOGLE_ACCESS_TOKEN` is supplied for local development, or when the
  * caller presents a request-scoped BYOK bearer token.
  */
+import { BING_API_BASE } from '@advance-labs/bing-api';
 
 export const SERVER_NAME = 'ga-gsc-mcp';
 export const SERVER_VERSION = '0.1.0';
@@ -28,6 +29,12 @@ export interface SupabaseEnv {
   encryptionKey: string | null;
 }
 
+/** Resolved Bing Webmaster configuration. `apiKey` is null when unset — never fatal. */
+export interface BingEnv {
+  apiKey: string | null;
+  baseUrl: string;
+}
+
 export interface ServerConfig {
   /** Google OAuth client config, or `null` when not fully configured. */
   oauth: GoogleOAuthEnv | null;
@@ -43,6 +50,8 @@ export interface ServerConfig {
   supabase: SupabaseEnv | null;
   /** In-process token-bucket rate limit applied to every tool call. */
   rateLimit: { capacity: number; refillPerSec: number };
+  /** Bing Webmaster configuration. `apiKey` is `null` when unset — never fatal. */
+  bing: BingEnv;
 }
 
 /** Read a trimmed, non-empty env var or return `null`. */
@@ -93,6 +102,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
     rateLimit: {
       capacity: intEnv(env, 'MCP_RATE_CAPACITY', 30),
       refillPerSec: intEnv(env, 'MCP_RATE_REFILL_PER_SEC', 5),
+    },
+    bing: {
+      apiKey: optionalEnv(env, 'BING_API_KEY'),
+      baseUrl: optionalEnv(env, 'BING_API_BASE') ?? BING_API_BASE,
     },
   };
 }
