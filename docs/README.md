@@ -9,7 +9,7 @@ description: >-
 ChatGPT, Claude, Perplexity, Gemini — cite your site when answering questions in your domain.
 Traditional SEO gets you ranked on the results page. AEO gets you *quoted* in the answer.
 
-This toolkit automates auditing for that. It is MIT-licensed, TypeScript throughout, and runs
+This toolkit automates auditing for that. It is Apache-2.0-licensed, TypeScript throughout, and runs
 entirely on your own infrastructure if you want it to.
 
 ## Start here

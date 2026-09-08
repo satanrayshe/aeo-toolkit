@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "GA4 Data API + Search Console clients and Google OAuth for the AEO Toolkit. Uses injectable global fetch (no heavy googleapis dependency).",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
