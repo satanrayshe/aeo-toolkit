@@ -1,42 +1,27 @@
 /**
- * Brand mark v2 — a printer's registration mark: the crosshair-in-circle used to align
- * plates on press. Chosen for what it means here: print (the audit, printed), precision
- * (a calibrated instrument), and hitting the target (the citation). Simple authored
- * geometry, monochrome via currentColor with the center dot in the drafting-ink accent,
- * so it works on both the dark shell and paper surfaces.
+ * Brand mark v3 — the Advance Labs mark: the crumpled-paper sphere from advancelabs.dev,
+ * replacing the printer's registration crosshair (v2). The mark is a raster with alpha
+ * (`/advance-labs-mark-256.png`, cropped square), so it renders identically on the dark
+ * shell and on paper surfaces; it no longer takes a color from `currentColor`.
  */
 
 interface BrandMarkProps {
   size?: number;
   className?: string;
-  /** Accent for the center dot; defaults to the Advance Labs violet secondary. */
-  dotColor?: string;
 }
 
-export function BrandMark({
-  size = 24,
-  className,
-  dotColor = '#A78BFA',
-}: BrandMarkProps): React.ReactElement {
+export function BrandMark({ size = 24, className }: BrandMarkProps): React.ReactElement {
   return (
-    <svg
+    <img
+      src="/advance-labs-mark-256.png"
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="none"
+      alt=""
       aria-hidden="true"
-      focusable="false"
+      draggable={false}
       className={className}
-    >
-      <circle cx="12" cy="12" r="7.5" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <circle cx="12" cy="12" r="2.4" fill={dotColor} />
-    </svg>
+      style={{ display: 'inline-block', objectFit: 'contain', flexShrink: 0 }}
+    />
   );
 }
 
