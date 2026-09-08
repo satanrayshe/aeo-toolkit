@@ -278,7 +278,7 @@ export function InstrumentIndexV2(): JSX.Element {
             Work the list. Re-run. <span className="v2-cursive">Get named.</span>
           </h2>
         </div>
-        <p className="v2-label">Five tools · free · MIT</p>
+        <p className="v2-label">Five tools · free · Apache-2.0</p>
       </div>
 
       <ol data-reveal-group className="mt-10 list-none p-0">
@@ -318,7 +318,7 @@ export function InstrumentIndexV2(): JSX.Element {
 
       {/* Verifiable-facts strip — one line, every claim checkable in the repo. */}
       <p data-reveal className="v2-label mt-12">
-        MIT · 6 packages on npm · 800+ tests · 3 MCP servers ·{' '}
+        Apache-2.0 · 6 packages on npm · 800+ tests · 3 MCP servers ·{' '}
         <a
           href="https://github.com/Advance-Labs/aeo-toolkit"
           className="underline hover:text-[color:var(--v2-text)]"

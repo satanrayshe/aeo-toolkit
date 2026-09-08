@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "type": "module",
   "description": "Shared domain types for the AEO Toolkit — the single source of truth across all packages.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

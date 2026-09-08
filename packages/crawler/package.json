@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "type": "module",
   "description": "Polite, bounded HTTP crawler — sitemap-first discovery, link-following BFS, robots.txt, and site-file detection.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

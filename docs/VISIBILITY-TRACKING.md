@@ -20,7 +20,7 @@ systems fit together — so anyone working in the toolkit understands the full r
 > [`Advance-Labs/advance-labs`](https://github.com/Advance-Labs/advance-labs) repo under
 > `scripts/aeo-tracker/` (CLI + canonical, unit-tested logic) and
 > `web/src/app/api/cron/aeo-tracker/` (the Vercel Cron runner). This repo (the toolkit)
-> stays a clean, public, MIT audit suite; the tracker is operational/retainer tooling.
+> stays a clean, public, Apache-2.0 audit suite; the tracker is operational/retainer tooling.
 
 ---
 

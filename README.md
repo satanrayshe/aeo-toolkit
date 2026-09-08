@@ -10,7 +10,7 @@
 ### Rank in ChatGPT, Claude, Perplexity &amp; AI Overviews
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-A8F326?style=flat-square&labelColor=0A0A0B)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-A8F326?style=flat-square&labelColor=0A0A0B)](LICENSE)
 [![Made by Advance Labs](https://img.shields.io/badge/Made%20by-Advance%20Labs-7C3AED?style=flat-square&labelColor=0A0A0B)](https://advancelabs.dev)
 [![Brand](https://img.shields.io/badge/Brand-guide-B6A4FD?style=flat-square&labelColor=0A0A0B)](brand/README.md)
 
