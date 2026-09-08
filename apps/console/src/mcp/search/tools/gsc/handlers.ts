@@ -7,7 +7,7 @@
 import type { ToolResult } from '@advance-labs/mcp-core';
 import type { DateRange } from '@advance-labs/types';
 
-import { ga4For, gscFor, type ToolContext } from './context.js';
+import { ga4For, gscFor, type ToolContext } from '../context.js';
 import { jsonResult, pct } from './format.js';
 import { lastNDays, precedingWindow } from './dates.js';
 import {

@@ -20,7 +20,7 @@ import {
   createTokenStore,
   DEFAULT_USER_ID,
   type TokenResolver,
-} from './auth.js';
+} from './auth/google.js';
 import { defaultClientFactory, type ToolContext } from './tools/context.js';
 import {
   comparePeriodsShape,
@@ -32,7 +32,7 @@ import {
   gscTrafficDropShape,
   gscCannibalizationShape,
   gscDecayShape,
-} from './tools/schemas.js';
+} from './tools/gsc/schemas.js';
 import {
   comparePeriodsTool,
   ga4RunReport,
@@ -44,7 +44,7 @@ import {
   gscTrafficDrop,
   gscCannibalization,
   gscDecay,
-} from './tools/handlers.js';
+} from './tools/gsc/handlers.js';
 
 export type { ToolContext } from './tools/context.js';
 export { defaultClientFactory } from './tools/context.js';

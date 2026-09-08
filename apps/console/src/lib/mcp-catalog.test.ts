@@ -13,7 +13,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { MCP_SERVERS } from './mcp-catalog.js';
+import { MCP_SERVERS, type McpServerMeta } from './mcp-catalog.js';
 
 const API_MCP_DIR = join(process.cwd(), 'src/app/api/mcp');
 
@@ -83,9 +83,18 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
+/**
+ * The `ga-gsc` slug is the published URL segment (kept for backward-compat clients) but the
+ * source directory behind it was renamed to `search` when Bing joined Google there.
+ */
+const SLUG_SOURCE_DIRS: Partial<Record<McpServerMeta['slug'], string>> = {
+  'ga-gsc': 'search',
+};
+
 function registeredToolNames(slug: string): Set<string> {
   const names = new Set<string>();
-  for (const file of sourceFiles(join(process.cwd(), 'src/mcp', slug))) {
+  const sourceDir = SLUG_SOURCE_DIRS[slug as McpServerMeta['slug']] ?? slug;
+  for (const file of sourceFiles(join(process.cwd(), 'src/mcp', sourceDir))) {
     for (const match of readFileSync(file, 'utf8').matchAll(/name:\s*'([a-z0-9]+(?:_[a-z0-9]+)+)'/g)) {
       names.add(match[1] as string);
     }

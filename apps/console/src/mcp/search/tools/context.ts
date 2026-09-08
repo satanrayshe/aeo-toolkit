@@ -7,8 +7,8 @@
  */
 import { Ga4Client, GscClient } from '@advance-labs/google-api';
 import type { GscDimension } from '@advance-labs/types';
-import type { TokenResolver } from '../auth.js';
-import { DEFAULT_USER_ID } from '../auth.js';
+import type { TokenResolver } from '../auth/google.js';
+import { DEFAULT_USER_ID } from '../auth/google.js';
 
 /** Minimal structural surface of the GA4 client a tool needs (for mocking). */
 export interface Ga4Like {
