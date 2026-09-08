@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { BingApiError, requestBing, type FetchResponse } from './http.js';
+import { BingApiError, requestBing, type FetchInit, type FetchResponse } from './http.js';
 
 const BASE = 'https://ssl.bing.com/webmaster/api.svc/json/';
 
@@ -25,7 +25,7 @@ function fail(status: number, body: string): FetchResponse {
 
 describe('requestBing', () => {
   it('injects the apikey and the named method into the URL', async () => {
-    const fetcher = vi.fn(async () => ok({ d: [] }));
+    const fetcher = vi.fn(async (_url: string, _init?: FetchInit) => ok({ d: [] }));
     await requestBing(fetcher, {
       baseUrl: BASE,
       method: 'GetUserSites',
@@ -37,7 +37,7 @@ describe('requestBing', () => {
   });
 
   it('appends params and url-encodes them', async () => {
-    const fetcher = vi.fn(async () => ok({ d: [] }));
+    const fetcher = vi.fn(async (_url: string, _init?: FetchInit) => ok({ d: [] }));
     await requestBing(fetcher, {
       baseUrl: BASE,
       method: 'GetQueryStats',
@@ -50,7 +50,7 @@ describe('requestBing', () => {
   });
 
   it('drops undefined params rather than sending the literal string', async () => {
-    const fetcher = vi.fn(async () => ok({ d: [] }));
+    const fetcher = vi.fn(async (_url: string, _init?: FetchInit) => ok({ d: [] }));
     await requestBing(fetcher, {
       baseUrl: BASE,
       method: 'GetKeywordStats',

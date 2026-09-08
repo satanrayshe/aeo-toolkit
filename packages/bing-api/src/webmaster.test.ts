@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { BingWebmasterClient } from './webmaster.js';
-import type { FetchResponse } from './http.js';
+import type { FetchInit, FetchResponse } from './http.js';
 
 function fixture(name: string): unknown {
   return JSON.parse(readFileSync(new URL(`../fixtures/${name}.json`, import.meta.url), 'utf8'));
@@ -18,7 +18,7 @@ function respond(body: unknown): FetchResponse {
 }
 
 function clientFor(body: unknown) {
-  const fetcher = vi.fn(async () => respond(body));
+  const fetcher = vi.fn(async (_url: string, _init?: FetchInit) => respond(body));
   return { client: new BingWebmasterClient({ apiKey: 'k', fetcher }), fetcher };
 }
 
