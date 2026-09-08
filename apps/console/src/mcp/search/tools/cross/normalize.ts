@@ -16,6 +16,7 @@
  *     comparable.
  */
 import type { BingQueryStat } from '@advance-labs/bing-api';
+import type { GscRow } from '@advance-labs/types';
 
 export type EngineName = 'google' | 'bing';
 
@@ -72,6 +73,22 @@ export function normalizeBingQueries(rows: BingQueryStat[]): EngineRow[] {
     impressions: row.impressions,
     ctr: ratio(row.clicks, row.impressions),
     position: usablePosition(row.avgImpressionPosition),
+  }));
+}
+
+/**
+ * Normalize Google Search Console rows onto the shared shape.
+ *
+ * `ctr` is recomputed from clicks/impressions rather than read off `row.ctr`:
+ * Google supplies `0` for zero impressions, and Rule 1 requires `null` there.
+ */
+export function normalizeGscRows(rows: GscRow[]): EngineRow[] {
+  return rows.map((row) => ({
+    key: row.keys[0] ?? '',
+    clicks: row.clicks,
+    impressions: row.impressions,
+    ctr: ratio(row.clicks, row.impressions),
+    position: usablePosition(row.position),
   }));
 }
 

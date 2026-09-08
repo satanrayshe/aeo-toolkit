@@ -3,6 +3,7 @@ import {
   buildCoverage,
   mergeEngineRows,
   normalizeBingQueries,
+  normalizeGscRows,
   POSITION_MAPPING_NOTE,
   type EngineRow,
 } from './normalize.js';
@@ -32,6 +33,34 @@ describe('normalizeBingQueries', () => {
 
   it('yields a null position when Bing reports 0, which means "no data"', () => {
     const row = normalizeBingQueries([{ ...bingRow, avgImpressionPosition: 0 }])[0]!;
+    expect(row.position).toBeNull();
+  });
+});
+
+const gscRow = {
+  keys: ['aeo tools'],
+  clicks: 10,
+  impressions: 200,
+  ctr: 0.05,
+  position: 8.4,
+};
+
+describe('normalizeGscRows', () => {
+  it('maps keys[0] onto key', () => {
+    expect(normalizeGscRows([gscRow])[0]!.key).toBe('aeo tools');
+  });
+
+  it('computes ctr from clicks over impressions', () => {
+    expect(normalizeGscRows([gscRow])[0]!.ctr).toBeCloseTo(0.05, 10);
+  });
+
+  it('yields a null ctr on zero impressions rather than reading the supplied ctr', () => {
+    const row = normalizeGscRows([{ ...gscRow, clicks: 0, impressions: 0, ctr: 0.5 }])[0]!;
+    expect(row.ctr).toBeNull();
+  });
+
+  it('yields a null position when Google reports 0, which means "no data"', () => {
+    const row = normalizeGscRows([{ ...gscRow, position: 0 }])[0]!;
     expect(row.position).toBeNull();
   });
 });

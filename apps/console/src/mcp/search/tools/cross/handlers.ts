@@ -14,6 +14,7 @@ import {
   buildCoverage,
   mergeEngineRows,
   normalizeBingQueries,
+  normalizeGscRows,
   type EngineRow,
 } from './normalize.js';
 import type { CompareEnginesInput } from './schemas.js';
@@ -38,13 +39,7 @@ export async function fetchBothEngines(
         dimensions: ['query'],
         rowLimit: input.limit,
       });
-      return response.rows.map((row) => ({
-        key: row.keys[0] ?? '',
-        clicks: row.clicks,
-        impressions: row.impressions,
-        ctr: row.impressions > 0 ? row.clicks / row.impressions : null,
-        position: Number.isFinite(row.position) && row.position >= 1 ? row.position : null,
-      }));
+      return normalizeGscRows(response.rows);
     })(),
     (async (): Promise<EngineRow[]> => {
       const bing = await bingFor(ctx);
