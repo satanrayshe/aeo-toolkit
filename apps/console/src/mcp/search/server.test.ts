@@ -3,7 +3,7 @@ import { registerSearchTools } from './server.js';
 
 function collectRegisteredNames(): { names: string[]; server: unknown } {
   const names: string[] = [];
-  const server = { registerTool: (name: string) => void names.push(name) };
+  const server = { server: { registerTool: (name: string) => void names.push(name) } };
   return { names, server };
 }
 

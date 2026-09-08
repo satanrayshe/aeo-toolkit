@@ -79,16 +79,7 @@ export function registerTool<TShape extends ZodRawShape>(
   target: CreatedServer | McpServer,
   def: McpToolDef<TShape>,
 ): void {
-  // Duck-typed rather than `instanceof McpServer`: a bare server-like object
-  // (the real SDK class, or a test double standing in for it) exposes its own
-  // `registerTool`; a `CreatedServer` wrapper does not and carries `.server`
-  // instead. `instanceof` would misclassify a test double built from a
-  // different module instance of the SDK class.
-  const isBareServer =
-    'registerTool' in target && typeof (target as { registerTool?: unknown }).registerTool === 'function';
-  const created: CreatedServer = isBareServer
-    ? { server: target as McpServer }
-    : (target as CreatedServer);
+  const created: CreatedServer = target instanceof McpServer ? { server: target } : target;
   const { server, rateLimiter } = created;
 
   // STUB: the SDK's ToolCallback arg/return types are intentionally widened to
