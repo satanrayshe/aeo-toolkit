@@ -62,8 +62,8 @@ import {
   bingTrafficStats,
   listBingSites,
 } from './tools/bing/handlers.js';
-import { compareEnginesShape, engineDivergenceShape } from './tools/cross/schemas.js';
-import { compareEngines, engineDivergence } from './tools/cross/handlers.js';
+import { compareEnginesShape } from './tools/cross/schemas.js';
+import { compareEngines } from './tools/cross/handlers.js';
 
 export type { ToolContext } from './tools/context.js';
 export { defaultClientFactory } from './tools/context.js';
@@ -269,19 +269,10 @@ export function registerSearchTools(server: McpServer, ctx: ToolContext): void {
     handler: (input) => compareEngines(ctx, input),
   });
 
-  registerTool(server, {
-    name: 'engine_divergence',
-    title: 'Where Google and Bing disagree',
-    description:
-      'Queries whose click trend diverges between Google and Bing, each classified as ' +
-      'google_specific (suspect Google ranking), bing_specific, broad (suspect content ' +
-      'or technical), or insufficient_data. Splits the caller\'s date range into two halves ' +
-      'and compares them, so a 30-day request compares two 15-day windows — the range must ' +
-      'span at least 2 days. Use this to tell a ranking problem from a content problem ' +
-      'before recommending work.',
-    inputSchema: engineDivergenceShape,
-    handler: (input) => engineDivergence(ctx, input),
-  });
+  // `engine_divergence` is deliberately NOT registered. See the docblock on
+  // `engineDivergence` in `./tools/cross/handlers.ts` and on
+  // `./tools/cross/divergence.ts` for why, and what has to be fixed before it
+  // can register again.
 }
 
 /** Compat alias: the server was named for GA4+GSC before Bing joined it. */

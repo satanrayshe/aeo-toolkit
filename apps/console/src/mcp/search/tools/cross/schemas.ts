@@ -27,7 +27,16 @@ export const compareEnginesShape = {
   limit: z.number().int().positive().max(1000).default(100).describe('Max merged rows.'),
 } as const;
 
-/** `engine_divergence({ siteUrl, bingSiteUrl?, startDate, endDate, threshold, minClicks })`. */
+/**
+ * `engine_divergence({ siteUrl, bingSiteUrl?, startDate, endDate, threshold, minClicks })`.
+ *
+ * UNREGISTERED — kept only because `engineDivergence` (`./handlers.ts`) still
+ * references it and stays compiled/tested. Nothing exposes this schema to an
+ * agent right now, so its inherited `startDate`/`endDate` "applies to Google
+ * only" description (from spreading `compareEnginesShape` below) describes no
+ * live tool. See the docblock on `engineDivergence` in `./handlers.ts` for why
+ * it is cut and what must be fixed before it registers again.
+ */
 export const engineDivergenceShape = {
   ...compareEnginesShape,
   threshold: z

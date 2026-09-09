@@ -11,6 +11,21 @@
  * 100% drop from two clicks is noise; classifying it would manufacture a finding,
  * and a manufactured finding is worse than a missing one because it is
  * indistinguishable from a real one downstream.
+ *
+ * NOT CURRENTLY REGISTERED as a tool. `engine_divergence` (the tool built on this
+ * classifier, in `./handlers.ts`) is cut from the server pending a live Bing
+ * Webmaster API key, because `GetQueryStats(siteUrl)` takes NO date parameter:
+ * `engine_divergence` calls the same fetch twice differing only in dates, Bing
+ * returns identical data for both halves, `bingDelta` is identically 0, and
+ * `broad`/`bing_specific` become unreachable — every Google decline would report
+ * as `google_specific` regardless of what actually happened on Bing. `verify:bing`
+ * (`packages/bing-api/scripts/verify.mjs`) prints `maxRowsForOneQuery`, which
+ * settles whether Bing's query stats can be bucketed per-date at all; that result
+ * is what unblocks re-registering this. This module's classifier logic itself is
+ * NOT the defect — the defect is upstream, in what `engineDivergence` feeds it. Do
+ * not re-register `engine_divergence` without first reading its own docblock in
+ * `./handlers.ts`, which names a second, independent defect that must also be
+ * fixed first.
  */
 
 export type DivergenceClass =

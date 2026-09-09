@@ -128,6 +128,35 @@ function halves(startDate: string, endDate: string): {
  * Runs `compare_engines`' fetch twice, once per half of the range, then classifies
  * every key. Rows classified `insufficient_data` are counted but not listed: they
  * are the majority of any long tail, and listing them buries the real findings.
+ *
+ * NOT CURRENTLY REGISTERED as a tool (see `server.ts`) — cut pending a live Bing
+ * Webmaster API key, for TWO independent reasons. Both must be fixed before this
+ * is safe to register again:
+ *
+ *  1. `fetchBothEngines` calls Bing's `getQueryStats(siteUrl)`, which takes NO
+ *     date parameter. This function calls it twice — once for `baseline`, once
+ *     for `current` — expecting two different windows, but Bing returns the
+ *     SAME unwindowed aggregate both times. `bingDelta` (via `fractionalDelta`)
+ *     is therefore identically 0 for every key, which makes `broad` and
+ *     `bing_specific` structurally unreachable: every real Google decline would
+ *     misclassify as `google_specific` regardless of what actually happened on
+ *     Bing. `verify:bing` (`packages/bing-api/scripts/verify.mjs`) prints
+ *     `maxRowsForOneQuery`; a value `> 1` with `distinctDates > 1` would mean
+ *     Bing's query stats CAN be bucketed per-date, which is what would unblock
+ *     this — but that has never been checked against a live key.
+ *
+ *  2. Independently of (1): `gBase`/`gNow`/`bBase`/`bNow` below default a
+ *     missing row to `?? 0`. `index()` builds its map from `rows ?? []`, so
+ *     when an engine fails outright for one half (`baseSides.bing.rows` or
+ *     `currentSides.bing.rows` is `null`), every key's clicks for that half
+ *     silently becomes `0` — indistinguishable from Bing genuinely reporting
+ *     zero clicks. That zero then feeds `fractionalDelta` and
+ *     `classifyDivergence`, which can manufacture a confident `bing_specific`
+ *     or `broad` verdict out of an API error rather than real data. This is
+ *     the same zero-fill class of bug `compare_engines`/`normalize.ts` were
+ *     built to ban; this function does not yet honour that ban. Fixing it
+ *     means threading `coverage`-style per-half availability through the
+ *     classification instead of defaulting to `0`.
  */
 export async function engineDivergence(
   ctx: ToolContext,

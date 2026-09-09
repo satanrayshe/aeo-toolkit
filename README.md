@@ -20,7 +20,7 @@
 Point the auditor at a URL and it returns a weighted, per-rule report in a few seconds.
 
 Those five are the browser tools. The full suite is **ten**: these five, plus three
-MCP servers (`ai-visibility`, `backlink`, `ga-gsc`) exposing 31 tools to Claude or any MCP
+MCP servers (`ai-visibility`, `backlink`, `ga-gsc`) exposing 30 tools to Claude or any MCP
 client, plus a scheduled content agent ([`@advance-labs/blogging`](packages/blogging)) and the
 [Chrome extension](apps/chrome-extension). See [`docs/reference/tools.md`](docs/reference/tools.md)
 for the full map.

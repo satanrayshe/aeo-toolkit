@@ -1,7 +1,7 @@
 ---
 title: Tool reference
 description: >-
-  All ten tools — five browser tools, three MCP servers with 31 tools, a content agent, and the Chrome extension — and the routes behind them.
+  All ten tools — five browser tools, three MCP servers with 30 tools, a content agent, and the Chrome extension — and the routes behind them.
 ---
 
 The suite is **ten tools**, delivered from **two deployables**: a single Next.js app
@@ -29,7 +29,7 @@ in the console with a matching route handler.
 ## MCP servers — 3
 
 Served from the console as Streamable-HTTP route handlers via the `mcp-handler` adapter, with OAuth
-discovery under `/.well-known/`. **31 tools total.** The connection page is [`/mcp`](https://advancelabs.dev/mcp).
+discovery under `/.well-known/`. **30 tools total.** The connection page is [`/mcp`](https://advancelabs.dev/mcp).
 Every tool on every server is **read-only** — none calls a write method on any upstream API.
 
 | Server | Endpoint | Auth | Tools |
@@ -41,7 +41,7 @@ Every tool on every server is **read-only** — none calls a write method on any
 The search server was `GA4 + GSC` at `/api/mcp/ga-gsc/mcp`; that path still works as a compatibility
 alias so existing client configs need no change, but new configs should point at `/api/mcp/search/mcp`.
 
-### Search server — 19 tools
+### Search server — 18 tools
 
 | Tool | Engine | Notes |
 |---|---|---|
@@ -63,12 +63,18 @@ alias so existing client configs need no change, but new configs should point at
 | `bing_index_health` | Bing | crawl stats, crawl issues, submission quota |
 | `bing_keyword_research` | Bing | no Google Search Console equivalent exists |
 | `compare_engines` | Google + Bing | merged rows with an explicit coverage block |
-| `engine_divergence` | Google + Bing | classifies each query as `google_specific`, `bing_specific`, `broad`, or `insufficient_data` |
 
 Bing authentication is BYOK via an `X-Bing-Api-Key` request header, or a static `BING_API_KEY`
 environment variable as a fallback. A missing Bing key does not fail the server: Bing tools return
 their own credential error, but the ten Google tools keep working — the server degrades to
 Google-only rather than failing outright.
+
+> `engine_divergence` (comparing Google's and Bing's click trends to tell a ranking problem from
+> a content problem) was built but is **not registered**. Bing's `GetQueryStats` takes no date
+> parameter, so the tool's two-half comparison would see identical Bing data both times and could
+> never classify a Bing-specific or broad decline correctly. The code is preserved, tested, and
+> documented in `apps/console/src/mcp/search/tools/cross/handlers.ts` and `divergence.ts` pending
+> a live Bing key to settle whether Bing's stats can be bucketed per date at all.
 
 ### Skills
 

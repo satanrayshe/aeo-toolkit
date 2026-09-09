@@ -8,10 +8,10 @@ function collectRegisteredNames(): { names: string[]; server: unknown } {
 }
 
 describe('registerSearchTools', () => {
-  it('registers exactly nineteen tools', () => {
+  it('registers exactly eighteen tools', () => {
     const { names, server } = collectRegisteredNames();
     registerSearchTools(server as never, {} as never);
-    expect(names).toHaveLength(19);
+    expect(names).toHaveLength(18);
   });
 
   it('keeps every existing GSC tool name unchanged', () => {
@@ -33,7 +33,7 @@ describe('registerSearchTools', () => {
     }
   });
 
-  it('registers the seven Bing tools and the two cross tools', () => {
+  it('registers the seven Bing tools and the one cross tool', () => {
     const { names, server } = collectRegisteredNames();
     registerSearchTools(server as never, {} as never);
     for (const name of [
@@ -45,10 +45,15 @@ describe('registerSearchTools', () => {
       'bing_index_health',
       'bing_keyword_research',
       'compare_engines',
-      'engine_divergence',
     ]) {
       expect(names).toContain(name);
     }
+  });
+
+  it('does NOT register engine_divergence — cut, not shipped, pending a live Bing key', () => {
+    const { names, server } = collectRegisteredNames();
+    registerSearchTools(server as never, {} as never);
+    expect(names).not.toContain('engine_divergence');
   });
 
   it('registers no tool whose name implies a write', () => {
