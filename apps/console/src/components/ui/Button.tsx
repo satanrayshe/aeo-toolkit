@@ -10,7 +10,7 @@ const BASE =
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    'text-white shadow-glow bg-[linear-gradient(100deg,#6366F1,#8B5CF6_55%,#22D3EE)] hover:brightness-110 active:brightness-95',
+    'text-[#0c0f05] shadow-glow border border-[#dcff8c]/60 bg-[linear-gradient(180deg,#c6ff5c,#a8f326)] hover:brightness-110 active:brightness-95',
   secondary:
     'text-white border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/25',
   ghost: 'text-slate-300 hover:text-white hover:bg-white/[0.06]',

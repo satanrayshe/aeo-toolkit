@@ -121,7 +121,7 @@ function ChatBubble({ turn }: { turn: ChatTurn }): JSX.Element {
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[linear-gradient(135deg,#6366F1,#22D3EE)] text-[11px] font-bold text-white"
+          className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[linear-gradient(135deg,#7C3AED,#A8F326)] text-[11px] font-bold text-white"
         >
           AI
         </span>
