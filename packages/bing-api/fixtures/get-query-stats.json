@@ -1,20 +1,49 @@
 {
   "d": [
     {
-      "Query": "aeo tools",
-      "Clicks": 31,
-      "Impressions": 1840,
-      "AvgClickPosition": 4.2,
-      "AvgImpressionPosition": 8.7,
-      "Date": "/Date(1399100400000-0700)/"
+      "__type": "QueryStats:#Microsoft.Bing.Webmaster.Api",
+      "AvgClickPosition": -1,
+      "AvgImpressionPosition": 6,
+      "Clicks": 0,
+      "Date": "/Date(1784851200000)/",
+      "Impressions": 4,
+      "Query": "example brand"
     },
     {
-      "Query": "answer engine optimization",
-      "Clicks": 12,
-      "Impressions": 990,
-      "AvgClickPosition": 6.1,
-      "AvgImpressionPosition": 11.4,
-      "Date": "/Date(1399100400000-0700)/"
+      "__type": "QueryStats:#Microsoft.Bing.Webmaster.Api",
+      "AvgClickPosition": -1,
+      "AvgImpressionPosition": 6,
+      "Clicks": 0,
+      "Date": "/Date(1785456000000)/",
+      "Impressions": 2,
+      "Query": "example brand"
+    },
+    {
+      "__type": "QueryStats:#Microsoft.Bing.Webmaster.Api",
+      "AvgClickPosition": -1,
+      "AvgImpressionPosition": 6,
+      "Clicks": 0,
+      "Date": "/Date(1787270400000)/",
+      "Impressions": 1,
+      "Query": "example brand"
+    },
+    {
+      "__type": "QueryStats:#Microsoft.Bing.Webmaster.Api",
+      "AvgClickPosition": 2.5,
+      "AvgImpressionPosition": 4,
+      "Clicks": 3,
+      "Date": "/Date(1784851200000)/",
+      "Impressions": 20,
+      "Query": "example guide"
+    },
+    {
+      "__type": "QueryStats:#Microsoft.Bing.Webmaster.Api",
+      "AvgClickPosition": -1,
+      "AvgImpressionPosition": 1,
+      "Clicks": 0,
+      "Date": "/Date(1784851200000)/",
+      "Impressions": 3,
+      "Query": "example long tail query"
     }
   ]
 }

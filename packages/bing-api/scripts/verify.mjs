@@ -12,27 +12,29 @@
  * non-zero with a clear message naming whichever is missing, before making
  * any request.
  *
- * TWO OPEN QUESTIONS THIS SCRIPT SETTLES, because our fixtures in
- * `packages/bing-api/fixtures/` were written BY HAND from documented field
- * names — they are guesses about Bing's response shape, not real captures:
+ * BOTH QUESTIONS THIS SCRIPT EXISTED TO SETTLE ARE NOW SETTLED (2026-09-09,
+ * against a live key on a real verified site). The answers are recorded in the
+ * fixtures and asserted in `webmaster.test.ts`:
  *
- *  1. Does `GetQueryStats` return one aggregate row per query, or one row per
- *     (query x date)? This decides whether per-date bucketing of query stats
- *     is even possible. Look at the "query-stats shape" block below:
- *       - `maxRowsForOneQuery === 1` -> one aggregate per query; per-date
- *         bucketing is impossible with this method.
- *       - `maxRowsForOneQuery > 1` with `distinctDates > 1` -> Bing does
- *         return per-(query x date) rows; bucketing is viable.
+ *  1. `GetQueryStats` returns one row per (query x date), NOT one aggregate per
+ *     query: `maxRowsForOneQuery=3` across `distinctDates=6`. Per-date bucketing is
+ *     therefore possible, which is what `engine_divergence` now relies on.
+ *  2. `GetPageStats` keys the page URL under `Query`, not `Url`. It reuses the
+ *     QueryStats wire type outright and emits no `Url` field at all. The same holds
+ *     for `GetQueryPageStats`. The old `||` fallback across both spellings is gone.
  *
- *  2. Does `GetPageStats` key the page URL under `Query` or `Url`?
- *     `toPageStats` (`webmaster.ts`) currently guesses with a `||` fallback
- *     across both spellings. The raw `GetPageStats` dump below shows Bing's
- *     actual field name directly, before our normalization gets a chance to
- *     paper over it.
+ * Two further facts the hand-written fixtures had wrong, now captured:
  *
- * Both raw dumps also show Bing's real WCF date strings (e.g.
- * `/Date(1399100400000-0700)/`) as Bing actually sends them, rather than our
- * parsed/mapped interpretation of them.
+ *  - Live WCF dates arrive with NO timezone offset (`/Date(1784851200000)/`), not
+ *    the offset-bearing form the docs show. `dates.ts` never trusted the offset, so
+ *    this was already handled.
+ *  - `AvgClickPosition` is `-1` on every zero-click row. It is a sentinel, not a
+ *    position, and `positionOrNull` in `webmaster.ts` now maps it to `null` at the
+ *    client boundary.
+ *
+ * The script remains useful as a regression check: re-run it after touching
+ * `webmaster.ts` or `dates.ts` to confirm Bing has not changed shape underneath us.
+ * The raw dumps below are what make a shape change visible.
  */
 import { BingWebmasterClient, requestBing, defaultFetcher, BING_API_BASE } from '../dist/index.js';
 

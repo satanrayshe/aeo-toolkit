@@ -23,29 +23,75 @@ function clientFor(body: unknown) {
 }
 
 describe('BingWebmasterClient', () => {
-  it('listSites maps Url/IsVerified', async () => {
+  it('listSites maps Url/IsVerified and drops the verification secrets', async () => {
     const { client } = clientFor(fixture('get-user-sites'));
-    await expect(client.listSites()).resolves.toEqual([
+    const sites = await client.listSites();
+    expect(sites).toEqual([
       { url: 'https://example.com/', isVerified: true },
-      { url: 'https://staging.example.com/', isVerified: false },
+      { url: 'https://docs.example.com/', isVerified: true },
     ]);
+    // The live payload carries AuthenticationCode and DnsVerificationCode. They are
+    // site-verification credentials and must not survive into our shape.
+    for (const site of sites) {
+      expect(Object.keys(site).sort()).toEqual(['isVerified', 'url']);
+    }
   });
 
   it('getRankAndTrafficStats converts WCF dates to ISO 8601', async () => {
     const { client } = clientFor(fixture('get-rank-and-traffic-stats'));
     const rows = await client.getRankAndTrafficStats('https://example.com/');
+    // Live Bing sends `/Date(1780531200000)/` with NO timezone offset, unlike the
+    // offset-bearing form the docs show. Verified 2026-09-09.
     expect(rows[0]).toEqual({
-      date: '2014-05-03T07:00:00.000Z',
-      clicks: 120,
-      impressions: 4300,
+      date: '2026-06-04T00:00:00.000Z',
+      clicks: 0,
+      impressions: 0,
     });
   });
 
   it('getQueryStats keeps BOTH position fields distinct', async () => {
     const { client } = clientFor(fixture('get-query-stats'));
     const rows = await client.getQueryStats('https://example.com/');
-    expect(rows[0]?.avgClickPosition).toBe(4.2);
-    expect(rows[0]?.avgImpressionPosition).toBe(8.7);
+    const clicked = rows.find((row) => row.clicks > 0);
+    expect(clicked?.avgClickPosition).toBe(2.5);
+    expect(clicked?.avgImpressionPosition).toBe(4);
+  });
+
+  it("normalizes Bing's -1 position sentinel to null, never to a number", async () => {
+    const { client } = clientFor(fixture('get-query-stats'));
+    const rows = await client.getQueryStats('https://example.com/');
+    const zeroClick = rows.filter((row) => row.clicks === 0);
+    expect(zeroClick.length).toBeGreaterThan(0);
+    for (const row of zeroClick) {
+      // -1 is what Bing actually sends here. It is not a position and must never
+      // reach a caller as one.
+      expect(row.avgClickPosition).toBeNull();
+    }
+    // A real impression position on the same rows survives untouched.
+    expect(zeroClick[0]?.avgImpressionPosition).toBe(6);
+  });
+
+  it('returns per-(query x date) rows, so a query can repeat across dates', async () => {
+    const { client } = clientFor(fixture('get-query-stats'));
+    const rows = await client.getQueryStats('https://example.com/');
+    const brand = rows.filter((row) => row.query === 'example brand');
+    // Verified live 2026-09-09: maxRowsForOneQuery=3 across distinctDates=6. This
+    // is what makes client-side date bucketing possible despite GetQueryStats
+    // accepting no date parameter.
+    expect(brand.length).toBe(3);
+    expect(new Set(brand.map((row) => row.date)).size).toBe(3);
+    for (const row of brand) expect(row.date).not.toBeNull();
+  });
+
+  it('getPageStats reads the page URL from Query, the field Bing actually sends', async () => {
+    const { client } = clientFor(fixture('get-page-stats'));
+    const rows = await client.getPageStats('https://example.com/');
+    // Bing reuses the QueryStats wire type for page stats and emits no `Url`
+    // field at all. Verified live 2026-09-09 on GetPageStats and GetQueryPageStats.
+    expect(rows[0]?.page).toBe('https://example.com/');
+    expect(rows[1]?.page).toBe('https://example.com/guides/how-to');
+    expect(rows[0]?.avgClickPosition).toBeNull();
+    expect(rows[1]?.avgClickPosition).toBe(3);
   });
 
   it('sends the siteUrl parameter', async () => {

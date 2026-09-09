@@ -1,6 +1,16 @@
 {
   "d": [
-    { "Date": "/Date(1399100400000-0700)/", "Clicks": 120, "Impressions": 4300 },
-    { "Date": "/Date(1399186800000-0700)/", "Clicks": 98, "Impressions": 4100 }
+    {
+      "__type": "RankAndTrafficStats:#Microsoft.Bing.Webmaster.Api",
+      "Clicks": 0,
+      "Date": "/Date(1780531200000)/",
+      "Impressions": 0
+    },
+    {
+      "__type": "RankAndTrafficStats:#Microsoft.Bing.Webmaster.Api",
+      "Clicks": 2,
+      "Date": "/Date(1780617600000)/",
+      "Impressions": 31
+    }
   ]
 }

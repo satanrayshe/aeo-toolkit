@@ -169,31 +169,49 @@ export class BingWebmasterClient {
   }
 }
 
+/**
+ * Bing's position sentinel, normalized away at the client boundary.
+ *
+ * A zero-click row carries `AvgClickPosition: -1` — verified live on 2026-09-09
+ * against `GetQueryStats`, `GetPageStats` and `GetQueryPageStats`, where every
+ * row with `Clicks: 0` had `-1`. `-1` is not a position: a real SERP position is
+ * always >= 1. Passed through as a number it reads to a consuming agent as a
+ * genuine ranking, which is the failure this normalization exists to prevent.
+ *
+ * Applied to BOTH position fields, not just the click one: the same `>= 1` truth
+ * holds for impression position, and a sentinel that only some fields normalize
+ * is worse than one no field normalizes.
+ */
+function positionOrNull(value: unknown): number | null {
+  const n = asNumber(value);
+  return Number.isFinite(n) && n >= 1 ? n : null;
+}
+
 function toQueryStats(rows: Record<string, unknown>[]): BingQueryStat[] {
   return rows.map((row) => ({
     query: asString(row['Query']),
     clicks: asNumber(row['Clicks']),
     impressions: asNumber(row['Impressions']),
-    avgClickPosition: asNumber(row['AvgClickPosition']),
-    avgImpressionPosition: asNumber(row['AvgImpressionPosition']),
+    avgClickPosition: positionOrNull(row['AvgClickPosition']),
+    avgImpressionPosition: positionOrNull(row['AvgImpressionPosition']),
     date: isoDateOrNull(row, 'Date'),
   }));
 }
 
 function toPageStats(rows: Record<string, unknown>[]): BingPageStat[] {
   return rows.map((row) => ({
-    // Bing is inconsistent about which field carries the page URL across the
-    // methods that return this shape (GetPageStats vs GetQueryPageStats) — the
-    // `||` fallback covers both spellings so neither shape yields a silently
-    // empty page key. NOT yet confirmed against live data: `verify:bing`
-    // dumps the raw GetPageStats payload so an operator can settle which
-    // field is real. Until then the `||` covers both spellings rather than
-    // guessing one.
-    page: asString(row['Query']) || asString(row['Url']),
+    // CONFIRMED live 2026-09-09: Bing carries the page URL under `Query`, for
+    // both `GetPageStats` and `GetQueryPageStats`. Both reuse the QueryStats
+    // wire type verbatim (`__type: "QueryStats:#Microsoft.Bing.Webmaster.Api"`)
+    // and neither emits a `Url` field at all. The previous `|| asString(row['Url'])`
+    // fallback was a guess covering a spelling Bing never sends; it is removed
+    // rather than kept as dead defence, so that a future shape change fails
+    // visibly instead of silently resolving to an empty page key.
+    page: asString(row['Query']),
     clicks: asNumber(row['Clicks']),
     impressions: asNumber(row['Impressions']),
-    avgClickPosition: asNumber(row['AvgClickPosition']),
-    avgImpressionPosition: asNumber(row['AvgImpressionPosition']),
+    avgClickPosition: positionOrNull(row['AvgClickPosition']),
+    avgImpressionPosition: positionOrNull(row['AvgImpressionPosition']),
   }));
 }
 

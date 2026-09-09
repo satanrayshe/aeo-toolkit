@@ -18,8 +18,16 @@ export interface BingQueryStat {
   query: string;
   clicks: number;
   impressions: number;
-  avgClickPosition: number;
-  avgImpressionPosition: number;
+  /**
+   * `null` when Bing reported no usable position. Bing's wire sentinel for this is
+   * `-1` (verified live 2026-09-09: every zero-click row carries
+   * `AvgClickPosition: -1`), which is not a position and must never reach a caller
+   * as one. Normalized at the client boundary so no consumer has to know the
+   * sentinel exists.
+   */
+  avgClickPosition: number | null;
+  /** `null` when Bing reported no usable position. See `avgClickPosition`. */
+  avgImpressionPosition: number | null;
   date: string | null;
 }
 
@@ -28,8 +36,10 @@ export interface BingPageStat {
   page: string;
   clicks: number;
   impressions: number;
-  avgClickPosition: number;
-  avgImpressionPosition: number;
+  /** `null` when Bing reported no usable position. See `BingQueryStat`. */
+  avgClickPosition: number | null;
+  /** `null` when Bing reported no usable position. See `BingQueryStat`. */
+  avgImpressionPosition: number | null;
 }
 
 /** From `GetCrawlStats`. */
