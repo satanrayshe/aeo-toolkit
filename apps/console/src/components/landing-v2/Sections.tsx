@@ -153,7 +153,7 @@ export function CinematicStage(): JSX.Element {
             ))}
           </div>
           {/* The answer pops in from the side once the resolve lands. */}
-          <div data-story-specimen className="flex flex-col items-center gap-4 lg:items-end">
+          <div data-story-specimen className="flex min-w-0 flex-col items-center gap-4 lg:items-end">
             <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
               02 · Know — sixty seconds later
             </p>

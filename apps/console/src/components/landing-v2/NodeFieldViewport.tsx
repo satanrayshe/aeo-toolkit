@@ -213,7 +213,7 @@ export function NodeFieldViewport(): React.ReactElement {
 
     // Query labels: DOM chips tracking the projected screen position of a probe's
     // source node while it fires.
-    type QueryLabel = { el: HTMLDivElement; node: number; life: number; ttl: number };
+    type QueryLabel = { el: HTMLDivElement; node: number; life: number; ttl: number; width: number };
     const labels: QueryLabel[] = [];
     const labelPool: HTMLDivElement[] = [];
     for (let i = 0; i < LABEL_COUNT; i += 1) {
@@ -250,7 +250,7 @@ export function NodeFieldViewport(): React.ReactElement {
         if (el && Math.random() < 0.55) {
           queryCursor = (queryCursor + 1) % QUERIES.length;
           el.textContent = QUERIES[queryCursor] ?? '';
-          labels.push({ el, node: probeNode[i] ?? 0, life: 0, ttl: 150 });
+          labels.push({ el, node: probeNode[i] ?? 0, life: 0, ttl: 150, width: el.offsetWidth });
         }
         return;
       }
@@ -324,12 +324,14 @@ export function NodeFieldViewport(): React.ReactElement {
         worldV.fromArray(positions, label.node * 3).applyMatrix4(group.matrixWorld).project(camera);
         const x = (worldV.x * 0.5 + 0.5) * w;
         const y = (-worldV.y * 0.5 + 0.5) * h;
-        // Behind the camera, off-canvas, or too close to the right edge to fit the
-        // chip: hide rather than clip mid-word.
-        const visible = worldV.z < 1 && x > 8 && x < w - 220 && y > 24 && y < h - 12;
+        // Behind the camera or off-canvas: hide rather than smear. Otherwise clamp the
+        // chip inside the field by its measured width so it never clips mid-word —
+        // this is what keeps chips legible on narrow (mobile) hosts too.
+        const visible = worldV.z < 1 && x > 8 && x < w - 24 && y > 24 && y < h - 12;
         const ramp = Math.min(label.life / 20, (label.ttl - label.life) / 30, 1);
+        const lx = Math.min(x + 10, Math.max(8, w - label.width - 10));
         label.el.style.opacity = visible ? String(0.9 * ramp) : '0';
-        label.el.style.transform = `translate(${Math.round(x + 10)}px, ${Math.round(y - 18)}px)`;
+        label.el.style.transform = `translate(${Math.round(lx)}px, ${Math.round(y - 18)}px)`;
       }
     };
     // ────────────────────────────────────────────────────────────────────────────
@@ -340,6 +342,9 @@ export function NodeFieldViewport(): React.ReactElement {
       if (w === 0 || h === 0) return;
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
+      // Portrait frustums are narrower than the cloud: back the camera off so the
+      // field fits the frame instead of clipping at the edges (phones, narrow columns).
+      camera.position.z = camera.aspect < 1 ? Math.min(4.6, 2.75 / Math.max(camera.aspect, 0.55)) : 2.75;
       camera.updateProjectionMatrix();
     };
     resize();
