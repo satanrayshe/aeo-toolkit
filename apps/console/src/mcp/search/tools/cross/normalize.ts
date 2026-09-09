@@ -66,8 +66,14 @@ function ratio(clicks: number, impressions: number): number | null {
   return impressions > 0 ? clicks / impressions : null;
 }
 
-/** Bing reports 0 for "no position data"; a real position is always >= 1. */
-function usablePosition(value: number): number | null {
+/**
+ * Bing's sentinel for "no position data" is `-1`, not 0 — verified against the live
+ * Webmaster API on 2026-09-09, where every zero-click row carried
+ * `AvgClickPosition: -1`. The `>= 1` test rejects both spellings, so this guard was
+ * already correct; only the stated reason was wrong. A real position is always >= 1.
+ */
+function usablePosition(value: number | null): number | null {
+  if (value === null) return null;
   return Number.isFinite(value) && value >= 1 ? value : null;
 }
 
@@ -140,4 +146,57 @@ export function buildCoverage(opts: {
   }
 
   return { google: describe(opts.google), bing: describe(opts.bing), notes };
+}
+
+/**
+ * Bucket Bing query rows into a date window and aggregate to one row per query.
+ *
+ * WHY THIS EXISTS: `GetQueryStats(siteUrl)` accepts no date parameter, so the
+ * window cannot be pushed to the API. It CAN be applied here, because Bing returns
+ * one row per (query x date) rather than one aggregate per query — verified live on
+ * 2026-09-09 (`maxRowsForOneQuery=3` across `distinctDates=6`). Fetch once, bucket
+ * locally.
+ *
+ * Rows whose `date` is `null` cannot be attributed to either half of a comparison.
+ * They are NOT silently dropped into the window and NOT counted as zero: they are
+ * returned in `undated` so the caller can decide, and a caller comparing two halves
+ * must treat a wholly-undated response as unavailable rather than as no traffic.
+ *
+ * Positions are deliberately not aggregated. Averaging an average across dates
+ * without impression weights invents a number; divergence classification reads
+ * clicks only, so the field is left `null` rather than fabricated.
+ */
+export function bucketBingQueriesByDate(
+  rows: BingQueryStat[],
+  window: { startDate: string; endDate: string },
+): { rows: EngineRow[]; undated: number; dated: number } {
+  const totals = new Map<string, { clicks: number; impressions: number }>();
+  let undated = 0;
+  let dated = 0;
+
+  for (const row of rows) {
+    if (row.date === null) {
+      undated += 1;
+      continue;
+    }
+    dated += 1;
+    // `date` is a full ISO timestamp; the window is YYYY-MM-DD and inclusive.
+    const day = row.date.slice(0, 10);
+    if (day < window.startDate || day > window.endDate) continue;
+
+    const acc = totals.get(row.query) ?? { clicks: 0, impressions: 0 };
+    acc.clicks += row.clicks;
+    acc.impressions += row.impressions;
+    totals.set(row.query, acc);
+  }
+
+  const bucketed: EngineRow[] = [...totals.entries()].map(([key, acc]) => ({
+    key,
+    clicks: acc.clicks,
+    impressions: acc.impressions,
+    ctr: ratio(acc.clicks, acc.impressions),
+    position: null,
+  }));
+
+  return { rows: bucketed, undated, dated };
 }

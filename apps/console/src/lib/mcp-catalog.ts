@@ -253,6 +253,11 @@ export const MCP_SERVERS: readonly McpServerMeta[] = [
         summary:
           'Query rows from Search Console and Bing Webmaster for the same site, merged by query with an explicit coverage block. Only the Google side honours the requested date range — Bing has no date-range parameter, so its rows are its own unwindowed aggregate.',
       },
+      {
+        name: 'engine_divergence',
+        summary:
+          'Split a date range in half and classify each query by how it moved on each engine: held on Bing but dropped on Google (a Google ranking problem), dropped on both (a content problem), Bing-specific, or insufficient data. Both engines honour the range here — Google is queried per half, and Bing\'s undated rows are bucketed locally by each row\'s own date. An engine that could not answer yields insufficient_data, never a zero.',
+      },
     ],
   },
 ];

@@ -30,15 +30,22 @@ export const compareEnginesShape = {
 /**
  * `engine_divergence({ siteUrl, bingSiteUrl?, startDate, endDate, threshold, minClicks })`.
  *
- * UNREGISTERED — kept only because `engineDivergence` (`./handlers.ts`) still
- * references it and stays compiled/tested. Nothing exposes this schema to an
- * agent right now, so its inherited `startDate`/`endDate` "applies to Google
- * only" description (from spreading `compareEnginesShape` below) describes no
- * live tool. See the docblock on `engineDivergence` in `./handlers.ts` for why
- * it is cut and what must be fixed before it registers again.
+ * Overrides the inherited `startDate`/`endDate` descriptions. In `compare_engines`
+ * the range genuinely applies to Google only; here it applies to BOTH engines,
+ * because `engineDivergence` fetches Bing once and buckets its rows locally by each
+ * row's own date. Inheriting the "Google only" wording would tell an agent the
+ * Bing halves are unwindowed when they are not.
  */
 export const engineDivergenceShape = {
   ...compareEnginesShape,
+  startDate: isoDate.describe(
+    'Range start (YYYY-MM-DD). Applies to BOTH engines: Google is queried per half, ' +
+      "and Bing's unwindowed rows are bucketed locally by each row's own date.",
+  ),
+  endDate: isoDate.describe(
+    'Range end (YYYY-MM-DD). Applies to BOTH engines: Google is queried per half, and ' +
+      "Bing's unwindowed rows are bucketed locally by each row's own date.",
+  ),
   threshold: z
     .number()
     .positive()

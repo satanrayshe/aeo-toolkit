@@ -176,3 +176,150 @@ describe('engineDivergence range guard', () => {
     expect(result.isError).toBeFalsy();
   });
 });
+
+/**
+ * The two defects that kept `engine_divergence` unregistered until 2026-09-09.
+ * Both are behavioural, so both are pinned here rather than left to the docblocks.
+ */
+describe('engineDivergence: the two defects that blocked registration', () => {
+  const dated = (query: string, date: string, clicks: number) => ({
+    query,
+    clicks,
+    impressions: clicks * 10,
+    avgClickPosition: null,
+    avgImpressionPosition: 4,
+    date,
+  });
+
+  it('buckets one unwindowed Bing fetch into halves instead of fetching twice', async () => {
+    // DEFECT 1. GetQueryStats takes no date parameter, so the old code fetched it
+    // twice and got the identical aggregate both times — bingDelta was always 0 and
+    // `broad` was unreachable. Bing must be asked exactly ONCE, then split locally.
+    const getQueryStats = vi.fn(async () => [
+      // Baseline half (Jan 1-3): 100 clicks. Current half (Jan 4-6): 10 clicks.
+      dated('shared', '2026-01-01T00:00:00.000Z', 100),
+      dated('shared', '2026-01-05T00:00:00.000Z', 10),
+    ]);
+    const ctx = ctxWithEngines({
+      gsc: {
+        query: async (opts: { startDate: string }): Promise<GscReport> => ({
+          rows: [
+            {
+              keys: ['shared'],
+              clicks: opts.startDate === '2026-01-01' ? 100 : 10,
+              impressions: 1000,
+              ctr: 0.1,
+              position: 3,
+            },
+          ],
+        }),
+      },
+      bing: { getQueryStats },
+    });
+
+    const out = payload(
+      await engineDivergence(ctx, {
+        siteUrl: 'sc-domain:example.com',
+        startDate: '2026-01-01',
+        endDate: '2026-01-06',
+        threshold: 0.3,
+        minClicks: 50,
+        limit: 100,
+      } as never),
+    );
+
+    expect(getQueryStats).toHaveBeenCalledTimes(1);
+    const findings = out['findings'] as { key: string; classification: string }[];
+    // Both engines dropped ~90%, so this is `broad` — the classification that was
+    // structurally unreachable before the fix.
+    expect(findings[0]?.classification).toBe('broad');
+  });
+
+  it('reports insufficient_data, not bing_specific, when Bing fails outright', async () => {
+    // DEFECT 2. A failed engine used to zero-fill via `?? 0`, which is
+    // indistinguishable from Bing genuinely reporting no clicks — and a Google-side
+    // drop against a fabricated Bing zero manufactures a confident verdict.
+    const ctx = ctxWithEngines({
+      gsc: {
+        query: async (opts: { startDate: string }): Promise<GscReport> => ({
+          rows: [
+            {
+              keys: ['shared'],
+              clicks: opts.startDate === '2026-01-01' ? 100 : 10,
+              impressions: 1000,
+              ctr: 0.1,
+              position: 3,
+            },
+          ],
+        }),
+      },
+      bing: {
+        getQueryStats: async () => {
+          throw new Error('bing exploded');
+        },
+      },
+    });
+
+    const out = payload(
+      await engineDivergence(ctx, {
+        siteUrl: 'sc-domain:example.com',
+        startDate: '2026-01-01',
+        endDate: '2026-01-06',
+        threshold: 0.3,
+        minClicks: 50,
+        limit: 100,
+      } as never),
+    );
+
+    const counts = out['counts'] as Record<string, number>;
+    expect(counts['insufficient_data']).toBeGreaterThan(0);
+    expect(counts['google_specific']).toBe(0);
+    expect(counts['bing_specific']).toBe(0);
+    expect(counts['broad']).toBe(0);
+
+    const coverage = out['coverage'] as { bing: { available: boolean; reason: string | null } };
+    expect(coverage.bing.available).toBe(false);
+    expect(coverage.bing.reason).toContain('bing exploded');
+  });
+
+  it('treats a wholly-undated Bing response as unavailable, not as zero clicks', async () => {
+    // The same zero-fill trap by a different route: rows arrive, but none can be
+    // attributed to a half. Counting them as 0 would fabricate a Bing collapse.
+    const ctx = ctxWithEngines({
+      gsc: {
+        query: async (opts: { startDate: string }): Promise<GscReport> => ({
+          rows: [
+            {
+              keys: ['shared'],
+              clicks: opts.startDate === '2026-01-01' ? 100 : 10,
+              impressions: 1000,
+              ctr: 0.1,
+              position: 3,
+            },
+          ],
+        }),
+      },
+      bing: {
+        getQueryStats: async () => [
+          { ...dated('shared', '2026-01-01T00:00:00.000Z', 100), date: null },
+        ],
+      },
+    });
+
+    const out = payload(
+      await engineDivergence(ctx, {
+        siteUrl: 'sc-domain:example.com',
+        startDate: '2026-01-01',
+        endDate: '2026-01-06',
+        threshold: 0.3,
+        minClicks: 50,
+        limit: 100,
+      } as never),
+    );
+
+    const coverage = out['coverage'] as { bing: { available: boolean; reason: string | null } };
+    expect(coverage.bing.available).toBe(false);
+    expect(coverage.bing.reason).toContain('none carried a date');
+    expect((out['counts'] as Record<string, number>)['bing_specific']).toBe(0);
+  });
+});

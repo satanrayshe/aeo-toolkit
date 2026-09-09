@@ -17,6 +17,7 @@ import {
   type DivergenceClass,
 } from './divergence.js';
 import {
+  bucketBingQueriesByDate,
   buildCoverage,
   mergeEngineRows,
   normalizeBingQueries,
@@ -125,38 +126,30 @@ function halves(startDate: string, endDate: string): {
 /**
  * `engine_divergence(...)` — where the two engines disagree, and what that means.
  *
- * Runs `compare_engines`' fetch twice, once per half of the range, then classifies
- * every key. Rows classified `insufficient_data` are counted but not listed: they
- * are the majority of any long tail, and listing them buries the real findings.
+ * Splits the range into a baseline half and a current half, then classifies every
+ * key. Rows classified `insufficient_data` are counted but not listed: they are the
+ * majority of any long tail, and listing them buries the real findings.
  *
- * NOT CURRENTLY REGISTERED as a tool (see `server.ts`) — cut pending a live Bing
- * Webmaster API key, for TWO independent reasons. Both must be fixed before this
- * is safe to register again:
+ * THE TWO ENGINES ARE WINDOWED DIFFERENTLY, on purpose:
  *
- *  1. `fetchBothEngines` calls Bing's `getQueryStats(siteUrl)`, which takes NO
- *     date parameter. This function calls it twice — once for `baseline`, once
- *     for `current` — expecting two different windows, but Bing returns the
- *     SAME unwindowed aggregate both times. `bingDelta` (via `fractionalDelta`)
- *     is therefore identically 0 for every key, which makes `broad` and
- *     `bing_specific` structurally unreachable: every real Google decline would
- *     misclassify as `google_specific` regardless of what actually happened on
- *     Bing. `verify:bing` (`packages/bing-api/scripts/verify.mjs`) prints
- *     `maxRowsForOneQuery`; a value `> 1` with `distinctDates > 1` would mean
- *     Bing's query stats CAN be bucketed per-date, which is what would unblock
- *     this — but that has never been checked against a live key.
+ *  - Google is fetched TWICE, once per half. GSC accepts a date range, so each
+ *    half is a real server-side query.
+ *  - Bing is fetched ONCE, unwindowed, then bucketed locally by each row's own
+ *    `date`. `GetQueryStats(siteUrl)` accepts no date parameter, so fetching it
+ *    twice would return the identical aggregate both times and make `bingDelta`
+ *    identically zero — which would render `broad` and `bing_specific` structurally
+ *    unreachable and misreport every Google decline as `google_specific`. Bing does
+ *    return one row per (query x date) (verified live 2026-09-09,
+ *    `maxRowsForOneQuery=3` across `distinctDates=6`), which is what makes the local
+ *    bucketing sound.
  *
- *  2. Independently of (1): `gBase`/`gNow`/`bBase`/`bNow` below default a
- *     missing row to `?? 0`. `index()` builds its map from `rows ?? []`, so
- *     when an engine fails outright for one half (`baseSides.bing.rows` or
- *     `currentSides.bing.rows` is `null`), every key's clicks for that half
- *     silently becomes `0` — indistinguishable from Bing genuinely reporting
- *     zero clicks. That zero then feeds `fractionalDelta` and
- *     `classifyDivergence`, which can manufacture a confident `bing_specific`
- *     or `broad` verdict out of an API error rather than real data. This is
- *     the same zero-fill class of bug `compare_engines`/`normalize.ts` were
- *     built to ban; this function does not yet honour that ban. Fixing it
- *     means threading `coverage`-style per-half availability through the
- *     classification instead of defaulting to `0`.
+ * NO ZERO-FILL. A half is only comparable when its engine actually answered AND
+ * supplied dated rows. When it did not, that half's clicks are `null`, the delta is
+ * `null`, and `classifyDivergence` returns `insufficient_data` — never a confident
+ * `bing_specific` manufactured out of an API error. Within an available half a key
+ * that is genuinely absent IS zero clicks, which is a real measurement and is
+ * treated as one. The difference between "we could not ask" and "the answer was
+ * none" is the whole point of this function's coverage handling.
  */
 export async function engineDivergence(
   ctx: ToolContext,
@@ -173,21 +166,78 @@ export async function engineDivergence(
   }
 
   const { baseline, current } = halves(input.startDate, input.endDate);
+  const bingSite = input.bingSiteUrl ?? input.siteUrl;
 
-  const [baseSides, currentSides] = await Promise.all([
-    fetchBothEngines(ctx, { ...input, ...baseline }),
-    fetchBothEngines(ctx, { ...input, ...current }),
+  const googleHalf = async (window: {
+    startDate: string;
+    endDate: string;
+  }): Promise<EngineRow[]> => {
+    const gsc = await gscFor(ctx);
+    const response = await gsc.query({
+      siteUrl: input.siteUrl,
+      startDate: window.startDate,
+      endDate: window.endDate,
+      dimensions: ['query'],
+      rowLimit: input.limit,
+    });
+    return normalizeGscRows(response.rows);
+  };
+
+  const [baseGoogleResult, nowGoogleResult, bingResult] = await Promise.allSettled([
+    googleHalf(baseline),
+    googleHalf(current),
+    (async () => {
+      const bing = await bingFor(ctx);
+      return bing.getQueryStats(bingSite);
+    })(),
   ]);
 
-  const coverage = buildCoverage(currentSides);
+  const googleError =
+    baseGoogleResult.status === 'rejected'
+      ? errorMessage(baseGoogleResult.reason)
+      : nowGoogleResult.status === 'rejected'
+        ? errorMessage(nowGoogleResult.reason)
+        : null;
+
+  // Google is comparable only when BOTH halves succeeded. One good half and one
+  // failed half cannot produce an honest delta.
+  const googleOk =
+    baseGoogleResult.status === 'fulfilled' && nowGoogleResult.status === 'fulfilled';
+
+  let bingBaseRows: EngineRow[] | null = null;
+  let bingNowRows: EngineRow[] | null = null;
+  let bingError: string | null =
+    bingResult.status === 'rejected' ? errorMessage(bingResult.reason) : null;
+  let bingUndated = 0;
+
+  if (bingResult.status === 'fulfilled') {
+    const base = bucketBingQueriesByDate(bingResult.value, baseline);
+    const now = bucketBingQueriesByDate(bingResult.value, current);
+    bingUndated = base.undated;
+    if (base.dated === 0) {
+      // Every row came back without a date, so neither half can be attributed.
+      // Reporting zero clicks here would be the zero-fill this function bans.
+      bingError =
+        `Bing returned ${bingResult.value.length} rows but none carried a date, so they ` +
+        `cannot be split into baseline and current halves.`;
+    } else {
+      bingBaseRows = base.rows;
+      bingNowRows = now.rows;
+    }
+  }
+
+  const coverage = buildCoverage({
+    google: { rows: googleOk ? nowGoogleResult.value : null, error: googleError },
+    bing: { rows: bingNowRows, error: bingError },
+  });
 
   const index = (rows: EngineRow[] | null): Map<string, EngineRow> =>
     new Map((rows ?? []).map((row) => [row.key, row]));
 
-  const baseGoogle = index(baseSides.google.rows);
-  const baseBing = index(baseSides.bing.rows);
-  const nowGoogle = index(currentSides.google.rows);
-  const nowBing = index(currentSides.bing.rows);
+  const baseGoogle = index(googleOk ? baseGoogleResult.value : null);
+  const nowGoogle = index(googleOk ? nowGoogleResult.value : null);
+  const baseBing = index(bingBaseRows);
+  const nowBing = index(bingNowRows);
 
   const keys = new Set<string>([...baseGoogle.keys(), ...baseBing.keys()]);
 
@@ -201,21 +251,29 @@ export async function engineDivergence(
     key: string;
     classification: DivergenceClass;
     meaning: string;
-    google: { baselineClicks: number; currentClicks: number; delta: number | null };
-    bing: { baselineClicks: number; currentClicks: number; delta: number | null };
+    google: { baselineClicks: number | null; currentClicks: number | null; delta: number | null };
+    bing: { baselineClicks: number | null; currentClicks: number | null; delta: number | null };
   }[] = [];
 
   for (const key of keys) {
-    const gBase = baseGoogle.get(key)?.clicks ?? 0;
-    const gNow = nowGoogle.get(key)?.clicks ?? 0;
-    const bBase = baseBing.get(key)?.clicks ?? 0;
-    const bNow = nowBing.get(key)?.clicks ?? 0;
+    // `null` when the engine is unavailable for this comparison — distinct from a
+    // real 0, which means the engine answered and this key had no clicks.
+    const gBase = googleOk ? (baseGoogle.get(key)?.clicks ?? 0) : null;
+    const gNow = googleOk ? (nowGoogle.get(key)?.clicks ?? 0) : null;
+    const bBase = bingBaseRows !== null ? (baseBing.get(key)?.clicks ?? 0) : null;
+    const bNow = bingNowRows !== null ? (nowBing.get(key)?.clicks ?? 0) : null;
 
-    const googleDelta = fractionalDelta(gBase, gNow);
-    const bingDelta = fractionalDelta(bBase, bNow);
+    const googleDelta =
+      gBase === null || gNow === null ? null : fractionalDelta(gBase, gNow);
+    const bingDelta = bBase === null || bNow === null ? null : fractionalDelta(bBase, bNow);
 
     const classification = classifyDivergence(
-      { googleDelta, bingDelta, googleBaseClicks: gBase, bingBaseClicks: bBase },
+      {
+        googleDelta,
+        bingDelta,
+        googleBaseClicks: gBase ?? 0,
+        bingBaseClicks: bBase ?? 0,
+      },
       { threshold: input.threshold, minClicks: input.minClicks },
     );
     counts[classification] += 1;
@@ -234,12 +292,20 @@ export async function engineDivergence(
   findings.sort((a, b) => (a.google.delta ?? 0) - (b.google.delta ?? 0));
   const listed = findings.slice(0, input.limit);
 
+  const undatedNote =
+    bingUndated > 0
+      ? ` ${bingUndated} Bing row${bingUndated === 1 ? '' : 's'} carried no date and were ` +
+        `excluded from both halves.`
+      : '';
+
   const summary =
     `${listed.length} diverging queries for ${input.siteUrl}: ` +
     `${counts.google_specific} Google-specific, ${counts.bing_specific} Bing-specific, ` +
     `${counts.broad} broad. ${counts.insufficient_data} excluded as insufficient data ` +
-    `(baseline under ${input.minClicks} clicks on an engine, or no move past ` +
-    `${Math.round(input.threshold * 100)}%).`;
+    `(baseline under ${input.minClicks} clicks on an engine, an engine unavailable for ` +
+    `this comparison, or no move past ${Math.round(input.threshold * 100)}%). ` +
+    `Google windowed server-side; Bing fetched once and bucketed locally by row date.` +
+    undatedNote;
 
   return jsonResult(summary, {
     siteUrl: input.siteUrl,
@@ -249,6 +315,7 @@ export async function engineDivergence(
     minClicks: input.minClicks,
     counts,
     coverage,
+    bingUndatedRows: bingUndated,
     findings: listed,
   });
 }

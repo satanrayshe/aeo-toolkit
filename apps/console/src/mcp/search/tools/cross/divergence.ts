@@ -12,20 +12,17 @@
  * and a manufactured finding is worse than a missing one because it is
  * indistinguishable from a real one downstream.
  *
- * NOT CURRENTLY REGISTERED as a tool. `engine_divergence` (the tool built on this
- * classifier, in `./handlers.ts`) is cut from the server pending a live Bing
- * Webmaster API key, because `GetQueryStats(siteUrl)` takes NO date parameter:
- * `engine_divergence` calls the same fetch twice differing only in dates, Bing
- * returns identical data for both halves, `bingDelta` is identically 0, and
- * `broad`/`bing_specific` become unreachable — every Google decline would report
- * as `google_specific` regardless of what actually happened on Bing. `verify:bing`
- * (`packages/bing-api/scripts/verify.mjs`) prints `maxRowsForOneQuery`, which
- * settles whether Bing's query stats can be bucketed per-date at all; that result
- * is what unblocks re-registering this. This module's classifier logic itself is
- * NOT the defect — the defect is upstream, in what `engineDivergence` feeds it. Do
- * not re-register `engine_divergence` without first reading its own docblock in
- * `./handlers.ts`, which names a second, independent defect that must also be
- * fixed first.
+ * REGISTERED as `engine_divergence` since 2026-09-09. It was cut for one day
+ * because `GetQueryStats(siteUrl)` accepts no date parameter: calling it twice for
+ * two halves returned the identical aggregate, `bingDelta` was identically 0, and
+ * `broad`/`bing_specific` were structurally unreachable. A live check against the
+ * Bing Webmaster API settled it — Bing returns one row per (query x date)
+ * (`maxRowsForOneQuery=3` across `distinctDates=6`), so the caller fetches once and
+ * buckets locally by each row's own date. The API still takes no date parameter;
+ * the windowing simply moved client-side. See `bucketBingQueriesByDate` in
+ * `./normalize.ts` and the docblock on `engineDivergence` in `./handlers.ts`.
+ *
+ * This module's classifier was never the defect, and is unchanged.
  */
 
 export type DivergenceClass =

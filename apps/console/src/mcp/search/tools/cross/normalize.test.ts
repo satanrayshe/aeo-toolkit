@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   BING_WINDOW_NOTE,
+  bucketBingQueriesByDate,
   buildCoverage,
   mergeEngineRows,
   normalizeBingQueries,
@@ -138,5 +139,62 @@ describe('buildCoverage', () => {
       bing: { rows: null, error: 'down' },
     });
     expect(cov.notes).not.toContain(BING_WINDOW_NOTE);
+  });
+});
+
+describe('bucketBingQueriesByDate', () => {
+  const row = (query: string, date: string | null, clicks: number) => ({
+    query,
+    clicks,
+    impressions: clicks * 10,
+    avgClickPosition: null,
+    avgImpressionPosition: 4,
+    date,
+  });
+
+  it('includes both window edges and excludes what falls outside', () => {
+    const rows = [
+      row('q', '2026-01-01T00:00:00.000Z', 1), // start edge, in
+      row('q', '2026-01-03T00:00:00.000Z', 2), // middle, in
+      row('q', '2026-01-05T00:00:00.000Z', 4), // end edge, in
+      row('q', '2026-01-06T00:00:00.000Z', 8), // past the end, out
+      row('q', '2025-12-31T00:00:00.000Z', 16), // before the start, out
+    ];
+    const out = bucketBingQueriesByDate(rows, {
+      startDate: '2026-01-01',
+      endDate: '2026-01-05',
+    });
+    // 1 + 2 + 4; the powers of two make an off-by-one edge failure unambiguous.
+    expect(out.rows).toEqual([
+      { key: 'q', clicks: 7, impressions: 70, ctr: 0.1, position: null },
+    ]);
+  });
+
+  it('counts undated rows separately instead of folding them into the window', () => {
+    const out = bucketBingQueriesByDate(
+      [row('q', null, 99), row('q', '2026-01-02T00:00:00.000Z', 5)],
+      { startDate: '2026-01-01', endDate: '2026-01-05' },
+    );
+    expect(out.undated).toBe(1);
+    expect(out.dated).toBe(1);
+    expect(out.rows[0]?.clicks).toBe(5);
+  });
+
+  it('reports dated=0 when nothing can be attributed, so the caller can bail', () => {
+    const out = bucketBingQueriesByDate([row('q', null, 99)], {
+      startDate: '2026-01-01',
+      endDate: '2026-01-05',
+    });
+    expect(out.dated).toBe(0);
+    expect(out.rows).toEqual([]);
+  });
+
+  it('never fabricates a position when aggregating across dates', () => {
+    const out = bucketBingQueriesByDate(
+      [row('q', '2026-01-01T00:00:00.000Z', 1), row('q', '2026-01-02T00:00:00.000Z', 1)],
+      { startDate: '2026-01-01', endDate: '2026-01-05' },
+    );
+    // Averaging an average without impression weights would invent a number.
+    expect(out.rows[0]?.position).toBeNull();
   });
 });
