@@ -1,6 +1,8 @@
 /**
- * Pure HTTP helper: bearer-token extraction. Kept transport-agnostic and
- * side-effect free so it unit-tests without a server.
+ * Pure HTTP helpers: extraction of the two request-scoped BYOK credentials this
+ * server accepts — the Google `Authorization` bearer token and the Bing
+ * `x-bing-api-key` header. Kept transport-agnostic and side-effect free so they
+ * unit-test without a server.
  */
 
 /**

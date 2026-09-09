@@ -63,18 +63,23 @@ alias so existing client configs need no change, but new configs should point at
 | `bing_index_health` | Bing | crawl stats, crawl issues, submission quota |
 | `bing_keyword_research` | Bing | no Google Search Console equivalent exists |
 | `compare_engines` | Google + Bing | merged rows with an explicit coverage block |
+| `engine_divergence` | Google + Bing | classifies each query as google_specific / bing_specific / broad |
 
 Bing authentication is BYOK via an `X-Bing-Api-Key` request header, or a static `BING_API_KEY`
 environment variable as a fallback. A missing Bing key does not fail the server: Bing tools return
 their own credential error, but the ten Google tools keep working — the server degrades to
 Google-only rather than failing outright.
 
-> `engine_divergence` (comparing Google's and Bing's click trends to tell a ranking problem from
-> a content problem) was built but is **not registered**. Bing's `GetQueryStats` takes no date
-> parameter, so the tool's two-half comparison would see identical Bing data both times and could
-> never classify a Bing-specific or broad decline correctly. The code is preserved, tested, and
-> documented in `apps/console/src/mcp/search/tools/cross/handlers.ts` and `divergence.ts` pending
-> a live Bing key to settle whether Bing's stats can be bucketed per date at all.
+> **`engine_divergence` and the two engines' date windows.** Bing's `GetQueryStats` takes no date
+> parameter, so `compare_engines` honours the requested range on the Google side only and labels
+> the Bing side as its own unwindowed aggregate. `engine_divergence` does honour the range on both
+> sides, by a different route: it fetches Bing once and buckets the rows locally on each row's own
+> date, which works because Bing returns one row per (query x date) rather than one aggregate per
+> query. Verified against the live API on 2026-09-09 (`maxRowsForOneQuery=3` across
+> `distinctDates=6`); re-check with `pnpm --filter @advance-labs/bing-api verify:bing` if Bing's
+> response shape ever looks off. When an engine cannot answer a half, that key is reported as
+> `insufficient_data` — never as zero clicks, which would manufacture a confident verdict out of
+> an API failure.
 
 ### Skills
 

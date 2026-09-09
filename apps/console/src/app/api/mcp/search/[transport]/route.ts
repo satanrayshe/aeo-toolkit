@@ -1,23 +1,31 @@
 /**
- * GA4 + GSC MCP server, mounted as a Next.js App Router route handler.
+ * Cross-engine search MCP server (Google Search Console + Bing Webmaster Tools),
+ * mounted as a Next.js App Router route handler.
  *
- * Unlike the other two servers, ga-gsc's BYOK credential is the request's
- * `Authorization` bearer token (a Google access token), so the `mcp-handler`
- * handler is built *inside* the request function — this captures the per-request
- * bearer and injects it into a fresh tool context (the dynamic-routing shape from
- * the mcp-handler docs). The process-shared runtime (env-gated Supabase/in-memory
- * token store + resolver) is reused across requests.
+ * Unlike the other two servers, this one takes TWO request-scoped BYOK credentials:
+ * the `Authorization` bearer token (a Google access token) and the `x-bing-api-key`
+ * header (a Bing Webmaster API key). Both are read per request, so the
+ * `mcp-handler` handler is built *inside* the request function — this captures them
+ * and injects them into a fresh tool context (the dynamic-routing shape from the
+ * mcp-handler docs). Either may be absent: the Google tools and the Bing tools fail
+ * independently, and a caller supplying only one still gets that engine's tools.
+ * The process-shared runtime (env-gated Supabase/in-memory token store, Google
+ * token resolver, Bing key resolver) is reused across requests.
  *
  * A per-caller distributed rate-limit gate runs before the transport hand-off.
  *
- * Node runtime: the tools call the Google Analytics + Search Console APIs.
-*
+ * Node runtime: the tools call the Google Analytics, Search Console, and Bing
+ * Webmaster APIs.
+ *
  * ROUTE SHAPE: this file MUST live under a `[transport]` segment. `mcp-handler`
  * derives its endpoints from `basePath` as `${basePath}/mcp`, `${basePath}/sse` and
  * `${basePath}/message`, then compares the request pathname against them. Mounted
  * directly at the basePath it answers every request with its own plain-text
  * "Not found" — a 404 that looks like a routing bug and is not. The dynamic segment
  * is what makes those transport paths exist. Clients connect to `<basePath>/mcp`.
+ *
+ * The previous path `/api/mcp/ga-gsc` still serves these same tools via its own
+ * handler; see that route's docblock for why it cannot re-export this one.
  */
 import { createMcpHandler } from 'mcp-handler';
 import { enforceWebRateLimit } from '@advance-labs/mcp-core';
