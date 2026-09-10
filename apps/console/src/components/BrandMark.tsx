@@ -3,7 +3,14 @@
  * replacing the printer's registration crosshair (v2). The mark is a raster with alpha
  * (`/advance-labs-mark-256.png`, cropped square), so it renders identically on the dark
  * shell and on paper surfaces; it no longer takes a color from `currentColor`.
+ *
+ * The src goes through `assetUrl` because these pages are also served from
+ * advancelabs.dev/tools/* by a rewrite. A root-relative src resolves against THAT domain,
+ * which has no such file, so the mark 404s for anyone on the proxied origin while looking
+ * perfect on aeo.advancelabs.dev. See src/lib/asset-url.ts.
  */
+
+import { assetUrl } from '@/lib/asset-url';
 
 interface BrandMarkProps {
   size?: number;
@@ -13,7 +20,7 @@ interface BrandMarkProps {
 export function BrandMark({ size = 24, className }: BrandMarkProps): React.ReactElement {
   return (
     <img
-      src="/advance-labs-mark-256.png"
+      src={assetUrl('/advance-labs-mark-256.png')}
       width={size}
       height={size}
       alt=""

@@ -12,6 +12,7 @@ import { FAQS, TOOLS } from '@/components/landing';
 import { HeroShader } from './HeroShader';
 import { NodeFieldViewport } from './NodeFieldViewport';
 import { SpecimenReport } from './SpecimenReport';
+import { assetUrl } from '@/lib/asset-url';
 
 /** The visible FAQ is cut to three; the page's FAQPage JSON-LD mirrors exactly these. */
 export const LANDING_FAQS = FAQS.slice(0, 3);
@@ -128,7 +129,7 @@ export function CinematicStage(): JSX.Element {
       >
         {/* Commissioned void frame as the act backdrop (Higgsfield Soul Cinema, 2026-09-03). */}
         <img
-          src="/story/uncited.webp"
+          src={assetUrl('/story/uncited.webp')}
           alt=""
           aria-hidden="true"
           loading="lazy"
