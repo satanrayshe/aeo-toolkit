@@ -14,6 +14,7 @@ import {
   StoryFrame,
 } from '@/components/landing-v2/Sections';
 import '@/components/landing-v2/landing-v2.css';
+import { assetUrl } from '@/lib/asset-url';
 
 /**
  * Landing v2 — "the audit, printed." A warm paper report sheet framed in the site's dark
@@ -83,7 +84,7 @@ export default function LandingPage(): JSX.Element {
             <CinematicStage />
             <LedgerV2 />
             <StoryFrame
-              src="/story/calibrated.webp"
+              src={assetUrl('/story/calibrated.webp')}
               alt="Macro of a precision lens element in matte black metal, a thin green laser refracting through its edge"
               label="Calibrated · 54 rules"
             />
