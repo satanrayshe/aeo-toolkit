@@ -47,9 +47,9 @@ export function CinematicStage(): JSX.Element {
       {/* Layer 1 · the hero (on top while pinned; scrolling zooms past it). */}
       <div
         data-stage-hero
-        className="v2-stage-layer relative flex min-h-[calc(100vh-6.75rem)] flex-col overflow-hidden px-6 pt-10 sm:px-10 lg:px-14"
+        className="v2-stage-layer relative flex min-h-[calc(100vh-6.75rem)] flex-col overflow-hidden px-6 pt-6 sm:px-10 sm:pt-10 lg:px-14"
       >
-        <div className="relative z-10 my-auto grid w-full items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
+        <div className="relative z-10 my-auto grid w-full items-center gap-7 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
           <div>
             <p className="v2-label" style={{ color: 'var(--v2-signal)' }}>
               01 · Ask
