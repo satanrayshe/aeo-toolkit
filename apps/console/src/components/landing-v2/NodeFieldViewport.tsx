@@ -346,9 +346,14 @@ export function NodeFieldViewport(): React.ReactElement {
       if (w === 0 || h === 0) return;
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
-      // Portrait frustums are narrower than the cloud: back the camera off so the
-      // field fits the frame instead of clipping at the edges (phones, narrow columns).
-      camera.position.z = camera.aspect < 1 ? Math.min(4.6, 2.75 / Math.max(camera.aspect, 0.55)) : 2.75;
+      // Desktop: the cloud deliberately bleeds past the column ("unframed field"),
+      // backing off only for portrait frustums. Phones: the short container must show
+      // the WHOLE ball, so fit the field's full radius on both axes instead.
+      camera.position.z = small
+        ? Math.min(4.6, 3.25 / Math.min(camera.aspect, 1))
+        : camera.aspect < 1
+          ? Math.min(4.6, 2.75 / Math.max(camera.aspect, 0.55))
+          : 2.75;
       camera.updateProjectionMatrix();
     };
     resize();
@@ -453,7 +458,7 @@ export function NodeFieldViewport(): React.ReactElement {
   }, []);
 
   return (
-    <div data-hero-sheet className="relative h-[420px] w-full sm:h-[500px] lg:h-[560px]">
+    <div data-hero-sheet className="relative h-[28svh] min-h-[180px] w-full sm:h-[500px] lg:h-[560px]">
       {/* The unframed cloud: fills the column, spills past where the card used to end. */}
       <div
         ref={hostRef}
