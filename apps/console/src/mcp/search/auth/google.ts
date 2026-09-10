@@ -15,7 +15,7 @@ import { GoogleOAuth, InMemoryTokenStore } from '@advance-labs/google-api';
 import type { GoogleOAuthTokens, TokenStore } from '@advance-labs/types';
 import { McpToolError } from '@advance-labs/mcp-core';
 import { createSupabaseClient, SupabaseTokenStore } from '@advance-labs/storage';
-import type { GoogleOAuthEnv, SupabaseEnv } from './config.js';
+import type { GoogleOAuthEnv, SupabaseEnv } from '../config.js';
 
 /** Skew applied to the expiry check so we refresh slightly before the hard expiry. */
 const EXPIRY_SKEW_MS = 60_000;

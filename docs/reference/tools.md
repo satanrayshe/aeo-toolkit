@@ -1,7 +1,7 @@
 ---
 title: Tool reference
 description: >-
-  All ten tools — five browser tools, three MCP servers with 22 tools, a content agent, and the Chrome extension — and the routes behind them.
+  All ten tools — five browser tools, three MCP servers with 30 tools, a content agent, and the Chrome extension — and the routes behind them.
 ---
 
 The suite is **ten tools**, delivered from **two deployables**: a single Next.js app
@@ -29,17 +29,61 @@ in the console with a matching route handler.
 ## MCP servers — 3
 
 Served from the console as Streamable-HTTP route handlers via the `mcp-handler` adapter, with OAuth
-discovery under `/.well-known/`. **22 tools total.** The connection page is [`/mcp`](https://advancelabs.dev/mcp).
+discovery under `/.well-known/`. **30 tools total.** The connection page is [`/mcp`](https://advancelabs.dev/mcp).
+Every tool on every server is **read-only** — none calls a write method on any upstream API.
 
 | Server | Endpoint | Auth | Tools |
 |---|---|---|---|
 | AI Visibility | `/api/mcp/ai-visibility/mcp` | none | `analyze_website_aeo`, `check_ai_visibility`, `discover_ranking_prompts`, `get_visibility_report`, `compare_competitor_visibility` |
 | Backlink | `/api/mcp/backlink/mcp` | none | `find_prospects`, `find_mentions`, `extract_contact_info`, `check_page_history`, `generate_outreach_email`, `verify_page_links`, `find_competitor_link_sources` |
-| GA4 + GSC | `/api/mcp/ga-gsc/mcp` | Google BYOK | `list_ga4_properties`, `list_gsc_sites`, `ga4_run_report`, `gsc_search_analytics`, `gsc_top_queries`, `gsc_ctr_gaps`, `compare_periods`, `gsc_traffic_drop`, `gsc_cannibalization`, `gsc_decay` |
+| Search (Google + Bing) | `/api/mcp/search/mcp` | Google BYOK; Bing BYOK optional | see below |
+
+The search server was `GA4 + GSC` at `/api/mcp/ga-gsc/mcp`; that path still works as a compatibility
+alias so existing client configs need no change, but new configs should point at `/api/mcp/search/mcp`.
+
+### Search server — 18 tools
+
+| Tool | Engine | Notes |
+|---|---|---|
+| `list_ga4_properties` | Google | |
+| `list_gsc_sites` | Google | |
+| `ga4_run_report` | Google | |
+| `gsc_search_analytics` | Google | |
+| `gsc_top_queries` | Google | |
+| `gsc_ctr_gaps` | Google | |
+| `compare_periods` | Google | |
+| `gsc_traffic_drop` | Google | |
+| `gsc_cannibalization` | Google | |
+| `gsc_decay` | Google | |
+| `list_bing_sites` | Bing | |
+| `bing_traffic_stats` | Bing | |
+| `bing_top_queries` | Bing | |
+| `bing_top_pages` | Bing | |
+| `bing_query_pages` | Bing | exactly one of `query`/`page` |
+| `bing_index_health` | Bing | crawl stats, crawl issues, submission quota |
+| `bing_keyword_research` | Bing | no Google Search Console equivalent exists |
+| `compare_engines` | Google + Bing | merged rows with an explicit coverage block |
+| `engine_divergence` | Google + Bing | classifies each query as google_specific / bing_specific / broad |
+
+Bing authentication is BYOK via an `X-Bing-Api-Key` request header, or a static `BING_API_KEY`
+environment variable as a fallback. A missing Bing key does not fail the server: Bing tools return
+their own credential error, but the ten Google tools keep working — the server degrades to
+Google-only rather than failing outright.
+
+> **`engine_divergence` and the two engines' date windows.** Bing's `GetQueryStats` takes no date
+> parameter, so `compare_engines` honours the requested range on the Google side only and labels
+> the Bing side as its own unwindowed aggregate. `engine_divergence` does honour the range on both
+> sides, by a different route: it fetches Bing once and buckets the rows locally on each row's own
+> date, which works because Bing returns one row per (query x date) rather than one aggregate per
+> query. Verified against the live API on 2026-09-09 (`maxRowsForOneQuery=3` across
+> `distinctDates=6`); re-check with `pnpm --filter @advance-labs/bing-api verify:bing` if Bing's
+> response shape ever looks off. When an engine cannot answer a half, that key is reported as
+> `insufficient_data` — never as zero clicks, which would manufacture a confident verdict out of
+> an API failure.
 
 ### Skills
 
-Three [Claude Skills](../../skills) turn the `ga-gsc` tools into workflows — *why did traffic
+Three [Claude Skills](../../skills) turn the Google tools into workflows — *why did traffic
 drop*, *are my pages competing*, *what needs refreshing*. They build on `gsc_traffic_drop`,
 `gsc_cannibalization`, and `gsc_decay`.
 

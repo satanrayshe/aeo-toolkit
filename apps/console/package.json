@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@advance-labs/backlinks": "workspace:*",
+    "@advance-labs/bing-api": "workspace:*",
     "@advance-labs/blogging": "workspace:*",
     "@advance-labs/crawler": "workspace:*",
     "@advance-labs/google-api": "workspace:*",
