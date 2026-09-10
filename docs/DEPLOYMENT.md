@@ -78,8 +78,11 @@ printf '%s' "<value>" | vercel env add TOKEN_ENCRYPTION_KEY production
 vercel deploy --prod --yes
 ```
 
-After the first deploy, set `MCP_PUBLIC_URL` to the live URL and redeploy so MCP `.well-known` discovery
-advertises the right origin.
+After the first deploy, set `MCP_PUBLIC_URL` to the live URL and redeploy. It's the canonical origin
+used across the app (SEO metadata, tool-page URLs, and the `.well-known` routes' notion of "this
+origin") — the MCP servers themselves are BYOK and implement no OAuth, so `/.well-known/oauth-*`
+404s regardless; `MCP_PUBLIC_URL` only matters there if an external `OAUTH_ISSUER` is ever set, so
+that issuer isn't mistaken for this origin.
 
 ---
 
@@ -147,12 +150,16 @@ Vercel sends `Authorization: Bearer $CRON_SECRET`, which the route verifies.
 
 The human-facing connection page is **`https://<domain>/mcp`** — it lists every tool and the exact
 connect steps for Claude.ai and Cursor. In **Claude.ai → Settings → Connectors**, add:
-- `https://<domain>/api/mcp/ai-visibility`
-- `https://<domain>/api/mcp/ga-gsc`
-- `https://<domain>/api/mcp/backlink`
+- `https://<domain>/api/mcp/ai-visibility/mcp`
+- `https://<domain>/api/mcp/search/mcp` (`/api/mcp/ga-gsc/mcp` still works as a compatibility alias)
+- `https://<domain>/api/mcp/backlink/mcp`
 
-OAuth discovery at `/.well-known/*` handles authorization. (A local **stdio** MCP variant for Claude
-Desktop isn't part of the Vercel deployment; re-add it later from a thin package over the same tools.)
+The trailing `/mcp` is required — the bare `/api/mcp/<slug>` returns the adapter's own "Not found".
+
+These servers are BYOK and implement no OAuth — credentials ride on the request (a Google
+`Authorization: Bearer` token, an optional `x-bing-api-key`), so `/.well-known/*` deliberately 404s
+and there is no authorization step to complete. (A local **stdio** MCP variant for Claude Desktop
+isn't part of the Vercel deployment; re-add it later from a thin package over the same tools.)
 
 ## 5. Chrome extension
 
