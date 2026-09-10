@@ -115,6 +115,45 @@ describe('BingWebmasterClient', () => {
     });
   });
 
+  it('lowercases the country Bing rejects in uppercase', async () => {
+    // Live 2026-09-09: country=CA returns 400 "argument out of range", country=ca is fine.
+    const { client, fetcher } = clientFor({ d: [] });
+    await client.getKeywordStats('llms.txt', 'CA');
+    expect(fetcher.mock.calls[0]![0]).toContain('country=ca');
+  });
+
+  it('normalizes a language tag to Bing\'s xx-XX casing', async () => {
+    // en-ca and en both 400; only en-CA is accepted.
+    const { client, fetcher } = clientFor({ d: [] });
+    await client.getKeywordStats('llms.txt', 'ca', 'en-ca');
+    expect(fetcher.mock.calls[0]![0]).toContain('language=en-CA');
+  });
+
+  it('takes the region from country when the language tag has none', async () => {
+    const { client, fetcher } = clientFor({ d: [] });
+    await client.getKeywordStats('llms.txt', 'CA', 'en');
+    const url = fetcher.mock.calls[0]![0];
+    expect(url).toContain('country=ca');
+    expect(url).toContain('language=en-CA');
+  });
+
+  it('refuses a bare language with no country rather than guessing a market', async () => {
+    // Dropping it would silently widen the query; guessing returns real-looking
+    // numbers for the wrong market. Both are worse than refusing.
+    const { client } = clientFor({ d: [] });
+    await expect(client.getKeywordStats('llms.txt', undefined, 'en')).rejects.toThrow(
+      /region-qualified language tag/i,
+    );
+  });
+
+  it('applies the same normalization to getRelatedKeywords', async () => {
+    const { client, fetcher } = clientFor({ d: [] });
+    await client.getRelatedKeywords('llms.txt', 'US', 'en');
+    const url = fetcher.mock.calls[0]![0];
+    expect(url).toContain('country=us');
+    expect(url).toContain('language=en-US');
+  });
+
   it('getKeywordStats omits absent optional params', async () => {
     const { client, fetcher } = clientFor({ d: [] });
     await client.getKeywordStats('aeo tools');

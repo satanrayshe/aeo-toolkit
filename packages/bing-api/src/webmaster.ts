@@ -153,8 +153,15 @@ export class BingWebmasterClient {
     country?: string,
     language?: string,
   ): Promise<BingKeywordStat[]> {
+    const normalizedCountry = normalizeCountry(country);
     return toKeywordStats(
-      asRecordArray(await this.call('GetKeywordStats', { q: query, country, language })),
+      asRecordArray(
+        await this.call('GetKeywordStats', {
+          q: query,
+          country: normalizedCountry,
+          language: normalizeLanguage(language, normalizedCountry),
+        }),
+      ),
     );
   }
 
@@ -163,8 +170,15 @@ export class BingWebmasterClient {
     country?: string,
     language?: string,
   ): Promise<BingKeywordStat[]> {
+    const normalizedCountry = normalizeCountry(country);
     return toKeywordStats(
-      asRecordArray(await this.call('GetRelatedKeywords', { q: query, country, language })),
+      asRecordArray(
+        await this.call('GetRelatedKeywords', {
+          q: query,
+          country: normalizedCountry,
+          language: normalizeLanguage(language, normalizedCountry),
+        }),
+      ),
     );
   }
 }
@@ -185,6 +199,53 @@ export class BingWebmasterClient {
 function positionOrNull(value: unknown): number | null {
   const n = asNumber(value);
   return Number.isFinite(n) && n >= 1 ? n : null;
+}
+
+/**
+ * Bing's locale parameters are case-sensitive in a way nothing documents, and it
+ * rejects rather than coerces. Verified live 2026-09-09 against `GetKeywordStats`:
+ *
+ *   country=CA                 -> 400 "argument out of range (Parameter 'country')"
+ *   country=ca                 -> OK
+ *   country=ca language=en     -> 400 "argument out of range (Parameter 'language')"
+ *   country=ca language=en-ca  -> 400 (same)
+ *   country=ca language=en-CA  -> OK
+ *
+ * So country must be lowercase, and language must be `xx-XX` -- lowercase language,
+ * UPPERCASE region. The natural forms a caller reaches for (an uppercase ISO code,
+ * a bare "en") are exactly the ones that fail, so normalizing here is the
+ * difference between the method working and 400-ing on its own documentation.
+ */
+function normalizeCountry(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed.toLowerCase() : undefined;
+}
+
+/**
+ * Normalize a language tag to Bing's `xx-XX`.
+ *
+ * A bare language ("en") has no region, and Bing will not accept it. Rather than
+ * drop it silently -- which would quietly widen the query the caller asked to
+ * narrow -- the region is taken from `country` when one was supplied, and
+ * otherwise this throws with the format named. A wrong locale returns real-looking
+ * numbers for the wrong market, so guessing one is worse than refusing.
+ */
+function normalizeLanguage(
+  value: string | undefined,
+  country: string | undefined,
+): string | undefined {
+  const trimmed = value?.trim();
+  if (!trimmed) return undefined;
+
+  const [rawLanguage = '', rawRegion] = trimmed.split(/[-_]/, 2);
+  const region = rawRegion ?? country;
+  if (!region) {
+    throw new Error(
+      `Bing needs a region-qualified language tag like "en-CA", not "${trimmed}". ` +
+        'Pass a full tag, or pass `country` so the region can be taken from it.',
+    );
+  }
+  return `${rawLanguage.toLowerCase()}-${region.trim().toUpperCase()}`;
 }
 
 function toQueryStats(rows: Record<string, unknown>[]): BingQueryStat[] {

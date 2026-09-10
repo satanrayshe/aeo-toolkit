@@ -48,8 +48,20 @@ export const bingIndexHealthShape = {
 /** `bing_keyword_research({ query, country?, language? })`. */
 export const bingKeywordResearchShape = {
   query: z.string().min(1).describe('Seed keyword.'),
-  country: z.string().length(2).optional().describe('ISO 3166-1 alpha-2, e.g. "CA".'),
-  language: z.string().min(2).max(5).optional().describe('Language code, e.g. "en".'),
+  country: z
+    .string()
+    .length(2)
+    .optional()
+    .describe('ISO 3166-1 alpha-2, e.g. "ca". Case-insensitive here; lowercased for Bing.'),
+  language: z
+    .string()
+    .min(2)
+    .max(5)
+    .optional()
+    .describe(
+      'Region-qualified language tag, e.g. "en-CA". Bing rejects a bare "en"; if you pass ' +
+        'one, also pass `country` and the region is taken from it.',
+    ),
 } as const;
 
 export type BingSiteInput = z.infer<z.ZodObject<typeof bingSiteShape>>;
