@@ -453,6 +453,14 @@ export function NodeFieldViewport(): React.ReactElement {
       beamGeo.dispose();
       beamMat.dispose();
       renderer.dispose();
+      // Release the GPU context NOW rather than when GC gets around to it — every
+      // lingering context counts against the tab-wide cap, and hitting that cap is
+      // what freezes the hero shader after heavy navigation.
+      try {
+        renderer.forceContextLoss();
+      } catch {
+        /* context may already be gone */
+      }
       renderer.domElement.remove();
     };
   }, []);
