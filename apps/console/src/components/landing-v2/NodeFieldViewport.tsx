@@ -19,10 +19,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-const NODE_COUNT = 520;
 const LINKS_PER_NODE = 2;
-const PULSE_COUNT = 110;
-const PROBE_COUNT = 10;
 const LABEL_COUNT = 3;
 
 // Mock traffic — the kinds of searches and prompts the audit samples. Synthesized
@@ -53,6 +50,13 @@ export function NodeFieldViewport(): React.ReactElement {
     if (!host || !labelLayer) return undefined;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Phones get a lighter scene: fewer nodes/links to build and draw, fewer moving
+    // pulses, and a lower DPR cap — the composition reads the same at that size.
+    const small = window.matchMedia('(max-width: 639px)').matches;
+    const NODE_COUNT = small ? 300 : 520;
+    const PULSE_COUNT = small ? 60 : 110;
+    const PROBE_COUNT = small ? 6 : 10;
+
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -60,7 +64,7 @@ export function NodeFieldViewport(): React.ReactElement {
       setFailed(true);
       return undefined;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.5 : 1.75));
     host.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -385,10 +389,22 @@ export function NodeFieldViewport(): React.ReactElement {
       running = false;
       cancelAnimationFrame(raf);
     };
+    // Render only while the field is actually on screen AND the tab is visible —
+    // once the user scrolls past the hero there is no reason to keep burning frames.
+    let inView = true;
+    const shouldRun = (): boolean => !reduceMotion && inView && !document.hidden;
     const onVisibility = (): void => {
-      if (document.hidden) stop();
-      else if (!reduceMotion) start();
+      if (shouldRun()) start();
+      else stop();
     };
+    const io = new IntersectionObserver(
+      (entries) => {
+        inView = entries[0]?.isIntersecting ?? true;
+        if (shouldRun()) start();
+        else stop();
+      },
+      { rootMargin: '120px' },
+    );
 
     const onContextLost = (e: Event): void => {
       e.preventDefault();
@@ -404,11 +420,13 @@ export function NodeFieldViewport(): React.ReactElement {
       host.addEventListener('pointermove', onPointer);
       host.addEventListener('pointerleave', onLeave);
       document.addEventListener('visibilitychange', onVisibility);
+      io.observe(host);
       start();
     }
 
     return () => {
       stop();
+      io.disconnect();
       ro.disconnect();
       host.removeEventListener('pointermove', onPointer);
       host.removeEventListener('pointerleave', onLeave);

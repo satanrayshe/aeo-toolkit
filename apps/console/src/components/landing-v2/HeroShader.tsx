@@ -28,7 +28,12 @@ export function HeroShader(): React.ReactElement | null {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) setEnabled(true);
+    // Desktop only: a full-stage animated shader is the single heaviest thing a phone
+    // GPU could be asked to do here, and below lg the stage doesn't pin anyway — a
+    // static tint (landing-v2.css) stands in on small screens.
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wide = window.matchMedia('(min-width: 1024px)').matches;
+    if (!reduce && wide) setEnabled(true);
   }, []);
 
   if (!enabled) return null;

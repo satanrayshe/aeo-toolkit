@@ -234,6 +234,18 @@ html.v2-header-folded body > header:focus-within {
   }
 }
 
+/* Below lg the WebGL gradient field never mounts (a full-stage shader is the most
+   expensive thing a phone GPU could run here); this static tint in the same palette
+   stands in behind the hero. */
+@media (max-width: 1023.98px) {
+  .v2 [data-stage-shader] {
+    background:
+      radial-gradient(120% 90% at 85% -10%, rgba(168, 243, 38, 0.1) 0%, transparent 55%),
+      radial-gradient(130% 100% at 15% 110%, rgba(124, 58, 237, 0.35) 0%, transparent 60%),
+      linear-gradient(200deg, #101024 0%, #0a0a0b 70%);
+  }
+}
+
 /* Mobile browsers overreport 100vh while the URL bar is visible; size the layers to
    the small viewport so the hero's instrument rail stays above the fold. */
 @supports (height: 100svh) {
