@@ -88,6 +88,28 @@ consolidated nine apps into one on purpose.
 - **`apps/chrome-extension`** — Vite + `@crxjs/vite-plugin`, MV3. Workspace deps are bundled; there is
   no Node at runtime, so use `jsPDF` rather than `@advance-labs/pdf`.
 
+## Design and brand
+
+The console's visual system is documented in [`brand/README.md`](../brand/README.md); read it before touching
+anything a user sees.
+
+- **Use tokens, not hex.** Colours come from the CSS variables in `apps/console/src/app/globals.css`
+  and `landing-v2.css` (`--bg`, `--v2-signal`, `--v2-rule`, …) or the Tailwind palette in
+  `tailwind.config.ts`. A literal hex in a component is a review comment unless it is the graph
+  palette or an OG image.
+- **One Signal per view.** `#A8F326` marks the primary action or the live figure. The second
+  green on a screen is a bug.
+- **The mark is the Advance Labs sphere**, rendered through `BrandMark` / `BrandLockup` in
+  `apps/console/src/components/BrandMark.tsx`. Don't inline logos, don't reintroduce the old tile
+  (`@advance-labs/ui`'s `Logo` is deprecated), don't tint the sphere.
+- **Labels are mono and uppercase; headlines are Syne; numbers are tabular.** Copy carries no
+  exclamation marks, and every figure in it must trace to a file in this repo.
+- **Motion is opt-in.** Gate scroll and pointer effects on `prefers-reduced-motion` and
+  `(hover: hover)`; the page must render complete without them.
+- **Cosmetic PRs stay cosmetic.** A design change touches `apps/console` (and `packages/ui` only
+  for shared components); it does not edit rules, crawler, scoring, or CI. Update tests that
+  assert colours (e.g. `graph-data.test.ts`) in the same PR.
+
 ## Code style
 
 - TypeScript strict. `verbatimModuleSyntax` is on → use `import type { X }` for type-only imports.

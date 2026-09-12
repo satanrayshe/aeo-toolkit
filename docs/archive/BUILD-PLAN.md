@@ -208,4 +208,4 @@ See `docs/CONVENTIONS.md` for the exact package template every agent must follow
 - BYOK keys are request-scoped, never logged, never persisted.
 - All MCP servers enforce token-bucket rate limiting and structured error responses.
 - Crawler is polite by default: respects robots.txt, identifies itself, rate-limits per host.
-- MIT-licensed throughout; no copied source from AGPL/proprietary references.
+- Apache-2.0-licensed throughout; no copied source from AGPL/proprietary references.
