@@ -16,7 +16,7 @@ Rebuild every tool **from scratch in TypeScript**, using the referenced repos on
 references — not forks. One language, one toolchain across all 20 units.
 
 ## Consequences
-- Clean MIT ownership; no AGPL obligations on a hosted product.
+- Clean copyright ownership; no AGPL obligations on a hosted product. (Released under MIT at the time of this ADR; relicensed to Apache-2.0 on 2026-09-08.)
 - Maximum reuse — all tools import the same TS engines instead of bridging across languages.
 - Cost: more upfront implementation than forking; mitigated by the shared-engine architecture.
 - Python/Go repos remain valuable as algorithm references (scoring weights, crawl politeness, MCP tool shapes).

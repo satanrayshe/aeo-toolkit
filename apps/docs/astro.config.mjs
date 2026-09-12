@@ -91,9 +91,18 @@ export default defineConfig({
       // consumes two segments of the base path. Ending the base at `apps/docs/` therefore lands
       // on `/edit/main/docs/<file>.md`, which is the file's real location on the default branch.
       editLink: { baseUrl: `${REPO}/edit/main/apps/docs/` },
+      // Brand: the Advance Labs sphere as logo + favicon, Signal-green accent on the ink ground.
+      // Tokens and rules in ../../brand/README.md; overrides in src/styles/brand.css.
+      logo: { src: './public/favicon.png', alt: 'AEO Toolkit' },
+      favicon: '/favicon.png',
+      customCss: ['./src/styles/brand.css'],
       social: [{ icon: 'github', label: 'GitHub', href: REPO }],
       head: [
         { tag: 'meta', attrs: { property: 'og:site_name', content: 'AEO Toolkit Docs' } },
+        { tag: 'meta', attrs: { property: 'og:image', content: `${SITE}${BASE}/og.png` } },
+        { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
+        { tag: 'meta', attrs: { name: 'twitter:image', content: `${SITE}${BASE}/og.png` } },
+        { tag: 'link', attrs: { rel: 'apple-touch-icon', href: `${BASE}/apple-touch-icon.png` } },
         // The toolkit teaches AI-crawler access, so the docs allow them explicitly.
         {
           tag: 'meta',
