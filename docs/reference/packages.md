@@ -1,10 +1,10 @@
 ---
 title: Package reference
 description: >-
-  All 16 packages: which six are published to npm, which ten are workspace-internal, and how the dependency graph is shaped.
+  All 17 packages: which six are published to npm, which eleven are workspace-internal, and how the dependency graph is shaped.
 ---
 
-**16 packages.** 6 are published to npm and usable standalone; 10 are
+**17 packages.** 6 are published to npm and usable standalone; 11 are
 workspace-internal (`"private": true`) — glue for this repo rather than things worth supporting on
 their own.
 
@@ -21,18 +21,19 @@ npm i @advance-labs/crawler      # polite crawler with robots.txt + rate limitin
 
 | Package | Version | Purpose |
 |---|---|---|
-| [`@advance-labs/crawler`](../../packages/crawler) | `0.2.0` | Polite, bounded HTTP crawler — sitemap-first discovery, link-following BFS, robots.txt, and site-file detection. |
-| [`@advance-labs/html-parser`](../../packages/html-parser) | `0.2.0` | Pure HTML extraction for the AEO Toolkit — meta/OG/Twitter, headings, images, links, content signals, and raw structured-data blocks. No network. |
-| [`@advance-labs/net-guard`](../../packages/net-guard) | `0.2.0` | SSRF-guarded HTTP fetch seam — DNS-resolves and rejects private/loopback/link-local/CGNAT/cloud-metadata addresses, re-validates every redirect hop, caps body size and time, and host-pins to defeat DNS rebinding. |
-| [`@advance-labs/schema-validator`](../../packages/schema-validator) | `0.2.0` | Detect and validate JSON-LD, Microdata, and RDFa structured data from raw HTML, mapped to schema.org types with AEO-relevant required-property validation. |
-| [`@advance-labs/scoring`](../../packages/scoring) | `0.2.0` | Declarative weighted rule engine plus technical-SEO, AEO, and E-E-A-T rule sets and report builders — the keystone scorer of the AEO Toolkit. |
-| [`@advance-labs/types`](../../packages/types) | `0.2.0` | Shared domain types for the AEO Toolkit — the single source of truth across all packages. |
+| [`@advance-labs/crawler`](../../packages/crawler) | `0.2.1` | Polite, bounded HTTP crawler — sitemap-first discovery, link-following BFS, robots.txt, and site-file detection. |
+| [`@advance-labs/html-parser`](../../packages/html-parser) | `0.2.1` | Pure HTML extraction for the AEO Toolkit — meta/OG/Twitter, headings, images, links, content signals, and raw structured-data blocks. No network. |
+| [`@advance-labs/net-guard`](../../packages/net-guard) | `0.2.1` | SSRF-guarded HTTP fetch seam — DNS-resolves and rejects private/loopback/link-local/CGNAT/cloud-metadata addresses, re-validates every redirect hop, caps body size and time, and host-pins to defeat DNS rebinding. |
+| [`@advance-labs/schema-validator`](../../packages/schema-validator) | `0.2.1` | Detect and validate JSON-LD, Microdata, and RDFa structured data from raw HTML, mapped to schema.org types with AEO-relevant required-property validation. |
+| [`@advance-labs/scoring`](../../packages/scoring) | `0.2.1` | Declarative weighted rule engine plus technical-SEO, AEO, and E-E-A-T rule sets and report builders — the keystone scorer of the AEO Toolkit. |
+| [`@advance-labs/types`](../../packages/types) | `0.2.1` | Shared domain types for the AEO Toolkit — the single source of truth across all packages. |
 
 ## Workspace-internal
 
 | Package | Version | Purpose |
 |---|---|---|
 | [`@advance-labs/backlinks`](../../packages/backlinks) | `0.1.1` | Free-source backlink engine — DuckDuckGo / CommonCrawl / Wayback providers, contact extraction, a rate-limited HTTP seam, and a backlink graph builder. |
+| [`@advance-labs/bing-api`](../../packages/bing-api) | `0.1.0` | Bing Webmaster Tools JSON/HTTP client for the AEO Toolkit. Read-only by construction — no write method exists on the class. Uses injectable global fetch. |
 | [`@advance-labs/blogging`](../../packages/blogging) | `0.1.1` | Autonomous multi-agent blogging pipeline: research GSC query gaps, draft with Groq, edit, dedup via Jaccard fingerprints, schedule, publish, and self-correct underperformers. Built on @advance-labs/google-api and @advance-labs/llm (BYOK). All I/O is injected, so it is fully testable with no network. |
 | [`@advance-labs/config`](../../packages/config) | `0.1.0` | Shared ESLint, TypeScript, and Prettier configuration for the AEO Toolkit monorepo. |
 | [`@advance-labs/google-api`](../../packages/google-api) | `0.1.1` | GA4 Data API + Search Console clients and Google OAuth for the AEO Toolkit. Uses injectable global fetch (no heavy googleapis dependency). |
@@ -52,7 +53,7 @@ render its output. Consolidating the apps did not change this graph, which is wh
 
 ```
 config ─┐
-types ──┴─▶ crawler · html-parser · llm · pdf · ui · mcp-core · google-api · net-guard
+types ──┴─▶ crawler · html-parser · llm · pdf · ui · mcp-core · google-api · bing-api · net-guard
                   │
                   ├─▶ schema-validator ─┐
                   │                     ├─▶ scoring ─┐

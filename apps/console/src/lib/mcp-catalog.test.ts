@@ -13,7 +13,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { MCP_SERVERS } from './mcp-catalog.js';
+import { MCP_SERVERS, type McpServerMeta } from './mcp-catalog.js';
 
 const API_MCP_DIR = join(process.cwd(), 'src/app/api/mcp');
 
@@ -72,7 +72,7 @@ describe('MCP catalog endpoints', () => {
  * Read the names out of the server source rather than importing and running the server, which
  * would need a full runtime context. This mirrors `mcp/skills.test.ts`.
  *
- * Scan the whole server directory, not just `server.ts`: ga-gsc declares its tool names inline
+ * Scan the whole server directory, not just `server.ts`: search declares its tool names inline
  * in `server.ts`, but backlink declares each one in its own `tools/*.ts` file.
  */
 function sourceFiles(dir: string): string[] {
@@ -83,10 +83,12 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
-function registeredToolNames(slug: string): Set<string> {
+function registeredToolNames(slug: McpServerMeta['slug']): Set<string> {
   const names = new Set<string>();
   for (const file of sourceFiles(join(process.cwd(), 'src/mcp', slug))) {
-    for (const match of readFileSync(file, 'utf8').matchAll(/name:\s*'([a-z0-9]+(?:_[a-z0-9]+)+)'/g)) {
+    for (const match of readFileSync(file, 'utf8').matchAll(
+      /name:\s*'([a-z0-9]+(?:_[a-z0-9]+)+)'/g,
+    )) {
       names.add(match[1] as string);
     }
   }
