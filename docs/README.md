@@ -9,7 +9,7 @@ description: >-
 ChatGPT, Claude, Perplexity, Gemini — cite your site when answering questions in your domain.
 Traditional SEO gets you ranked on the results page. AEO gets you *quoted* in the answer.
 
-This toolkit automates auditing for that. It is MIT-licensed, TypeScript throughout, and runs
+This toolkit automates auditing for that. It is Apache-2.0-licensed, TypeScript throughout, and runs
 entirely on your own infrastructure if you want it to.
 
 ## Start here
@@ -27,7 +27,7 @@ entirely on your own infrastructure if you want it to.
 ## What's in the suite
 
 **Ten tools from two deployables.** Five browser tools (technical audit, E-E-A-T scanner, llms.txt
-generator, GA4+GSC chat, 3D backlink graph), three MCP servers exposing 22 tools to Claude and other
+generator, GA4+GSC chat, 3D backlink graph), three MCP servers exposing 31 tools to Claude and other
 MCP clients, one scheduled content agent, and a Chrome extension. All of it is served from a single
 Next.js app plus the extension — see [ADR-0003](adr/0003-single-vercel-deployment.md) for why.
 

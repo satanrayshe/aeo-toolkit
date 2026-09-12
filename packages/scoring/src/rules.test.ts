@@ -4,7 +4,13 @@ import { runRules } from './engine.js';
 import { technicalSeoRules } from './technical-seo-rules.js';
 import { aeoRules } from './aeo-rules.js';
 import { eeatSignalDefs } from './eeat-rules.js';
-import { emptyContext, goodContext, poorContext, singlePageContext } from './fixtures.js';
+import {
+  clientRenderedContext,
+  emptyContext,
+  goodContext,
+  poorContext,
+  singlePageContext,
+} from './fixtures.js';
 
 /** The finding for one rule id out of a `runRules` result. */
 function findingIn(result: { categories: ScoreCategory[] }, id: string): Finding | undefined {
@@ -22,7 +28,7 @@ describe('published rule counts', () => {
   /**
    * These numbers are QUOTED PUBLICLY — advancelabs.dev/services/aeo-audit sells the audit as an
    * "N-rule engine" and breaks it down by family, right next to an invitation to read this
-   * MIT-licensed source. On 2026-08-01 that copy claimed 51 rules with a 16-rule E-E-A-T family
+   * Apache-2.0-licensed source. On 2026-08-01 that copy claimed 51 rules with a 16-rule E-E-A-T family
    * when the real numbers were 49 and 14; it had been wrong since the copy was written, because
    * nothing connected the claim to the code.
    *
@@ -36,13 +42,21 @@ describe('published rule counts', () => {
    * by `runRules`, while E-E-A-T is a separate signal-definition set. The public "N-rule" figure
    * sums both, so both are pinned here.
    */
+  /**
+   * 2026-08-30: `aeo.content-server-rendered` took the AEO family to 12 and the total to 55.
+   * The advance-labs marketing site still says 54 in the places listed above. That copy lives
+   * in a DIFFERENT repository and was not edited here, so this is a known, deliberate
+   * inconsistency with an owner rather than a silent drift: whoever ships the site copy next
+   * updates it to 55.
+   */
   it('matches the counts published on the marketing site', () => {
-    // 2026-09: +2 technical (tech.charset-declared #10, tech.hreflang-valid #12) and
-    // +1 AEO (aeo.content-freshness #11) — 54 became 57; update the marketing pages above.
+    // 2026-09: +2 technical (tech.charset-declared, tech.hreflang-valid), +1 AEO
+    // (aeo.content-freshness) on top of aeo.content-server-rendered already merged from
+    // main — 55 became 58; update the marketing pages above.
     expect(technicalSeoRules.length).toBe(31);
-    expect(aeoRules.length).toBe(12);
+    expect(aeoRules.length).toBe(13);
     expect(eeatSignalDefs.length).toBe(14);
-    expect(technicalSeoRules.length + aeoRules.length + eeatSignalDefs.length).toBe(57);
+    expect(technicalSeoRules.length + aeoRules.length + eeatSignalDefs.length).toBe(58);
   });
 });
 
@@ -201,5 +215,58 @@ describe('aeoRules', () => {
       expect(finding?.description).toContain('unparseable');
       expect(finding?.description).toContain('last Tuesday');
     });
+  });
+});
+
+describe('aeo.content-server-rendered', () => {
+  const rule = aeoRules.find((r) => r.id === 'aeo.content-server-rendered');
+
+  /** `evaluate` may be sync or async; await narrows the union for the assertions. */
+  async function run(ctx: Parameters<NonNullable<typeof rule>['evaluate']>[0]) {
+    if (rule === undefined) throw new Error('aeo.content-server-rendered is not registered');
+    return await rule.evaluate(ctx);
+  }
+
+  it('exists', () => {
+    expect(rule).toBeDefined();
+  });
+
+  it('fails a client-rendered page and says the fix is not "write more"', async () => {
+    const result = await run(clientRenderedContext());
+    expect(result.passed).toBe(false);
+    // The detail is the whole point of the rule: same symptom as thin content,
+    // opposite remedy. If this wording goes, the rule stops being useful.
+    expect(result.detail).toContain('not thin content');
+    expect(result.detail).toContain('empty app shell');
+  });
+
+  it('passes a thin but genuinely server-rendered page', async () => {
+    // poorContext has a 40-word page. It SHOULD fail tech.content-not-thin and
+    // PASS this rule — those are different problems with different fixes.
+    expect((await run(poorContext())).passed).toBe(true);
+  });
+
+  it('passes a healthy server-rendered page', async () => {
+    expect((await run(goodContext())).passed).toBe(true);
+  });
+
+  it('passes an empty context without throwing', async () => {
+    await expect(run(emptyContext())).resolves.toMatchObject({ passed: true });
+  });
+
+  it('still fires when the shell page is one of several', async () => {
+    const ctx = clientRenderedContext();
+    const good = goodContext();
+    const firstGood = good.pages[0];
+    if (firstGood === undefined) throw new Error('fixture must have a page');
+    const mixed = { ...ctx, pages: [firstGood, ...ctx.pages] };
+    expect((await run(mixed)).passed).toBe(false);
+  });
+
+  it('is weighted as a high-severity AEO rule', () => {
+    // A page invisible to crawlers is not a nitpick; if this drops to low the rule
+    // stops changing the score in any meaningful way.
+    expect(rule?.severity).toBe('high');
+    expect(rule?.category).toBe('aeo');
   });
 });
