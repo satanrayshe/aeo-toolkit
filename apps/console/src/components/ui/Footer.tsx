@@ -20,14 +20,23 @@ const RESOURCES = [
   { href: '/mcp#backlink', label: 'Backlink MCP' },
 ];
 
+// The content cluster (#35–#37): footer links make it a site-wide hub, which is exactly the
+// internal-linking pattern the SEO plan prescribes (and the scoring engine rewards).
+const LEARN = [
+  { href: '/guide/answer-engine-optimization', label: 'AEO Guide' },
+  { href: '/glossary', label: 'Glossary' },
+  { href: '/compare/aeo-vs-seo', label: 'AEO vs SEO' },
+];
+
 export function Footer(): React.ReactElement {
   return (
     <footer className="relative mt-16 border-t border-white/[0.08] py-14">
       <Container>
-        {/* Phones: two columns — Tools on the left, MCP + Company stacked beside it
-            (their combined height ≈ the Tools list, so nothing scrolls longer than it
-            must). From lg the wrapper dissolves (lg:contents) into the four columns. */}
-        <div className="grid grid-cols-2 gap-10 lg:grid-cols-4">
+        {/* Phones: two columns — Tools + Learn stacked on the left, MCP + Company stacked
+            on the right (each side's combined height stays close to the other, so neither
+            scrolls longer than it must). From lg both wrappers dissolve (lg:contents) into
+            the five columns. */}
+        <div className="grid grid-cols-2 gap-10 lg:grid-cols-5">
           <div className="col-span-2 max-w-xs lg:col-span-1">
             <Link
               href="/"
@@ -41,7 +50,10 @@ export function Footer(): React.ReactElement {
               Perplexity, and Google AI Overviews.
             </p>
           </div>
-          <FooterCol title="Tools" links={TOOLS} />
+          <div className="flex flex-col gap-10 lg:contents">
+            <FooterCol title="Tools" links={TOOLS} />
+            <FooterCol title="Learn" links={LEARN} />
+          </div>
           <div className="flex flex-col gap-10 lg:contents">
             <FooterCol title="MCP servers" links={RESOURCES} />
             <FooterCol
